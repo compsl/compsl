@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-#include "vm.h"
-#include "compart.h"
-#include "var.h"
-#include "intern/bytecode.h"
-#include "intern/vm.h"
-#include "compsl.h"
+#include "../extern/vm.h"
+#include "../extern/compart.h"
+#include "../extern/var.h"
+#include "../intern/bytecode.h"
+#include "../intern/vm.h"
+#include "../extern/compsl.h"
 
 int main()
 {

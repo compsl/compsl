@@ -21,7 +21,7 @@ SOURCES=src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm
 OBJECTS=$(SOURCES:.c=.o)
 TESTSRCS=src/test/hello.c
 TESTOBJS=$(TESTSRCS:.c=.o)
-TESTINCLUDE=../src/extern ../src
+TESTINCLUDE=../extern ..
 
 SHORTLIB=compsl
 LIBNAME=lib$(SHORTLIB)

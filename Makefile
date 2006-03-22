@@ -15,12 +15,13 @@
 
 
 CC=gcc
-CFLAGS=-c -Wall -fPIC
+CFLAGS=-c -Wall -fPIC -std=gnu99 
 
 SOURCES=src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm.c
 OBJECTS=$(SOURCES:.c=.o)
 TESTSRCS=src/test/hello.c
 TESTOBJS=$(TESTSRCS:.c=.o)
+TESTINCLUDE=src/extern src
 
 SHORTLIB=compsl
 LIBNAME=lib$(SHORTLIB)
@@ -41,7 +42,7 @@ test: maketestonly
 	$(TEST_EXE)
 
 maketestonly: $(TESTSRCS) $(TESTOBJS) static
-	$(CC) -static $(TESTSRCS) -Lbin -l$(SHORTLIB) -o $(TEST_EXE)
+	$(CC) -static $(TESTSRCS) -Lbin -l$(SHORTLIB) -I$(TESTINCLUDES) -o $(TEST_EXE)
 
 clean:
 	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE)

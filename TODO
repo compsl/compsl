@@ -1,4 +1,9 @@
-TODO:
+TODO: In no particular order.
 
  1. add conditional compilation to headers for C++ compiling
- 2.
+ 2. finsh bytecodes
+ 3. figure out how to make eclipse build our test case
+ 4. finish API
+ 5. add test cases for entire API
+ 6. add test cases for all instructions
+ 7. 

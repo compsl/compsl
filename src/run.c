@@ -10,8 +10,10 @@
 
 #include <malloc.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <inttypes.h>
+#include <stdbool.h>
 
 #define VM_FLOAT_EPSILON 0.1f
 
@@ -20,6 +22,7 @@ void runCubbyhole(compart *com, int id)
 static void *jmptbl[] = 
 {
 	&&NOOP,
+//stack operations with local vars
 	&&PUSH,
  	&&APUSH,
  	&&CPUSH,
@@ -27,32 +30,49 @@ static void *jmptbl[] =
  	&&APOP,
  	&&DPOP,
  	&&SWAP,
+ // native function call
  	&&CALL, 
+ // integer operations
  	&&ADD, 
  	&&SUB, 
  	&&MUL, 
  	&&DIV, 
- 	&&CMP, 
+ 	&&CMP,
+ // float operations 
  	&&FADD, 
  	&&FSUB, 
  	&&FMUL,
  	&&FDIV, 	
- 	&&FCMP, 
+ 	&&FCMP,
+ // jumps 
  	&&JMP, 	
  	&&JMPL, 	
  	&&JMPE, 	
  	&&JMPG, 	
  	&&JMLE, 	
- 	&&JMNE, 	
+ 	&&JMNE,
  	&&JMGE,
+ //type conversion
  	&&FLIN, 
  	&&INFL,
+ //mod
  	&&MOD, 
  	&&FMOD,
+ //global vars
  	&&GPSH,
  	&&GAPS,
  	&&GPOP,
  	&&GAPP,
+ //boolean 
+ 	&&AND,
+ 	&&OR,
+ 	&&NOT,
+ //bitwise
+ 	&&BAND,
+ 	&&BOR,
+ 	&&BXOR,
+ 	&&BNOT,
+ //misc
  	&&END,
  	&&HLT,
  	&&DBG
@@ -65,13 +85,13 @@ static void *jmptbl[] =
 	var *lcs = com->ct.vars;
 	var *gvs = com->vm->vt.vars;
 	
-	bytecode *pc= (bytecode *)(com->cubbys[id].code);
+	bytecode *pc= (bytecode *)(com->cubbys[id].code); // init program counter
 	
-	bool less, equal, greater;
+	bool less, equal, greater; // comparison flags
 	
-	goto START;
+	goto START; // skip over program counter increment
 	
-	TOP:
+	TOP: 
 		pc++;
 	START:
 		goto *jmptbl[pc->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
@@ -200,14 +220,71 @@ static void *jmptbl[] =
  	GAPP:
  //TODO: writeme
  		goto UNIMP;
+ //begin of boolean + bitwise opers
+ 
+ //boolean 
+ 	AND:
+ 		sp-=2;	
+ 		sp->i = sp->i && (sp+1)->i;
+ 		goto TOP;
+ 	OR:
+ 		sp-=2;	
+ 		sp->i = sp->i || (sp+1)->i;
+ 		goto TOP;
+ 	NOT:
+ 		sp->i = !(sp->i);
+ 		goto TOP;
+ //bitwise
+ 	BAND:
+ 		sp-=2;	
+ 		sp->i = sp->i & (sp+1)->i;
+ 		goto TOP;
+ 	BOR:
+ 		sp-=2;	
+ 		sp->i = sp->i | (sp+1)->i;
+ 		goto TOP;
+ 	BXOR:
+ 		sp-=2;	
+ 		sp->i = sp->i ^ (sp+1)->i;
+ 		goto TOP;
+ 	BNOT: 
+ 		sp->i = ~(sp->i);
+ 		goto TOP;
+ //end of boolean + bitwise opers
  	HLT:
  	
  	END:
  		return;
  	DBG: // dump some state info
+ 	{
+ 		var *t;
+ 		intfloat *st;
  		
+ 		fprintf(stderr, "Program Counter: %X", (unsigned int)((bytecode *)(com->cubbys[id].code) - pc));
+ 		
+ 		fprintf(stderr, "Compare Flags (e,l,g): %s %s %s\n",
+ 			(equal?"true":"false"),
+ 			(less?"true":"false"),
+ 			(greater?"true":"false"));
+ 		fprintf(stderr, "Stack Pointer: %X\n", (unsigned int)(sp - stack)); // what does this do? index of sp?
+ 		fprintf(stderr, "Stack: \n");
+ 		st = stack;
+ 		for(unsigned int i = 0; i < VM_STACK_SIZE; i++, st++)
+	 		fprintf(stderr,"\t%X   %i %f\n", i, (int)(st->i), (st->f)); 
+
+ 		fprintf(stderr, "Local variables:\n");
+ 		t = lvs;
+ 		for(unsigned int i = 0 ; i < COMPART_MAX_VARS; i++, t++)
+ 			if(t->size <= 0) 
+ 				fprintf(stderr, "\t%X:   %i %f\n", i, (int)(t->v.i), t->v.f);
+ 		
+ 		fprintf(stderr, "Global Vars:\n");
+ 		t = gvs;
+ 		for(unsigned int i = 0 ; i < VM_MAX_GVARS; i++, t++)
+ 			if(t->size <= 0) 
+ 				fprintf(stderr, "\t%X:   %i %f\n",i, (int)(t->v.i), t->v.f);
+ 	}
  		goto TOP;
- 	
  	UNIMP:
  	
  	panic("unimplemented instruction");

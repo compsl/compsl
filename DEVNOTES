@@ -1,0 +1,3 @@
+
+1. all strings representing variable names are duplicated, the duplicate is used
+   and is thus the responibilty of the interpreter to free.

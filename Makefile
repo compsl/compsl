@@ -42,7 +42,7 @@ test: maketestonly
 	$(TEST_EXE)
 
 maketestonly: $(TESTSRCS) $(TESTOBJS) static
-	$(CC) -static $(TESTSRCS) -Lbin -l$(SHORTLIB) -I$(TESTINCLUDES) -o $(TEST_EXE)
+	$(CC) -static $(TESTSRCS) -Lbin -l$(SHORTLIB) -o $(TEST_EXE)
 
 clean:
 	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE)

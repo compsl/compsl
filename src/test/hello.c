@@ -25,6 +25,7 @@ int main()
 			{.code = 0x01, { {.a1 =0} } }, //push local at address 0
 			{.code = 0x01, { {.a1 =1} } }, //push local at address 1
 			{.code = 0x09}, // add
+			{.code = 0x04, { {.a1 =0} }}, // pop into address 0
 			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
 		};
 		com->cubbys[0].code = code;
@@ -36,6 +37,11 @@ int main()
 		com->vt.vars[1].v.i = 3;
 		
 		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 5)
+			printf("TEST 1 PASS!\n");
+		else
+			printf("TEST 1 FAIL!\n");
 	}
 	//example case
 	{

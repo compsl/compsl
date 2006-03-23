@@ -17,8 +17,30 @@ int main()
 	
 	//Tests
 	
+	{ //TEST 2 test push/pop
+		bytecode code[] = 
+		{ 
+			{.code = 0x01, { {.a1 =0} } }, //push local at address 0
+			{.code = 0x04, { {.a1 =1} }}, // pop into address 1
+			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
+		};
+		com->cubbys[0].code = code;
+		com->vm = vm;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 2;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[1].v.i == com->vt.vars[0].v.i)
+			printf("TEST 1 PASS!\n");
+		else
+			printf("TEST 1 FAIL!\n");
+	}
 	
-	{// new block so code[] goes out of scope, this way we can re-use it's name in each test case
+	{// TEST 2
 		//test push/pop/add/end
 		bytecode code[] = 
 		{ 
@@ -39,19 +61,23 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.i == 5)
-			printf("TEST 1 PASS!\n");
+			printf("TEST 2 PASS!\n");
 		else
-			printf("TEST 1 FAIL!\n");
+			printf("TEST 2 FAIL!\n");
 	}
+	
+	{ //TEST 2
+	}
+	/*
 	//example case
-	{
+	{ // new block so code[] goes out of scope, this way we can re-use it's name in each test case
 		bytecode code[] = 
 		{ 
 			{.code = 0x00, { {.a1 =0, .a2 = 0} }}, 
 			{.code = 0x00, {.a = 0} },
 			{.code = 0x00}
 		};
-	}
+	}*/
 	
 	//end tests
 	

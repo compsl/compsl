@@ -168,7 +168,7 @@ static void *jmptbl[] =
 	 	sp-=2;
  		tmp.f = sp->f - (sp + 1)->f;
  		less = tmp.f < 0;
- 		equal = fabs(tmp.f) < VM_FLOAT_EPSILON;
+ 		equal = fabs(tmp.f) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
  		greater = tmp.f > 0;
  		goto TOP;
  	JMP:
@@ -220,6 +220,7 @@ static void *jmptbl[] =
  	GAPP:
  //TODO: writeme
  		goto UNIMP;
+ 		
  //begin of boolean + bitwise opers
  
  //boolean 
@@ -256,7 +257,7 @@ static void *jmptbl[] =
  	END:
  		return;
  	DBG: // dump some state info
- 	#ifdef DEBUG
+ #ifdef DEBUG
  	{
  		var *t;
  		intfloat *st;
@@ -285,7 +286,7 @@ static void *jmptbl[] =
  			if(t->size <= 0) 
  				fprintf(stderr, "\t%X:   %i %f\n",i, (int)(t->v.i), t->v.f);
  	}
- 	#endif
+ #endif
  		goto TOP;
  	UNIMP:
  	

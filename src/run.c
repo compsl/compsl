@@ -256,6 +256,7 @@ static void *jmptbl[] =
  	END:
  		return;
  	DBG: // dump some state info
+ 	#ifdef DEBUG
  	{
  		var *t;
  		intfloat *st;
@@ -284,6 +285,7 @@ static void *jmptbl[] =
  			if(t->size <= 0) 
  				fprintf(stderr, "\t%X:   %i %f\n",i, (int)(t->v.i), t->v.f);
  	}
+ 	#endif
  		goto TOP;
  	UNIMP:
  	

@@ -19,7 +19,7 @@ CFLAGS=-c -Wall -fPIC -std=gnu99
 
 SOURCES=src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm.c
 OBJECTS=$(SOURCES:.c=.o)
-TESTSRCS=src/test/hello.c
+TESTSRCS=src/test/test.c
 TESTOBJS=$(TESTSRCS:.c=.o)
 
 SHORTLIB=compsl

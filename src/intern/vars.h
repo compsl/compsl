@@ -6,6 +6,7 @@
 #include "../extern/compart.h"
 #include "../intern/vars.h"
 #include <inttypes.h>
+#include <stdbool.h>
 
 #define INT_VAR 0
 #define FLOAT_VAR 1

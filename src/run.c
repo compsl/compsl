@@ -109,8 +109,8 @@ static void *jmptbl[] =
  		sp++;
 		goto TOP;
  	POP:
- 		lvs[pc->a1].v = *sp;
  		sp--;
+ 		lvs[pc->a1].v = *sp;
 		goto TOP;
  	APOP:
  		//TODO: writeme
@@ -214,8 +214,8 @@ static void *jmptbl[] =
  		//TODO: writeme
  		goto UNIMP;
  	GPOP:
+ 		sp--;
  		gvs[pc->a1].v = *sp;
-		sp--;
 		goto TOP;
  	GAPP:
  //TODO: writeme

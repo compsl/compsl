@@ -125,20 +125,20 @@ static void *jmptbl[] =
  	//TODO: writeme
  		goto UNIMP;
  	ADD:
- 		sp-=2;
- 		sp->i = sp->i + (sp+1)->i;
+ 		sp--;
+ 		(sp - 1)->i = (sp - 1)->i + sp->i;
  		goto TOP;
  	SUB:
- 		sp-=2;	
- 		sp->i = sp->i - (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i - sp->i;
  		goto TOP;
  	MUL:
-	 	sp-=2;
- 		sp->i = sp->i * (sp+1)->i;
+	 	sp--;
+ 		(sp - 1)->i = (sp - 1)->i * sp->i;
  		goto TOP;
  	DIV:
- 		sp-=2;	
- 		sp->i = sp->i / (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i / sp->i;
  		goto TOP;
  	CMP:
  	// TODO: see if this can be done faster
@@ -149,24 +149,24 @@ static void *jmptbl[] =
  		greater = tmp.i > 0;
  		goto TOP;
  	FADD:
-	 	sp-=2;
- 		sp->f = sp->f + (sp+1)->f;
+	 	sp--;
+ 		(sp - 1)->f = (sp - 1)->f + sp->f;
  		goto TOP;
  	FSUB:
-	 	sp-=2;
- 		sp->f = sp->f - (sp+1)->f;
+	 	sp--;
+ 		(sp - 1)->f = (sp - 1)->f - sp->f;
  		goto TOP; 
  	FMUL:
- 		sp-=2;
- 		sp->f = sp->f * (sp+1)->f;
+ 		sp--;
+ 		(sp - 1)->f = (sp - 1)->f * sp->f;
  		goto TOP; 
  	FDIV:
- 		sp-=2;
- 		sp->f = sp->f / (sp+1)->f;
+ 		sp--;
+ 		(sp - 1)->f = (sp - 1)->f / sp->f;
  		goto TOP; 
  	FCMP:
 	 	sp-=2;
- 		tmp.f = sp->f - (sp+1)->f;
+ 		tmp.f = sp->f - (sp + 1)->f;
  		less = tmp.f < 0;
  		equal = fabs(tmp.f) < VM_FLOAT_EPSILON;
  		greater = tmp.f > 0;
@@ -199,12 +199,12 @@ static void *jmptbl[] =
  		sp->f = (float)(sp->i);
  		goto TOP;
  	MOD:
- 		sp-=2;	
- 		sp->i = sp->i % (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i % sp->i;
  		goto TOP;
  	FMOD:
- 		sp-=2;	
- 		sp->f = sp->f - (sp+1)->f * (int)(sp->f / (sp+1)->f); // a ? ((int)(a / b)) * b
+ 		sp--;	
+ 		(sp - 1)->f = (sp - 1)->f - sp->f * (int)((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
  		goto TOP;
  	GPSH:
  		*sp = gvs[pc->a1].v;
@@ -224,31 +224,31 @@ static void *jmptbl[] =
  
  //boolean 
  	AND:
- 		sp-=2;	
- 		sp->i = sp->i && (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i && sp->i;
  		goto TOP;
  	OR:
- 		sp-=2;	
- 		sp->i = sp->i || (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i || sp->i;
  		goto TOP;
  	NOT:
- 		sp->i = !(sp->i);
+ 		(sp - 1)->i = !((sp - 1)->i);
  		goto TOP;
  //bitwise
  	BAND:
- 		sp-=2;	
- 		sp->i = sp->i & (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i & sp->i;
  		goto TOP;
  	BOR:
- 		sp-=2;	
- 		sp->i = sp->i | (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i | sp->i;
  		goto TOP;
  	BXOR:
- 		sp-=2;	
- 		sp->i = sp->i ^ (sp+1)->i;
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i ^ sp->i;
  		goto TOP;
  	BNOT: 
- 		sp->i = ~(sp->i);
+ 		(sp - 1)->i = ~((sp - 1)->i);
  		goto TOP;
  //end of boolean + bitwise opers
  	HLT:

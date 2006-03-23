@@ -44,7 +44,7 @@ int main()
 		bytecode code[] = 
 		{ 
 			{.code = 0x03, { {.a1 =0} } }, //push constant at address 0
-			{.code = 0x04, { {.a1 =1} }}, // pop into address 1
+			{.code = 0x04, { {.a1 =0} }}, // pop into address 0
 			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
 		};
 		com->cubbys[0].code = code;

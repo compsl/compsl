@@ -27,6 +27,10 @@ typedef struct _COMPART_t
 compart *createComp(void);
 void destroyComp(compart *);
 
+float *com_addFloat(compart *, const char *name);
+int32_t *com_addInt(compart *, const char *name);
 
+float *com_getFloat(compart *, const char *name);
+int32_t *com_getInt(compart *, const char *name);
 
 #endif /*COMPART_H_*/

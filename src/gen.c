@@ -43,6 +43,7 @@ symbolinfo searchSym(const char *name, compart *com)
 	
 	res.array = res.isvar = res.local = res.constant = false;
 	res.id = -1;
+	
 	//TODO: write function search
 	
 	return res;

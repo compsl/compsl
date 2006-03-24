@@ -93,7 +93,7 @@ int main()
 		{ 
 			{.code = 0x01, { {.a1 =0} } }, //push local at address 0
 			{.code = 0x01, { {.a1 =1} } }, //push local at address 1
-			{.code = 0x10}, // sub
+			{.code = 0x0A}, // sub
 			{.code = 0x04, { {.a1 =0} }}, // pop into address 0
 			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
 		};
@@ -110,7 +110,7 @@ int main()
 		if(com->vt.vars[0].v.i == -1)
 			printf("SUB: PASS!\n");
 		else
-			printf("SUB: FAIL!\n");
+			printf("SUB: FAIL!%i\n");
 	}
 	/*
 	//example case

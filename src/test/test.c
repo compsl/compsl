@@ -83,12 +83,34 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.i == 5)
-			printf("ADD PASS!\n");
+			printf("ADD: PASS!\n");
 		else
-			printf("ADD FAIL!\n");
+			printf("ADD: FAIL!\n");
 	}
 	
-	{ //TEST 3
+	{ //SUB
+		bytecode code[] = 
+		{ 
+			{.code = 0x01, { {.a1 =0} } }, //push local at address 0
+			{.code = 0x01, { {.a1 =1} } }, //push local at address 1
+			{.code = 0x10}, // sub
+			{.code = 0x04, { {.a1 =0} }}, // pop into address 0
+			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
+		};
+		com->cubbys[0].code = code;
+		com->vm = vm;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 2;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 3;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == -1)
+			printf("SUB: PASS!\n");
+		else
+			printf("SUB: FAIL!\n");
 	}
 	/*
 	//example case

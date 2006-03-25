@@ -21,7 +21,7 @@ compart *createComp(void)
 	varTableCreate(&(tmp->vt), COMPART_MAX_VARS);
 	varTableCreate(&(tmp->ct), COMPART_MAX_CONSTS);
     
-    tmp->errno = COMPSL_NOERR;
+    tmp->errorno = COMPSL_NOERR;
     
     return tmp;
 }

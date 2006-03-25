@@ -23,7 +23,7 @@ VM *createVM(void)
     tmp->natives = (nativeFN *)malloc(sizeof(nativeFN) * VM_NATIVEFN_INIT_SIZE);
     tmp->ncnt = 0;
     
-    tmp->errno = COMPSL_NOERR;
+    tmp->errorno = COMPSL_NOERR;
     
     return tmp;
 }

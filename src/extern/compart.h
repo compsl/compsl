@@ -21,7 +21,7 @@ typedef struct _COMPART_t
     
     VM *vm; // the vm this compartment was compiled with
     
-    COMPSL_ERROR errno; // error code of last error produced by this compartment
+    COMPSL_ERROR errorno; // error code of last error produced by this compartment
 } compart;
 
 compart *createComp(void);

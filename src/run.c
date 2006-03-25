@@ -15,7 +15,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#define VM_FLOAT_EPSILON 0.1f
+#define VM_FLOAT_EPSILON 0.01f
 
 void runCubbyhole(compart *com, int id)
 {
@@ -85,15 +85,13 @@ static void *jmptbl[] =
 	var *lcs = com->ct.vars;
 	var *gvs = com->vm->vt.vars;
 	
-	bytecode *pc= (bytecode *)(com->cubbys[id].code); // init program counter
+	bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
 	
 	bool less, equal, greater; // comparison flags
-	
-	goto START; // skip over program counter increment
+	less = equal = greater = false;
 	
 	TOP: 
 		pc++;
-	START:
 		goto *jmptbl[pc->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
 	NOOP:
 		goto TOP;
@@ -172,8 +170,8 @@ static void *jmptbl[] =
  		greater = tmp.f > 0;
  		goto TOP;
  	JMP:
- 		pc += pc->sa;
- 		goto START;
+ 		pc += pc->sa - 1; // compensate for pc++ at top
+ 		goto TOP;
  	JMPL:
  		if(less) pc += pc->sa - 1;// compensate for pc++ at top
  		goto TOP;	

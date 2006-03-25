@@ -18,7 +18,13 @@
 # with no debug info and -O2
 
 CC=gcc
-CFLAGS=-c -Wall -fPIC -std=gnu99 
+CFLAGS=-c -ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fPIC -std=gnu99 
+ifdef DEBUG
+	CFLAGS += -ggdb -D DEBUG
+else
+	CFLAGS += -O2 -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -ffast-math -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks -fmove-all-movables
+	#TODO figure out if we need the -fno-strict-aliasing option.
+endif
 
 SOURCES=src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm.c
 OBJECTS=$(SOURCES:.c=.o)

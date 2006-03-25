@@ -10,7 +10,7 @@ typedef enum _COMPSL_ERROR_TYPE_
 	COMPSL_NO_SUCH_VAR
 } COMPSL_ERROR;
 
-char *compsl_getErrstr(COMPSL_ERROR err);
+const char *compsl_getErrstr(COMPSL_ERROR err);
 void compsl_printErr(COMPSL_ERROR err);
 
 #endif /*COMPSLERR_H_*/

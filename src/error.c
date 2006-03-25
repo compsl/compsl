@@ -1,7 +1,7 @@
 #include "extern/compslerr.h"
 #include <stdio.h>
 
-static char *emessgs[] =
+static const char *emessgs[] =
 {//TODO: fill in errors
 	"No Error",
 	"VARIABLE TABLE FULL: Cannot add variable",
@@ -13,7 +13,7 @@ static char *emessgs[] =
 
 //static char *noSuchMessage = "Non-existant error message";
 
-char *compsl_getErrstr(COMPSL_ERROR err)
+const char *compsl_getErrstr(COMPSL_ERROR err)
 {
 	//TODO: find some way to bounds check this
 	return emessgs[err];

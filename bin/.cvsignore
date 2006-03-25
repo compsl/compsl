@@ -1,2 +1,4 @@
-compsl-test.exe
-libcompsl.a
+compsl-test*
+*.a
+*.so
+*.o

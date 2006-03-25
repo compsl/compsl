@@ -4,8 +4,10 @@
 static char *emessgs[] =
 {//TODO: fill in errors
 	"No Error",
-	"",
-	"",
+	"VARIABLE TABLE FULL: Cannot add variable",
+	"Cubbyhole Table full: Too many cubbyholes",
+	"No Such Cubbyhole: the specified name does not exist",
+	"No Such Variable: the specified name does not exist",
 	""
 };
 

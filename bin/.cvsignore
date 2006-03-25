@@ -1,4 +1,4 @@
 compsl-test*
 *.a
-*.so
+*.so*
 *.o

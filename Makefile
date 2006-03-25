@@ -30,7 +30,7 @@ STATIC_LIB_OUT=bin/$(LIBNAME).a
 DYN_LIB_OUT=bin/$(LIBNAME).so.1.0.1
 
 #TARGETS
-all: compile static dynamic
+all: compile static dynamic maketestonly
 	         
 compile: $(SOURCES) $(OBJECTS)
 

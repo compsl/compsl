@@ -12,7 +12,10 @@
 # http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
 # http://www.eng.hawaii.edu/Tutor/Make/3-1.html
 
-
+#TODO: figure out how to make the test link against version of the lib with debug
+#symbols but also have optimizations in the release worthy stuff ie: end up with two
+# versions of the static lib, one with debug stuff and not optimization, and the other
+# with no debug info and -O2
 
 CC=gcc
 CFLAGS=-c -Wall -fPIC -std=gnu99 

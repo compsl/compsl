@@ -116,9 +116,11 @@ static void *jmptbl[] =
  	DPOP:
  		sp--;
  		goto TOP;
- 	SWAP:
- 	//TODO: writeme
- 		goto UNIMP;
+ 	SWAP://TODO: should this be an addressed thing? (ie: can swap an arbitrary pair of stack elements)
+ 		tmp = *(sp - 1);
+ 		*(sp - 1) = *(sp - 2);
+ 		*(sp - 2) = tmp;
+ 		goto TOP;
  	CALL: 
  	//TODO: writeme
  		goto UNIMP;

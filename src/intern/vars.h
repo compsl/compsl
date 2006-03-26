@@ -18,7 +18,7 @@
  * list = list to search
  * name = name of var
  */
-int16_t findVar(varTable *vt,const char *name);
+int16_t findVar(varTable *vt,const char *name) __attribute__ ((pure));
 
 var *addVar(varTable *vt, uint8_t typeflags, const char *name);
 

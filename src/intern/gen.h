@@ -19,6 +19,6 @@ typedef struct
 /**
  * search all symbol tables and return info on a symbol
  */
-symbolinfo searchSym(const char *name, compart *com);
+symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure, fastcall));
 
 #endif /*GEN_H_*/

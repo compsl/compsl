@@ -7,7 +7,7 @@
 #include <malloc.h>
 #include <string.h>
 
-symbolinfo searchSym(const char *name, compart *com)
+__attribute__ ((pure, fastcall)) symbolinfo searchSym(const char *name, compart *com) 
 {
 	symbolinfo res;
 	

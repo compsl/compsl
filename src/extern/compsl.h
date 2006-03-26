@@ -4,6 +4,6 @@
 #include "compart.h"
 #include "var.h"
 
-void runCubbyhole(compart *com, int id); // runs 
+void runCubbyhole(compart *com, int id)  __attribute__ ((fastcall)); // runs 
 
 #endif /*COMPSL_H_*/

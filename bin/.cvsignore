@@ -2,3 +2,4 @@ compsl-test*
 *.a
 *.so*
 *.o
+compsl-cmplr*

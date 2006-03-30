@@ -1,2 +1,4 @@
-*.c
-*.h
+compsl.tab.c
+compsl.tab.h
+lex.yy.c
+*.o

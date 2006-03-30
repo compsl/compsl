@@ -19,6 +19,8 @@
 
 CC=gcc
 CFLAGS=-c -ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fPIC -std=gnu99 
+# Any changes to CFLAGS probably need to be done to src/compiler/Makefile as well
+
 ifdef DEBUG
 	CFLAGS += -ggdb -D DEBUG
 else
@@ -30,6 +32,8 @@ SOURCES=src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm
 OBJECTS=$(SOURCES:.c=.o)
 TESTSRCS=src/test/test.c
 TESTOBJS=$(TESTSRCS:.c=.o)
+
+CMPLRPATH=src/compiler
 
 SHORTLIB=compsl
 LIBNAME=lib$(SHORTLIB)
@@ -55,7 +59,8 @@ maketestonly: $(TESTSRCS) $(TESTOBJS) static
 clean:
 	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE)
 
-
+compiler:
+	make -C $(CMPLRPATH)
 
 
 # INTERNAL TARGETS

@@ -13,16 +13,17 @@ int main()
 {
 	VM *vm = createVM();
 	compart *com = createComp();
+	bool ret = 0;
 	
 	
 	//Tests
-	
+	printf("\nRunning tests\n-------------\n");
 	{ // PUSH,POP
 		bytecode code[] = 
 		{ 
-			{.code = 0x01, { {.a1 =0} } }, //push local at address 0
-			{.code = 0x04, { {.a1 =1} }}, // pop into address 1
-			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 1
+			{.code = BC_END}  // end
 		};
 		com->cubbys[0].code = code;
 		com->vm = vm;
@@ -36,16 +37,18 @@ int main()
 		
 		if(com->vt.vars[1].v.i == com->vt.vars[0].v.i)
 			printf("PUSH, POP: PASS!\n");
-		else
+		else {
 			printf("PUSH, POP: FAIL!\n");
+			ret = 1;
+		}
 	}
 	
 	{ // CPUSH
 		bytecode code[] = 
 		{ 
-			{.code = 0x03, { {.a1 =0} } }, //push constant at address 0
-			{.code = 0x04, { {.a1 =0} }}, // pop into address 0
-			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push constant at address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}  // end
 		};
 		com->cubbys[0].code = code;
 		com->vm = vm;
@@ -59,18 +62,20 @@ int main()
 		
 		if(com->vt.vars[0].v.i == com->ct.vars[0].v.i)
 			printf("CPUSH: PASS!\n");
-		else
+		else {
 			printf("CPUSH: FAIL!\n");
+			ret = 1;
+		}
 	}
 	
 	{// ADD
 		bytecode code[] = 
 		{ 
-			{.code = 0x01, { {.a1 =0} } }, //push local at address 0
-			{.code = 0x01, { {.a1 =1} } }, //push local at address 1
-			{.code = 0x09}, // add
-			{.code = 0x04, { {.a1 =0} }}, // pop into address 0
-			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+			{.code = BC_ADD}, // add
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END} 
 		};
 		com->cubbys[0].code = code;
 		com->vm = vm;
@@ -84,18 +89,20 @@ int main()
 		
 		if(com->vt.vars[0].v.i == 5)
 			printf("ADD: PASS!\n");
-		else
+		else {
+			ret = 1;
 			printf("ADD: FAIL!\n");
+		}
 	}
 	
 	{ //SUB
 		bytecode code[] = 
 		{ 
-			{.code = 0x01, { {.a1 =0} } }, //push local at address 0
-			{.code = 0x01, { {.a1 =1} } }, //push local at address 1
-			{.code = 0x0A}, // sub
-			{.code = 0x04, { {.a1 =0} }}, // pop into address 0
-			{.code = 0x29}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+			{.code = BC_SUB}, // sub
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
 		};
 		com->cubbys[0].code = code;
 		com->vm = vm;
@@ -109,8 +116,10 @@ int main()
 		
 		if(com->vt.vars[0].v.i == -1)
 			printf("SUB: PASS!\n");
-		else
+		else { 
 			printf("SUB: FAIL!%i\n");
+			ret = 1;
+		}
 	}
 	/*
 	//example case
@@ -127,5 +136,5 @@ int main()
 	
 	destroyComp(com);
 	destroyVM(vm);
-	return 0; //return 0 else make's unhappy
+	return ret; //return 0 else make's unhappy
 }

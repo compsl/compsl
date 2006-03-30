@@ -1,0 +1,22 @@
+// testing comments
+
+
+
+
+
+declare
+{
+	//int fsdf;
+	a = b;
+}
+
+cubbyhole init
+{
+}
+
+cubbyhole frame
+{ 
+}
+cubbyhole point
+{
+}

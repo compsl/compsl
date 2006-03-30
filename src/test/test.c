@@ -17,7 +17,7 @@ int main()
 	
 	
 	//Tests
-	printf("\nRunning tests\n-------------\n");
+	printf("Running interpreter tests\n");
 	{ // PUSH,POP
 		bytecode code[] = 
 		{ 

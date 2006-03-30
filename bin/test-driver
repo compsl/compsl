@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+echo; echo;
+echo "Running tests"
+echo "-------------"
+echo 
+echo "using root: " `pwd`
+
+
+#TODO: excecute all parameters
+#TODO: Yell and stuff if when excecuting one of the params it fails
+
+echo -n ">> ";
+$1
+
+echo
+echo ">> Testing compiler"
+
+testfiles="src/test/test1.csl
+src/test/test2.csl"
+
+for file in $testfiles; do
+            echo -n $file": " ;
+            cat $file | bin/compsl-cmplr
+done
+
+

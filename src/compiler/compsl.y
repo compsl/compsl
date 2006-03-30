@@ -16,9 +16,9 @@ int yywrap()
   
 main()
 {
-		printf("CompSL is parsing..");
+		
         yyparse();
-        printf("CompSL is done");
+        printf("Parsing successful\n");
 } 
 
 %}
@@ -42,7 +42,7 @@ cubbys:
 cubby:
 		CUBBY IDENTIFIER block;
 block:
-		OPENB stmts CLOSEB;
+		OPENB stmts CLOSEB | stmt SEMI;
 
 stmts:
 		stmt SEMI stmts 	|;
@@ -60,7 +60,7 @@ expression:
 		;
 
 control: 
-		IF OPENB stmts CLOSEB else
+		IF OPENP expression CLOSEP block else
 		|
 		WHILE OPENP expression CLOSEP OPENB stmts CLOSEP
 		;

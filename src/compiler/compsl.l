@@ -6,7 +6,7 @@
 
 %}
 %%
-\/\*.*\*\/		; /*comment*/
+   
 \/\/.*\n		; /*comment*/
 -?[0-9]+  INT_LIT; 						/*PASS_ON*/
 -?[0-9]+\.[0-9]*  return FLOAT_LIT; 	/*PASS_ON*/
@@ -25,7 +25,7 @@ else		return ELSE;
 while		return WHILE;
 break		return BREAK;
 return		return RETURN;
-[a-zA-Z](_*[a-zA-Z0-9])*   return IDENTIFIER; 		/*PASS_ON*/
+([_a-zA-Z0-9])*   return IDENTIFIER; 		/*PASS_ON*/
 ;			return SEMI;
 ,			return COMA;
 \{			return OPENB; /*"bracket"*/

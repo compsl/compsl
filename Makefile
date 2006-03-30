@@ -6,11 +6,7 @@
 #
 #
 #Links
-#=========================================================================
-# http://www.cs.washington.edu/orgs/acm/tutorials/dev-in-unix/compiler.html
-# http://www.gnu.org/fun/jokes/helloworld.html
 # http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
-# http://www.eng.hawaii.edu/Tutor/Make/3-1.html
 
 #TODO: figure out how to make the test link against version of the lib with debug
 #symbols but also have optimizations in the release worthy stuff ie: end up with two
@@ -33,35 +29,45 @@ OBJECTS=$(SOURCES:.c=.o)
 TESTSRCS=src/test/test.c
 TESTOBJS=$(TESTSRCS:.c=.o)
 
+
 CMPLRPATH=src/compiler
+CMPLRSRC=src/compiler/lex.yy.c src/compiler/compsl.tab.c
+CMPLROBJS=$(CMPLRSRC:.c=.o)
 
 SHORTLIB=compsl
 LIBNAME=lib$(SHORTLIB)
 
 TEST_EXE=bin/compsl-test
+CMPRL_TEST_EXE=bin/compsl-cmplr
 STATIC_LIB_OUT=bin/$(LIBNAME).a
 DYN_LIB_OUT=bin/$(LIBNAME).so.1.0.1
+
+
 
 #TARGETS
 all: compile static dynamic maketestonly
 	         
-compile: $(SOURCES) $(OBJECTS)
+compile: $(SOURCES) $(OBJECTS) compiler
 
 static: compile $(STATIC_LIB_OUT)
 dynamic: compile $(DYN_LIB_OUT)
+compiler: $(CMPLRSRC) $(CMPLROBJS)
 
 test: maketestonly
-	$(TEST_EXE)
+	bin/test-driver $(TEST_EXE)
+	
 
-maketestonly: $(TESTSRCS) $(TESTOBJS) static
+maketestonly: $(TESTSRCS) $(TESTOBJS) static compiler
 	$(CC) -static $(TESTSRCS) -Lbin -l$(SHORTLIB) -o $(TEST_EXE)
+	$(CC) $(CMPLROBJS) -o $(CMPRL_TEST_EXE)
 
 clean:
-	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE)
+	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE) $(CMPRL_TEST_EXE)
+	make clean -C $(CMPLRPATH)
 
-compiler:
+
+$(CMPLRSRC): $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 	make -C $(CMPLRPATH)
-
 
 # INTERNAL TARGETS
 .c.o:

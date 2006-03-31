@@ -17,12 +17,13 @@ $1
 echo
 echo ">> Testing compiler"
 
-testfiles="src/test/test1.csl
-src/test/test2.csl"
+
+testfiles=`find src/test/*.csl`
 
 for file in $testfiles; do
-            echo -n $file": " ;
+            echo -n $file":	  	" ;
             cat $file | bin/compsl-cmplr
 done
 
 
+# TODO: print a big message if no errors

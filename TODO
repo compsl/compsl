@@ -7,3 +7,8 @@ TODO: In no particular order.
  5. add test cases for entire API
  6. add test cases for all instructions
  7. 
+ 
+ flex/bison
+ 
+ 1. Write tests & code for math, order of operations 
+ 2. Fill in compsl.y

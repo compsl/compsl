@@ -1,11 +1,15 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#define YYDEBUG 1 
+
+#define YYERROR_VERBOSE 1
+ 
  
 void yyerror(const char *str)
 {
-        fprintf(stderr,"Error: %s\n",str);
+		
+        fprintf(stderr,"Error: %s\nLine Num: %i\n",str,12);
+        
         exit(2);
 }
  
@@ -38,16 +42,18 @@ do_declare:
 		DECLARE block;
 
 cubbys:
-		cubbys cubby | ;
+		cubby cubbys | ;
 cubby:
 		CUBBY IDENTIFIER block;
 block:
 		OPENB stmts CLOSEB | stmt SEMI;
 
 stmts:
-		stmt SEMI stmts 	|;
+		stmt SEMI stmts 	|
+		control stmts | ;
 stmt:
-		control | decl | expression ;
+		decl | expression | RETURN | BREAK
+		;
 		
 expression:
 		IDENTIFIER ASSIGN expression
@@ -56,17 +62,26 @@ expression:
 		|
 		expression PLUS expression
 		|
-		IDENTIFIER OPENP stmt CLOSEP
+		IDENTIFIER OPENP expression CLOSEP
+		|
+		IDENTIFIER OPENP CLOSEP
+		|
+		retable
 		;
+		
+retable:
+		IDENTIFIER | FLOAT_LIT | INT_LIT
+		;
+
 
 control: 
 		IF OPENP expression CLOSEP block else
 		|
-		WHILE OPENP expression CLOSEP OPENB stmts CLOSEP
+		WHILE OPENP expression CLOSEP block
 		;
 
 else:
-		ELSEIF block else
+		ELSEIF OPENP expression CLOSEP block else
 		|
 		ELSE block
 		|
@@ -75,9 +90,9 @@ else:
 
 		
 decl:	
-		modifiers INT ident_list SEMI
+		modifiers INT ident_list
 		|
-		modifiers FLOAT ident_list SEMI
+		modifiers FLOAT ident_list 
 		;
 		
 modifiers:
@@ -90,9 +105,6 @@ more_ident_list:
 		COMA IDENTIFIER more_ident_list
 		|
 		;		
-				
-		
-		
 		
 		
 %%

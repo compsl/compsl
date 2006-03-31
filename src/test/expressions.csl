@@ -1,0 +1,36 @@
+
+
+// testing EXPRESSIONS
+
+
+declare
+{
+	//int fsdf;
+	//a = b;
+}
+
+cubbyhole init
+{	
+	4.5;
+	.2345234;
+	0.3452;
+	342.;
+	67;
+	fsdafasdf =3434.0;
+	dfasd= (12);
+	sdfasdf =(asda = dfasd);
+	addasd = ( asfsdf + 23.45);
+	fork();
+	exit(2);
+	asd = exit(2) + asdf;
+	dfs= -343;
+	return;
+	break;
+}
+
+cubbyhole frame
+{ 
+}
+cubbyhole point
+{
+}

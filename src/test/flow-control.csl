@@ -1,0 +1,49 @@
+
+
+// testing flow CONTROL structures
+
+
+declare
+{
+	
+}
+
+cubbyhole init
+{	
+	while ( asdf ) {
+		asdf;
+	}
+	while ( 1) { 
+		fork(); 
+	}
+	while(1) 
+		er = er+1 ; 
+		
+	if(asdf) {}
+	
+	if(42) {
+		correct();
+	}
+	
+	if(1) sdf;
+	
+	if(1) asdfas;
+	else asdf;
+	
+	
+	if(123) {sdfsa;}
+	elseif(dfgs) sfas;
+	
+	if(sadf+.32) { sdaf;}
+	elseif(0) { sdaf;}
+	elseif(2){sadf;}
+	else 
+		jump();
+}
+
+cubbyhole frame
+{ 
+}
+cubbyhole point
+{
+}

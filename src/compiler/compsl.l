@@ -2,30 +2,27 @@
 %{
 #include <stdio.h>
 #include "compsl.tab.h"
-#define YYDEBUG 1 
+int lineno;
 
 %}
 %%
    
 \/\/.*\n		; /*comment*/
--?[0-9]+  INT_LIT; 						/*PASS_ON*/
+-?[0-9]+  	return INT_LIT; 			/*PASS_ON*/
 -?[0-9]+\.[0-9]*  return FLOAT_LIT; 	/*PASS_ON*/
 -?\.[0-9]+  return FLOAT_LIT; 			/*PASS_ON*/
 cubbyhole	return CUBBY;
 global		return GLOBAL;
 declare		return DECLARE;
 int			return INT;
-bool		return BOOL;
 float		return FLOAT;
-true		return TRUE;
-false		return FALSE;
 if			return IF;
 elseif		return ELSEIF;
 else		return ELSE;
 while		return WHILE;
 break		return BREAK;
 return		return RETURN;
-([_a-zA-Z0-9])*   return IDENTIFIER; 		/*PASS_ON*/
+[_a-zA-Z0-9]+   return IDENTIFIER; 		/*PASS_ON*/
 ;			return SEMI;
 ,			return COMA;
 \{			return OPENB; /*"bracket"*/

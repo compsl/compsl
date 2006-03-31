@@ -1,0 +1,20 @@
+
+
+// testing DECLS
+
+
+declare
+{
+	//int fsdf;
+
+}
+
+cubbyhole init
+{
+	float asdf;
+	int sadf;
+	float sadf,s_sdafsf;
+	global int sadfs,sfasdf,sadfsfd,sadf;
+	global float ya;
+}
+

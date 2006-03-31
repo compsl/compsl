@@ -116,7 +116,7 @@ int main()
 		if(com->vt.vars[0].v.i == -1)
 			printf("SUB: PASS!\n");
 		else { 
-			printf("SUB: FAIL!%i\n");
+			printf("SUB: FAIL!\n");
 			ret = 1;
 		}
 	}

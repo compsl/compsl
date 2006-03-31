@@ -12,3 +12,7 @@ TODO: In no particular order.
  
  1. Write tests & code for math, order of operations 
  2. Fill in compsl.y
+ 3. fix declares, (ie not a block, cannot contain statements)
+ 4. fix statmetns (cannot be a declare)
+ 5. casting
+ 6. 

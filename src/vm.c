@@ -1,6 +1,5 @@
 #include "extern/vm.h"
 #include "extern/compslerr.h"
-#include "intern/vm.h"
 #include "intern/vars.h"
 #include <stdlib.h>
 #include <malloc.h>
@@ -77,10 +76,3 @@ int32_t *vm_addInt(VM *vm, const char *name)
 		return NULL;
 }
 
-/*************************************************************
- * Internal functions
- *************************************************************/
-int16_t vm_findVar(VM *vm, const char *name)
-{
-	return findVar(&(vm->vt), name);
-}

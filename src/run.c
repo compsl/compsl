@@ -4,7 +4,6 @@
 #include "extern/compsl.h"
 
 #include "intern/panic.h"
-#include "intern/vm.h"
 #include "intern/vars.h"
 #include "intern/bytecode.h"
 

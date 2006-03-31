@@ -6,7 +6,6 @@
 #include "../extern/compart.h"
 #include "../extern/var.h"
 #include "../intern/bytecode.h"
-#include "../intern/vm.h"
 #include "../extern/compsl.h"
 
 int main()

@@ -1,6 +1,7 @@
-#include "intern/vm.h"
 #include "extern/vm.h"
 #include "extern/compart.h"
+#include "intern/vars.h"
+#include "extern/var.h"
 #include <malloc.h>
 #include <stdlib.h>
 #include <inttypes.h>

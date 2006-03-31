@@ -5,12 +5,12 @@
 
 declare
 {
-	//int fsdf;
-
+	int fsdf;
+	a = b; // should generate syntax error
 }
 
 cubbyhole init
-{
+{// this should generate errors
 	float asdf;
 	int sadf;
 	float sadf,s_sdafsf;

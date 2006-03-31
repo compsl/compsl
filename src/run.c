@@ -71,6 +71,9 @@ static void *jmptbl[] =
  	&&BOR,
  	&&BXOR,
  	&&BNOT,
+ //bit shifting
+ 	&&SFTL,
+ 	&&SFTR,
  //misc
  	&&END,
  	&&HLT,
@@ -250,7 +253,16 @@ static void *jmptbl[] =
  	BNOT: 
  		(sp - 1)->i = ~((sp - 1)->i);
  		goto TOP;
- //end of boolean + bitwise opers
+ //bit shift
+ 	SFTL:
+ 		sp--;
+ 		(sp - 1)->i = (sp - 1)->i << sp->i;
+ 		goto TOP;
+ 	SFTR:
+ 		sp--;
+ 		(sp - 1)->i = (sp - 1)->i >> sp->i;
+ 		goto TOP;
+ 
  	HLT:
  	
  	END:

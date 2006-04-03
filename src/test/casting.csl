@@ -1,0 +1,27 @@
+
+declare
+{
+	int a;
+	int b;
+	float c;
+} 
+
+cubbyhole init 
+{
+	a = 4;
+	b = 3;
+	c = ((float)a);
+	a = a;
+	a = (float)a;
+	b = (int) (((int)c)+((float)d));
+} 
+
+
+cubbyhole frame
+{
+  
+}
+
+cubbyhole point
+{ 
+}

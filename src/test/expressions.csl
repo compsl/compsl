@@ -5,7 +5,7 @@
 
 declare
 {
-	int fsdafasdf;
+	
 }
 
 cubbyhole init
@@ -16,7 +16,9 @@ cubbyhole init
 	342.;
 	67;
 	fsdafasdf =3434.0;
-	dfasd= (12);
+	dfasd = (asdf);
+	sdf = (sdfg+(gsdfg-dfgd));
+	((((dsf=(dghdfghdfgh+345)))));
 	sdfasdf =(asda = dfasd);
 	addasd = ( asfsdf + 23.45);
 	fork();

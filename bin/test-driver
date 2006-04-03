@@ -20,9 +20,8 @@ echo ">> Testing compiler"
 
 testfiles=`find src/test/*.csl`
 
-for file in $testfiles; do
-            echo -n $file":	  	" ;
-            cat $file | bin/compsl-cmplr
+for file in ${testfiles}; do 
+	echo -n ${file}":	" ;   cat ${file} | bin/compsl-cmplr; 
 done
 
 

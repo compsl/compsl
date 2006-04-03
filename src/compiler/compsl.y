@@ -8,7 +8,7 @@
 void yyerror(const char *str)
 {
 		
-        fprintf(stderr,"Error: %s\nLine Num: %i\n",str,12);
+        fprintf(stderr,"Error: %s\nLine Num: %i\n",str,-1);
         
         exit(2);
 }
@@ -39,7 +39,7 @@ header_stuff:
 		;
 		
 do_declare:
-		DECLARE block;
+		DECLARE OPENB decls CLOSEB;
 
 cubbys:
 		cubby cubbys | ;
@@ -52,22 +52,36 @@ stmts:
 		stmt SEMI stmts 	|
 		control stmts | ;
 stmt:
-		decl | expression | RETURN | BREAK
+		expression | RETURN | BREAK
 		;
 		
 expression:
-		IDENTIFIER ASSIGN expression
-		|
 		OPENP expression CLOSEP;
 		|
-		expression PLUS expression
+		math
 		|
 		IDENTIFIER OPENP expression CLOSEP
 		|
 		IDENTIFIER OPENP CLOSEP
 		|
 		retable
+		|
+		IDENTIFIER ASSIGN expression
+		|
+		cast expression
 		;
+		
+
+cast: 
+		OPENP INT CLOSEP 
+		| 
+		OPENP FLOAT CLOSEP
+		;
+		
+math:
+		expression PLUS expression | 
+		expression MINUS expression;
+		
 		
 retable:
 		IDENTIFIER | FLOAT_LIT | INT_LIT
@@ -88,7 +102,9 @@ else:
 		;
 		
 
-		
+decls:
+		decl SEMI decls | ;
+			
 decl:	
 		modifiers INT ident_list
 		|

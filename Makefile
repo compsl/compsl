@@ -31,7 +31,7 @@ TESTOBJS=$(TESTSRCS:.c=.o)
 
 
 CMPLRPATH=src/compiler
-CMPLRSRC=src/compiler/lex.yy.c src/compiler/compsl.tab.c
+CMPLRSRC=src/compiler/lex.yy.c src/compiler/compsl.tab.c 
 CMPLROBJS=$(CMPLRSRC:.c=.o)
 
 SHORTLIB=compsl

@@ -8,9 +8,17 @@ int lineno;
 %%
    
 \/\/.*\n		; /*comment*/
--?[0-9]+  	return INT_LIT; 			/*PASS_ON*/
--?[0-9]+\.[0-9]*  return FLOAT_LIT; 	/*PASS_ON*/
--?\.[0-9]+  return FLOAT_LIT; 			/*PASS_ON*/
+-?[0-9]+  	{	yylval.ival = atoi( yytext ); 
+				return INT_LIT; 	
+			}
+-?[0-9]+\.[0-9]*  {	
+				yylval.fval = atof(yytext);
+				return FLOAT_LIT; 	
+			}
+-?\.[0-9]+  {
+				yylval.fval = atof(yytext);
+				return FLOAT_LIT; 			
+			}
 cubbyhole	return CUBBY;
 global		return GLOBAL;
 declare		return DECLARE;

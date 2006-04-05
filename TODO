@@ -14,3 +14,4 @@ TODO: In no particular order.
  2. Fill in compsl.y
  3. Figure out how to keep track of line nos between compsl.l and .y . 
  4. In compsl.l read in and store the literals and the identifier names. 
+ 5. Fix randomness in compsl.[yl]

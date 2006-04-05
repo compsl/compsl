@@ -1,5 +1,7 @@
 
-all: lex.yy.c compsl.tab.c
+
+all: clean lex.yy.c compsl.tab.c
+
 	
 lex.yy.c: compsl.l 
 	flex compsl.l 

@@ -1,33 +1,40 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include "node.h"
 
 #define YYERROR_VERBOSE 1
  
- 
-void yyerror(const char *str)
-{
-		
+void yyerror(const char *str) {
         fprintf(stderr,"Error: %s\nLine Num: %i\n",str,-1);
-        
         exit(2);
 }
  
-int yywrap()
-{
+int yywrap() {
         return 1;
 } 
   
-main()
-{
-		
+main() {
         yyparse();
         printf("Parsing successful\n");
 } 
 
 %}
 
-%token INT_LIT FLOAT_LIT  FLOAT_LIT CUBBY GLOBAL DECLARE INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN IDENTIFIER SEMI COMA OPENB CLOSEB OPENP CLOSEP PLUS MINUS MULT DIV MOD ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR;
+%union {
+	int ival;
+	float fval;
+	char* sval;
+//	node* nv;
+}
+
+%token INT_LIT FLOAT_LIT CUBBY GLOBAL DECLARE INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN IDENTIFIER SEMI COMA OPENB CLOSEB OPENP CLOSEP PLUS MINUS MULT DIV MOD ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR;
+
+%type <nv> file header_stuff do_declare cubbys decls block stmts stmt control expression;
+%type <fval> FLOAT_LIT;
+%type <ival> INT_LIT;
+%type <sval> IDENTIFIER;
+
 
 
 %%
@@ -84,7 +91,13 @@ math:
 		
 		
 retable:
-		IDENTIFIER | FLOAT_LIT | INT_LIT
+		IDENTIFIER 
+		| 
+		FLOAT_LIT{ //printf("%f\n",yylval.fval);
+			} 
+		| 
+		INT_LIT { //printf("%i\n",yylval.ival); 
+			}
 		;
 
 

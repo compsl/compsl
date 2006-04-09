@@ -6,7 +6,8 @@ TODO: In no particular order.
  4. finish API
  5. add test cases for entire API
  6. add test cases for all instructions
- 7. 
+ 7. Make sure make is doing what we think it's doing....
+ 8. 
  
  flex/bison
  
@@ -15,3 +16,5 @@ TODO: In no particular order.
  3. Figure out how to keep track of line nos between compsl.l and .y . 
  4. In compsl.l read in and store the literals and the identifier names. 
  5. Fix randomness in compsl.[yl]
+ 6. Fix make (non-recursive)
+ 7. 

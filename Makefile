@@ -14,7 +14,7 @@
 # with no debug info and -O2
 
 CC=gcc
-CFLAGS=-c -ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fPIC -std=gnu99 
+CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fPIC -std=gnu99 
 # Any changes to CFLAGS probably need to be done to src/compiler/Makefile as well
 
 ifdef DEBUG
@@ -24,10 +24,11 @@ else
 	#TODO figure out if we need the -fno-strict-aliasing option.
 endif
 
-SOURCES=src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm.c
-OBJECTS=$(SOURCES:.c=.o)
-TESTSRCS=src/test/test.c
-TESTOBJS=$(TESTSRCS:.c=.o)
+SOURCES := src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm.c
+OBJECTS := $(SOURCES:.c=.o)
+DEPS := $(SOURCES:.c=.d)
+TESTSRCS := src/test/test.c
+TESTOBJS := $(TESTSRCS:.c=.o)
 
 
 CMPLRPATH=src/compiler
@@ -35,12 +36,12 @@ CMPLRSRC=src/compiler/lex.yy.c src/compiler/compsl.tab.c
 CMPLROBJS=$(CMPLRSRC:.c=.o)
 
 SHORTLIB=compsl
-LIBNAME=lib$(SHORTLIB)
+LIBNAME := lib$(SHORTLIB)
 
 TEST_EXE=bin/compsl-test
 CMPRL_TEST_EXE=bin/compsl-cmplr
-STATIC_LIB_OUT=bin/$(LIBNAME).a
-DYN_LIB_OUT=bin/$(LIBNAME).so.1.0.1
+STATIC_LIB_OUT := bin/$(LIBNAME).a
+DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
 
 
@@ -62,7 +63,7 @@ maketestonly: $(TESTSRCS) $(TESTOBJS) static compiler
 	$(CC) $(CMPLROBJS) -o $(CMPRL_TEST_EXE)
 
 clean:
-	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE) $(CMPRL_TEST_EXE)
+	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE) $(CMPRL_TEST_EXE) $(DEPS)
 	make clean -C $(CMPLRPATH)
 
 
@@ -70,8 +71,15 @@ $(CMPLRSRC): $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 	make -C $(CMPLRPATH)
 
 # INTERNAL TARGETS
+
+$(DEPS): $(SOURCES)
+	$(CC) $(CFLAGS) -MM -MG $< -MF $@
+
 .c.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@
+
+include $(OBJECTS:.o=.d)
+
 
 $(STATIC_LIB_OUT):
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)

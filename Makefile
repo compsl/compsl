@@ -72,13 +72,13 @@ $(CMPLRSRC): $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 
 # INTERNAL TARGETS
 
+include $(DEPS)
+
 $(DEPS): $(SOURCES)
 	$(CC) $(CFLAGS) -MM -MG $< -MF $@
 
 .c.o:
 	$(CC) -c $(CFLAGS) $< -o $@
-
-include $(OBJECTS:.o=.d)
 
 
 $(STATIC_LIB_OUT):

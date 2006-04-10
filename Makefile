@@ -36,8 +36,6 @@ CMPLRPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-TEST_EXE=bin/interp-test
-CMPRL_TEST_EXE=bin/compsl-cmplr
 STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 

@@ -4,3 +4,4 @@ compsl-test*
 *.o
 compsl-cmplr*
 interp-test*
+test-interp*

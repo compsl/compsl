@@ -14,10 +14,10 @@ int yywrap() {
         return 1;
 } 
   
-main() {
-        yyparse();
-        printf("Parsing successful\n");
-} 
+//main() {
+//        yyparse();
+//        printf("Parsing successful\n");
+//} 
 
 %}
 

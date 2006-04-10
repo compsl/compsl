@@ -6,8 +6,10 @@ TODO: In no particular order.
  4. finish API
  5. add test cases for entire API
  6. add test cases for all instructions
- 7. Make sure make is doing what we think it's doing....
- 8. 
+ 7. Fix Makefile (.d's seem to be somewhat screwy, and test get's made always...)
+ 8. Figure out some way to allow interpreter to be terminated if it goes into an
+    infinite loop.
+ 9. 
  
  flex/bison
  

@@ -4,6 +4,14 @@
 #include "compart.h"
 #include "var.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void runCubbyhole(compart *com, int id)  __attribute__ ((fastcall)); // runs 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*COMPSL_H_*/

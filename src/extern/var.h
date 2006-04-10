@@ -2,6 +2,10 @@
 #define VAR_H_
 #include <inttypes.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef union {int32_t i; float f;} intfloat; 
 
 typedef struct _var_t
@@ -29,5 +33,9 @@ typedef struct VAR_TABLE_T
     var *vars; // the variables themselves
     struct SYMTABLE_T *symbols; // the symbol table for the vars
 } varTable;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*VAR_H_*/

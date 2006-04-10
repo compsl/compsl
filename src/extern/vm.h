@@ -18,6 +18,10 @@
 #define VM_MAX_GVARS 256
 #define VM_NATIVEFN_INIT_SIZE 64
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _nativeFN_t
 {
         char *name; // name of this function
@@ -53,5 +57,9 @@ int32_t *vm_getInt(VM *vm, const char *name);
  * sets errno on fail
  */
 bool addFunc(VM *vm, var (*func)(var *)); //TODO work out how to spec params
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*VM_H_*/

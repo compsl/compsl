@@ -8,6 +8,10 @@
 #define COMPART_MAX_CONSTS 256
 #define COMPART_MAX_CUBBYS 16
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _COMPART_t
 {
     varTable vt;
@@ -32,5 +36,9 @@ int32_t *com_addInt(compart *, const char *name);
 
 float *com_getFloat(compart *, const char *name);
 int32_t *com_getInt(compart *, const char *name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*COMPART_H_*/

@@ -49,7 +49,9 @@ static: compile $(STATIC_LIB_OUT)
 dynamic: compile $(DYN_LIB_OUT)
 
 test: maketestonly
-	exec bin/test-driver $(TEST_EXES)
+	for test in  $(TEST_EXES); do \
+		$$test; \
+	done
 	
 # make test executibles, assumes that all tests are single object/source file
 # linked to libcompsl.a

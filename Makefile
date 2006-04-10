@@ -27,7 +27,7 @@ endif
 SOURCES := src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/lex.yy.c src/compiler/compsl.tab.c 
 OBJECTS := $(SOURCES:.c=.o)
 DEPS := $(SOURCES:.c=.d)
-TESTSRCS := src/test/test-interp.c src/test/test-comp.c
+TESTSRCS := $(addprefix src/test/,test-interp.c test-comp.c test-api.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 CMPLRPATH=src/compiler

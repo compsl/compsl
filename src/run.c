@@ -174,8 +174,8 @@ static void *jmptbl[] =
 	 	sp-=2;
  		tmp.f = sp->f - (sp + 1)->f;
  		less = tmp.f < 0;
- 		//equal = fabs(tmp.f) <VM_FLOAT_EPSILON;
- 		equal = fabs( 1 - (sp->f)/((sp + 1)->f)) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
+ 		//equal = fabsf(tmp.f) <VM_FLOAT_EPSILON;
+ 		equal = fabsf( 1.0f - (sp->f)/((sp + 1)->f)) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
  		greater = tmp.f > 0;
  		goto TOP;
  	JMP:
@@ -211,7 +211,7 @@ static void *jmptbl[] =
  		goto TOP;
  	FMOD:
  		sp--;	
- 		//(sp - 1)->f = (sp - 1)->f - sp->f * (int)((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
+ 		//(sp - 1)->f = (sp - 1)->f - sp->f * truncf((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
  		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
  		goto TOP;
  	GPSH:

@@ -85,6 +85,7 @@ include $(DEPS)
 $(DEPS): $(SOURCES)
 	$(CC) $(CFLAGS) -MM -MG $< -MF $@
 
+#gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
 	$(CC) -c $(CFLAGS) -fno-gcse $< -o $@
 .c.o:

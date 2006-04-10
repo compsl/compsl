@@ -9,19 +9,19 @@
 # http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
 
 #TODO: figure out how to make the test link against version of the lib with debug
-#symbols but also have optimizations in the release worthy stuff ie: end up with two
+# symbols but also have optimizations in the release worthy stuff ie: end up with two
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
 CC=gcc
 CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fPIC -std=gnu99 
-# Any changes to CFLAGS probably need to be done to src/compiler/Makefile as well
 
 ifdef DEBUG
 	CFLAGS += -ggdb -D DEBUG
 else
 	CFLAGS += -O2 -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -ffast-math -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks -fmove-all-movables
-	#TODO figure out if we need the -fno-strict-aliasing option.
+	# TODO: figure out if we need the -fno-strict-aliasing option.
+	# TODO: make sure none of these breaks the library for linking....
 endif
 
 SOURCES := src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/lex.yy.c src/compiler/compsl.tab.c 

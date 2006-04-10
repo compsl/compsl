@@ -14,7 +14,7 @@
 # with no debug info and -O2
 
 CC=gcc
-CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fPIC -std=gnu99 
+CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fPIC -std=gnu99 -mmmx
 
 ifdef DEBUG
 	CFLAGS += -ggdb -D DEBUG
@@ -27,7 +27,7 @@ endif
 SOURCES := src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/lex.yy.c src/compiler/compsl.tab.c 
 OBJECTS := $(SOURCES:.c=.o)
 DEPS := $(SOURCES:.c=.d)
-TESTSRCS := src/test/test.c
+TESTSRCS := src/test/test-interp.c
 TESTOBJS := $(TESTSRCS:.c=.o)
 
 
@@ -36,7 +36,7 @@ CMPLRPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-TEST_EXE=bin/compsl-test
+TEST_EXE=bin/interp-test
 CMPRL_TEST_EXE=bin/compsl-cmplr
 STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
@@ -52,11 +52,14 @@ static: compile $(STATIC_LIB_OUT)
 dynamic: compile $(DYN_LIB_OUT)
 
 test: maketestonly
-	bin/test-driver $(TEST_EXE)
+	bash bin/test-driver $(TEST_EXE)
 	
-
-maketestonly: $(TESTSRCS) $(TESTOBJS) static
-	$(CC) -static $(TESTSRCS) -Lbin -l$(SHORTLIB) -o $(TEST_EXE)
+# make test executibles, assumes that all tests are single object/source file
+# linked to libcompsl.a
+maketestonly: $(TESTOBJS) static
+	for obj in $(TESTOBJS); do \
+		$(CC) -static $$obj -Lbin -l$(SHORTLIB) -o bin/$$(basename $$obj .o); \
+	done
 
 clean:
 	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE) $(CMPRL_TEST_EXE) $(DEPS)

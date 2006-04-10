@@ -211,7 +211,8 @@ static void *jmptbl[] =
  		goto TOP;
  	FMOD:
  		sp--;	
- 		(sp - 1)->f = (sp - 1)->f - sp->f * (int)((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
+ 		//(sp - 1)->f = (sp - 1)->f - sp->f * (int)((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
+ 		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
  		goto TOP;
  	GPSH:
  		*sp = gvs[pc->a1].v;

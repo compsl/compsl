@@ -24,7 +24,7 @@ else
 	#TODO figure out if we need the -fno-strict-aliasing option.
 endif
 
-SOURCES := src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c  src/vm.c
+SOURCES := src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/lex.yy.c src/compiler/compsl.tab.c 
 OBJECTS := $(SOURCES:.c=.o)
 DEPS := $(SOURCES:.c=.d)
 TESTSRCS := src/test/test.c
@@ -32,8 +32,6 @@ TESTOBJS := $(TESTSRCS:.c=.o)
 
 
 CMPLRPATH=src/compiler
-CMPLRSRC=src/compiler/lex.yy.c src/compiler/compsl.tab.c 
-CMPLROBJS=$(CMPLRSRC:.c=.o)
 
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
@@ -48,29 +46,33 @@ DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 #TARGETS
 all: compile static dynamic maketestonly
 	         
-compile: $(SOURCES) $(OBJECTS) compiler
+compile: $(SOURCES) $(OBJECTS)
 
 static: compile $(STATIC_LIB_OUT)
 dynamic: compile $(DYN_LIB_OUT)
-compiler: $(CMPLRSRC) $(CMPLROBJS)
 
 test: maketestonly
 	bin/test-driver $(TEST_EXE)
 	
 
-maketestonly: $(TESTSRCS) $(TESTOBJS) static compiler
+maketestonly: $(TESTSRCS) $(TESTOBJS) static
 	$(CC) -static $(TESTSRCS) -Lbin -l$(SHORTLIB) -o $(TEST_EXE)
-	$(CC) $(CMPLROBJS) -o $(CMPRL_TEST_EXE)
 
 clean:
 	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE) $(CMPRL_TEST_EXE) $(DEPS)
-	make clean -C $(CMPLRPATH)
 
 
-$(CMPLRSRC): $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
-	make -C $(CMPLRPATH)
+
+# FLEX/BISON TARGETS
+$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l 
+	flex -o$@ $<
+
+$(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.y
+	bison -d $< -o $@
+
 
 # INTERNAL TARGETS
+
 
 include $(DEPS)
 
@@ -79,7 +81,6 @@ $(DEPS): $(SOURCES)
 
 .c.o:
 	$(CC) -c $(CFLAGS) $< -o $@
-
 
 $(STATIC_LIB_OUT):
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)

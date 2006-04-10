@@ -14,7 +14,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#define VM_FLOAT_EPSILON 0.01f
+#define VM_FLOAT_EPSILON 0.001f
 
 __attribute__ ((fastcall)) void runCubbyhole(compart *com, int id)
 {
@@ -170,7 +170,8 @@ static void *jmptbl[] =
 	 	sp-=2;
  		tmp.f = sp->f - (sp + 1)->f;
  		less = tmp.f < 0;
- 		equal = fabs(tmp.f) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
+ 		//equal = fabs(tmp.f) <VM_FLOAT_EPSILON;
+ 		equal = fabs( 1 - (sp->f)/((sp + 1)->f)) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
  		greater = tmp.f > 0;
  		goto TOP;
  	JMP:

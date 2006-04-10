@@ -3,3 +3,4 @@ compsl-test*
 *.so*
 *.o
 compsl-cmplr*
+interp-test*

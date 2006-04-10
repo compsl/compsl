@@ -1,17 +1,20 @@
 TODO: In no particular order.
+general
+ 1. Fix Makefile (.d's seem to be somewhat screwy, and test get's made always...)
+ 2. 
 
+interpreter
  1. add conditional compilation to headers for C++ compiling
  2. finsh bytecodes
- 3. figure out how to make eclipse build our test case
+ 3. figure out how to make eclipse build our test case - DONE!
  4. finish API
  5. add test cases for entire API
  6. add test cases for all instructions
- 7. Fix Makefile (.d's seem to be somewhat screwy, and test get's made always...)
- 8. Figure out some way to allow interpreter to be terminated if it goes into an
+ 7. Figure out some way to allow interpreter to be terminated if it goes into an
     infinite loop.
- 9. 
+ 8. 
  
- flex/bison
+flex/bison
  
  1. Write tests & code for math, order of operations 
  2. Fill in compsl.y

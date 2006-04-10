@@ -24,4 +24,5 @@ flex/bison
  4. In compsl.l read in and store the literals and the identifier names. 
  5. Fix randomness in compsl.[yl]
  6. Fix make (non-recursive)
- 7. 
+ 7. Find some way to make all the lex/yacc functions not be exported in
+    the lib.

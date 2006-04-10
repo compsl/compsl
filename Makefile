@@ -14,7 +14,7 @@
 # with no debug info and -O2
 
 CC=gcc
-CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99 -ffast-math
+CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99 -ffast-math -fno-math-errno -funsafe-math-optimizations -fno-trapping-math
 # if none x86 need to disable this line
 CFLAGS += -mmmx -mno-ieee-fp
 #if sse instructions not available need to disable this line

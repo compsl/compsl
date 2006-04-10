@@ -27,10 +27,9 @@ endif
 SOURCES := src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/lex.yy.c src/compiler/compsl.tab.c 
 OBJECTS := $(SOURCES:.c=.o)
 DEPS := $(SOURCES:.c=.d)
-TESTSRCS := src/test/test-interp.c
+TESTSRCS := src/test/test-interp.c src/test/test-comp.c
 TESTOBJS := $(TESTSRCS:.c=.o)
-
-
+TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 CMPLRPATH=src/compiler
 
 SHORTLIB=compsl
@@ -50,7 +49,7 @@ static: compile $(STATIC_LIB_OUT)
 dynamic: compile $(DYN_LIB_OUT)
 
 test: maketestonly
-	bash bin/test-driver $(TEST_EXE)
+	exec bin/test-driver $(TEST_EXES)
 	
 # make test executibles, assumes that all tests are single object/source file
 # linked to libcompsl.a
@@ -60,7 +59,7 @@ maketestonly: $(TESTOBJS) static
 	done
 
 clean:
-	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(TEST_EXE) $(CMPRL_TEST_EXE) $(DEPS)
+	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*)
 
 
 

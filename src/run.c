@@ -14,6 +14,10 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+#ifndef __GNUC__
+#error "gotta have gcc!"
+#endif
+
 #define VM_FLOAT_EPSILON 0.001f
 
 __attribute__ ((fastcall)) void runCubbyhole(compart *com, int id)

@@ -1,13 +1,31 @@
+ 	
+
+
+%parse-param { char const *file_name };
+%initial-action
+{	
+	//printf("Parsing file: %s",file_name);
+};
+
+
 %{
 #include <stdio.h>
 #include <string.h>
-#include "node.h"
+//#include "node.h"
 
 #define YYERROR_VERBOSE 1
- 
-void yyerror(const char *str) {
-        fprintf(stderr,"Error: %s\nLine Num: %i\n",str,-1);
-        exit(2);
+
+extern FILE *yyin;
+
+int goparse(char* fn) {
+	yyin = fopen( fn, "r" );
+	yyrestart(yyin);
+	return yyparse(fn);
+}
+
+void yyerror(const char *fn, const char *msg) {
+    fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",fn,msg,-1);//yylloc.first_line);
+	exit(2);
 }
  
 int yywrap() {
@@ -35,7 +53,7 @@ int yywrap() {
 %type <ival> INT_LIT;
 %type <sval> IDENTIFIER;
 
-
+%locations
 
 %%
 file:
@@ -51,7 +69,9 @@ do_declare:
 cubbys:
 		cubby cubbys | ;
 cubby:
-		CUBBY IDENTIFIER block;
+		CUBBY IDENTIFIER block {
+			//printf("Cubby declared %i\n",yyget_lineno()); //doesnt get line no. dunno what that gets
+		};
 block:
 		OPENB stmts CLOSEB | stmt SEMI;
 
@@ -134,6 +154,5 @@ more_ident_list:
 		COMA IDENTIFIER more_ident_list
 		|
 		;		
-		
-		
+				
 %%

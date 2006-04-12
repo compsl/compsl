@@ -65,7 +65,7 @@ maketestonly: $(TESTOBJS) static
 	done
 
 clean:
-	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*)
+	rm -f $(OBJECTS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*) src/compiler/compsl.tab.h src/compiler/compsl.tab.c src/compiler/lex.yy.c
 
 
 

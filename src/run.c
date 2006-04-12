@@ -175,7 +175,8 @@ static void *jmptbl[] =
  		tmp.f = sp->f - (sp + 1)->f;
  		less = tmp.f < 0;
  		//equal = fabsf(tmp.f) <VM_FLOAT_EPSILON;
- 		equal = fabsf( 1.0f - (sp->f)/((sp + 1)->f)) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
+ 		//equal = fabsf( 1.0f - (sp->f)/((sp + 1)->f)) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
+ 		equal = fabsf( tmp.f/(sp->f) ) < VM_FLOAT_EPSILON;
  		greater = tmp.f > 0;
  		goto TOP;
  	JMP:

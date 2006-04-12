@@ -21,8 +21,7 @@ flex/bison
  1. Write tests & code for math, order of operations 
  2. Fill in compsl.y
  3. Figure out how to keep track of line nos between compsl.l and .y . 
- 4. In compsl.l read in and store the literals and the identifier names. 
  5. Fix randomness in compsl.[yl]
- 6. Fix make (non-recursive)
  7. Find some way to make all the lex/yacc functions not be exported in
     the lib.
+ 8. Makefile doesn't rebuild something it should when compsl.y is changed  

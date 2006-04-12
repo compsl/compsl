@@ -20,7 +20,7 @@
 
 #define VM_FLOAT_EPSILON 0.001f
 
-__attribute__ ((fastcall)) void runCubbyhole(compart *com, int id)
+void runCubbyhole(compart *com, int id)
 {
 static void *jmptbl[] = 
 {

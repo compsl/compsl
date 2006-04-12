@@ -175,6 +175,8 @@ int main()
 		}
 	}
 	
+	//TODO: fix comparisons in these tests
+	
 	{// FADD
 		bytecode code[] = 
 		{ 
@@ -199,6 +201,87 @@ int main()
 		else {
 			ret = 1;
 			printf("FADD: FAIL!\n");
+		}
+	}
+	
+	{// FSUB
+		bytecode code[] = 
+		{ 
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+			{.code = BC_FSUB}, // subtract
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END} 
+		};
+		com->cubbys[0].code = code;
+		com->vm = vm;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.f = 2.0f;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.f = 0.5f;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.5f)
+			printf("FSUB: PASS!\n");
+		else {
+			ret = 1;
+			printf("FSUB: FAIL!\n");
+		}
+	}
+	
+	{// FMUL
+		bytecode code[] = 
+		{ 
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+			{.code = BC_FMUL}, // multiply
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END} 
+		};
+		com->cubbys[0].code = code;
+		com->vm = vm;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.f = 2.0f;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.f = 0.5f;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FMUL: PASS!\n");
+		else {
+			ret = 1;
+			printf("FMUL: FAIL!\n");
+		}
+	}
+	
+	{// FDIV
+		bytecode code[] = 
+		{ 
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+			{.code = BC_FDIV}, // divide
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END} 
+		};
+		com->cubbys[0].code = code;
+		com->vm = vm;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.f = 2.0f;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.f = 0.5f;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 4.0f)
+			printf("FDIV: PASS!\n");
+		else {
+			ret = 1;
+			printf("FDIV: FAIL!\n");
 		}
 	}
 	
@@ -267,6 +350,47 @@ int main()
 		else 
 		{
 			printf("JMP 2: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMPE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMPE, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		com->vm = vm;
+		
+		com->ct.vars[0].size = -1;
+		com->ct.vars[0].v.i = 1;
+		com->ct.vars[1].size = -1;
+		com->ct.vars[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 1)
+			printf("JMPE: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.i == 1)
+				printf("JMPE: FAIL! Didn't go far enough\n");
+			else
+				printf("JMPE: FAIL! When't too far\n");
 			ret = 1;
 		}
 	}

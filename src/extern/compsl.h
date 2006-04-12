@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-void runCubbyhole(compart *com, int id)  __attribute__ ((fastcall)); // runs 
+void runCubbyhole(compart *com, int id); // runs 
 
 #ifdef __cplusplus
 }

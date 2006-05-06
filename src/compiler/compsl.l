@@ -6,7 +6,7 @@
 %}
 %%
    
-\/\/.*\n		; /*comment*/
+\/\/.*\n		{}; /*comment*/
 -?[0-9]+  	{	yylval.ival = atoi( yytext ); 
 				return INT_LIT; 	
 			}

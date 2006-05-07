@@ -47,12 +47,22 @@ return		return RETURN;
 				return INT_LIT; 	
 			}
 -?[0-9]+\.[0-9]*  {	
-				yylval.fval = atof(yytext);
-				return FLOAT_LIT; 	
-			}
+	yylval.fval = atof(yytext);
+	return FLOAT_LIT; 	
+}
 -?\.[0-9]+  {
-				yylval.fval = atof(yytext);
-				return FLOAT_LIT; 			
-			}
-[_a-zA-Z0-9]+   return IDENTIFIER; 		/*PASS_ON*/
+	yylval.fval = atof(yytext);
+	return FLOAT_LIT; 			
+}
+[_a-zA-Z0-9]+   {
+	yylval.sval = malloc(sizeof(char)*(strlen(yytext)+1));
+	if(yylval.sval==NULL) { 
+		puts("\t\t\t\t\t\tERROR"); 
+		exit(1); 
+	}
+	strcpy(yylval.sval,yytext);
+	printf("Parsed: %s,%s\n",yylval.sval,yytext);
+	return IDENTIFIER; 		/*PASS_ON*/
+}
+
 %%

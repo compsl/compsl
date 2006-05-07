@@ -46,12 +46,12 @@ int yywrap() {
 	node *nval;
 }
 
-%token INT_LIT FLOAT_LIT CUBBY GLOBAL DECLARE INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN IDENTIFIER SEMI COMA OPENB CLOSEB OPENP CLOSEP PLUS MINUS MULT DIV MOD ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR;
+%token <fval> FLOAT_LIT;
+%token <ival> INT_LIT;
+%token <sval> IDENTIFIER;
+%token CUBBY GLOBAL DECLARE INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP PLUS MINUS MULT DIV MOD ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR;
 
-%type <nv> file header_stuff do_declare cubbys decls block stmts stmt control expression;
-%type <fval> FLOAT_LIT;
-%type <ival> INT_LIT;
-%type <sval> IDENTIFIER;
+%type <nv> file header_stuff do_declare cubbys cubby block stmts stmt expression cast math retable control else decls decl modifiers ident_list more_ident_list
 
 %locations
 
@@ -70,7 +70,7 @@ cubbys:
 		cubby cubbys | ;
 cubby:
 		CUBBY IDENTIFIER block {
-			//printf("Cubby declared %i\n",yyget_lineno()); //doesnt get line no. dunno what that gets
+			printf("Cubby declared: %s\n",yylval.sval); //doesnt get line no. dunno what that gets
 		};
 block:
 		OPENB stmts CLOSEB | stmt SEMI;
@@ -89,11 +89,15 @@ expression:
 		|
 		IDENTIFIER OPENP expression CLOSEP
 		|
-		IDENTIFIER OPENP CLOSEP
+		IDENTIFIER OPENP CLOSEP {
+			printf("Identifier: %s\n",yylval.sval);
+		}
 		|
 		retable
 		|
-		IDENTIFIER ASSIGN expression
+		IDENTIFIER ASSIGN expression {
+			printf("Identifier: %s\n",yylval.sval);
+		}
 		|
 		cast expression
 		;
@@ -111,7 +115,9 @@ math:
 		
 		
 retable:
-		IDENTIFIER 
+		IDENTIFIER {
+			printf("Identifier: %s\n",yylval.sval);
+		}
 		| 
 		FLOAT_LIT { //printf("%f\n",yylval.fval);
 			} 

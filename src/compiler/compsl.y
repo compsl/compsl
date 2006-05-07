@@ -90,13 +90,13 @@ expression:
 		IDENTIFIER OPENP expression CLOSEP
 		|
 		IDENTIFIER OPENP CLOSEP {
-			printf("Identifier: %s\n",yylval.sval);
+			printf("Function: %s\n",$1);
 		}
 		|
 		retable
 		|
 		IDENTIFIER ASSIGN expression {
-			printf("Identifier: %s\n",yylval.sval);
+			printf("Identifier: %s\n",$1);
 		}
 		|
 		cast expression

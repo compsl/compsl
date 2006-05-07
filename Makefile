@@ -21,8 +21,9 @@ CFLAGS += -mmmx -mno-ieee-fp
 CFLAGS += -msse -mfpmath=sse
 
 ifdef DEBUG
-	CFLAGS += -ggdb -D DEBUG
+	CFLAGS += -O0 -ggdb -D DEBUG
 else
+	#CFLAGS += -O2
 	CFLAGS += -O2 -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks -fmove-all-movables
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
@@ -51,6 +52,10 @@ compile: $(SOURCES) $(OBJECTS)
 
 static: compile $(STATIC_LIB_OUT)
 dynamic: compile $(DYN_LIB_OUT)
+
+cleantest: 
+	make clean 
+	make test
 
 test: maketestonly
 	for test in  $(TEST_EXES); do \

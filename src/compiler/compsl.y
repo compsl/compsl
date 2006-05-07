@@ -11,7 +11,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
-//#include "node.h"
+#include "node.h"
 
 #define YYERROR_VERBOSE 1
 
@@ -27,7 +27,7 @@ void yyerror(const char *fn, const char *msg) {
     fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",fn,msg,-1);//yylloc.first_line);
 	exit(2);
 }
- 
+
 int yywrap() {
         return 1;
 } 
@@ -42,8 +42,8 @@ int yywrap() {
 %union {
 	int ival;
 	float fval;
-	char* sval;
-//	node* nv;
+	char *sval;
+	node *nval;
 }
 
 %token INT_LIT FLOAT_LIT CUBBY GLOBAL DECLARE INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN IDENTIFIER SEMI COMA OPENB CLOSEB OPENP CLOSEP PLUS MINUS MULT DIV MOD ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR;
@@ -113,7 +113,7 @@ math:
 retable:
 		IDENTIFIER 
 		| 
-		FLOAT_LIT{ //printf("%f\n",yylval.fval);
+		FLOAT_LIT { //printf("%f\n",yylval.fval);
 			} 
 		| 
 		INT_LIT { //printf("%i\n",yylval.ival); 

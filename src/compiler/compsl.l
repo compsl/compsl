@@ -1,23 +1,13 @@
 
 %{
 #include <stdio.h>
+#include "node.h"
 #include "compsl.tab.h"
 
 %}
 %%
    
 \/\/.*\n		{}; /*comment*/
--?[0-9]+  	{	yylval.ival = atoi( yytext ); 
-				return INT_LIT; 	
-			}
--?[0-9]+\.[0-9]*  {	
-				yylval.fval = atof(yytext);
-				return FLOAT_LIT; 	
-			}
--?\.[0-9]+  {
-				yylval.fval = atof(yytext);
-				return FLOAT_LIT; 			
-			}
 cubbyhole	return CUBBY;
 global		return GLOBAL;
 declare		return DECLARE;
@@ -29,7 +19,6 @@ else		return ELSE;
 while		return WHILE;
 break		return BREAK;
 return		return RETURN;
-[_a-zA-Z0-9]+   return IDENTIFIER; 		/*PASS_ON*/
 ;			return SEMI;
 ,			return COMA;
 \{			return OPENB; /*"bracket"*/
@@ -54,5 +43,16 @@ return		return RETURN;
 \ 			;
 \t			;
 \n			;
-
+-?[0-9]+  	{	yylval.ival = atoi( yytext ); 
+				return INT_LIT; 	
+			}
+-?[0-9]+\.[0-9]*  {	
+				yylval.fval = atof(yytext);
+				return FLOAT_LIT; 	
+			}
+-?\.[0-9]+  {
+				yylval.fval = atof(yytext);
+				return FLOAT_LIT; 			
+			}
+[_a-zA-Z0-9]+   return IDENTIFIER; 		/*PASS_ON*/
 %%

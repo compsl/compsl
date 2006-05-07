@@ -1,9 +1,10 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-typedef struct node
+typedef struct _node_t
 {
-	int i; float f;
+	char* foo;
+	int f;
 } node;
 
 #endif 

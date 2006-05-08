@@ -30,8 +30,7 @@ typedef struct _nativeFN_t
         bool retFloat; // true if the return type is a float false it's int
         
         var *params; // the list of paramaters to pass to it
-        bool *paramTypes; // false indecates an int, true indicates a float
-        				  // one element per param
+        uint8_t *paramFlags;// OR together the apropriat flags ex float array = FLOAT_VAR | IS_ARRAY
         uint8_t numParam; // how many paramaters to pass it
 } nativeFN;
 

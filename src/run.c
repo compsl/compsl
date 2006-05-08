@@ -105,9 +105,25 @@ static void *jmptbl[] =
 		*sp = lvs[pc->a1].v;
 		sp++;
 		goto TOP;
- 	APUSH:
- 		//TODO: writeme
- 		goto UNIMP;
+ 	APUSH://TODO: test this
+ 		if(lvs[pc->a1].size > (sp - 1)->i || (sp - 1)->i < 0)
+ 		{
+ 			*(sp - 1) = lvs[pc->a1].p[(sp - 1)->i];
+ 		}
+ 		else
+ 		{
+ 			fprintf(stderr, 
+ 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
+ 				pc->a1, com->vt.symbols[pc->a1].name, lvs[pc->a1].size, (sp - 1)->i);
+ 			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
+ 			#ifdef DEBUG
+ 				goto DBG;
+ 			#else
+ 				goto HLT;
+ 			#endif
+ 			
+ 		}
+ 		goto TOP;
  	CPUSH:
  		*sp = lcs[pc->a1].v;
  		sp++;
@@ -117,8 +133,24 @@ static void *jmptbl[] =
  		lvs[pc->a1].v = *sp;
 		goto TOP;
  	APOP:
- 		//TODO: writeme
- 		goto UNIMP;
+ 		//TODO: test this
+ 		sp -= 2;
+ 		if(lvs[pc->a1].size > sp->i || sp->i < 0)
+ 		{
+ 			lvs[pc->a1].p[sp->i] = *(sp + 1);
+ 		}
+ 		else
+ 		{
+ 			fprintf(stderr, 
+ 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
+ 				pc->a1, com->vt.symbols[pc->a1].name, lvs[pc->a1].size, sp->i);
+ 			#ifdef DEBUG
+ 				goto DBG;
+ 			#else
+ 				goto HLT;
+ 			#endif
+ 		}
+ 		goto TOP;
  	DPOP:
  		sp--;
  		goto TOP;

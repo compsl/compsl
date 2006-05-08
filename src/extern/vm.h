@@ -27,8 +27,11 @@ typedef struct _nativeFN_t
         char *name; // name of this function
         var (*func)(var *); // pointer the function to call
         
+        bool retFloat; // true if the return type is a float false it's int
+        
         var *params; // the list of paramaters to pass to it
-        uint8_t *paramFlags; //the type flags of each paramater
+        bool *paramTypes; // false indecates an int, true indicates a float
+        				  // one element per param
         uint8_t numParam; // how many paramaters to pass it
 } nativeFN;
 

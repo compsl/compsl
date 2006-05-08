@@ -511,6 +511,9 @@ int main()
 			ret = 1;
 		}
 	}
+	
+	//TODO: test APUSH/APOP
+	
 	/*
 	//example case
 	{ // new block so code[] goes out of scope, this way we can re-use it's name in each test case

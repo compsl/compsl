@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "node.h"
+#include "../intern/gen.h"
+#include <stdbool.h>
 
 #define YYERROR_VERBOSE 1
 
@@ -44,14 +46,17 @@ int yywrap() {
 	float fval;
 	char *sval;
 	node *nval;
+	bool bval;
+	expression *expr;
 }
 
 %token <fval> FLOAT_LIT;
 %token <ival> INT_LIT;
 %token <sval> IDENTIFIER;
 %token CUBBY GLOBAL DECLARE INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP PLUS MINUS MULT DIV MOD ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR;
-
-%type <nv> file header_stuff do_declare cubbys cubby block stmts stmt expression cast math retable control else decls decl modifiers ident_list more_ident_list
+%type <expr> expression math retable;
+%type <bval> cast;
+%type <nval> file header_stuff do_declare cubbys cubby block stmts stmt control else decls decl modifiers ident_list more_ident_list, paramlist;
 
 %locations
 
@@ -70,7 +75,7 @@ cubbys:
 		cubby cubbys | ;
 cubby:
 		CUBBY IDENTIFIER block {
-			printf("Cubby declared: %s\n",yylval.sval); //doesnt get line no. dunno what that gets
+			//printf("Cubby declared: %s\n",$2); 
 		};
 block:
 		OPENB stmts CLOSEB | stmt SEMI;
@@ -83,40 +88,111 @@ stmt:
 		;
 		
 expression:
-		OPENP expression CLOSEP;
+		OPENP expression CLOSEP {
+			$$ = $2;
+		}
 		|
 		math
 		|
-		IDENTIFIER OPENP expression CLOSEP
-		|
-		IDENTIFIER OPENP CLOSEP {
-			printf("Function: %s\n",$1);
+		IDENTIFIER OPENP paramlist CLOSEP { // FUNCTION CALL
+			/*expression *ex = malloc(sizeof(expression));
+			symbolinfo foo = searchSym($1,curCompart);
+			if(!(foo.isvar)) {
+				ex->isLiteral=false;
+				nativeFN bar = comp->vm->natives[foo.id];
+				//TODO get type from bar
+				//TODO check var list
+			}
+			else {
+				//TODO error here
+			}*/
 		}
 		|
 		retable
 		|
 		IDENTIFIER ASSIGN expression {
-			printf("Identifier: %s\n",$1);
+			//printf("Identifier: %s\n",$1);
 		}
 		|
-		cast expression
+		cast expression { 
+			//if($1==CSL_FLOAT) {
+				//if($2.isFloat) $$ = $2;
+				//else {
+					// TODO
+				//}
+			//}
+			//else {
+			//} 
+		}
 		;
 		
 
-cast: 
-		OPENP INT CLOSEP 
-		| 
-		OPENP FLOAT CLOSEP
+paramlist:
+		expression moreparamlist
+		|
 		;
 		
+moreparamlist:
+		COMA expression  moreparamlist
+		|
+		;
+
+cast: 
+		OPENP INT CLOSEP {
+			$$ = CSL_INT;
+		}
+		| 
+		OPENP FLOAT CLOSEP {
+			$$ = CSL_FLOAT;
+		}
+		;
+		
+		
+%left         OR;
+%left         AND;
+%nonassoc     ISEQ ISNEQ;
+%nonassoc     ISGEQ ISLEQ ISGT ISLT;
+%left         PLUS MINUS;
+%left         MULT DIV;
+%left         NOT; //unary ops
+//%left         OPENP; // ??
+
+		
 math:
-		expression PLUS expression | 
-		expression MINUS expression;
+		expression PLUS expression {
+			
+		}
+		| 
+		expression MINUS expression
+		|
+		expression MULT expression
+		|
+		expression DIV expression
+		|
+		expression OR expression
+		|
+		expression AND expression
+		|
+		expression ISEQ expression
+		|
+		expression ISNEQ expression
+		|
+		expression ISGEQ expression
+		| 
+		expression ISGT expression
+		|
+		expression ISLT expression
+		| 
+		NOT expression
+		
+		;
+		
 		
 		
 retable:
 		IDENTIFIER {
-			printf("Identifier: %s\n",yylval.sval);
+			
+			//printf("Identifier: %s\n",$1);
 		}
 		| 
 		FLOAT_LIT { //printf("%f\n",yylval.fval);

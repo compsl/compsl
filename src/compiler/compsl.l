@@ -4,6 +4,7 @@
 #include "node.h"
 #include "compsl.tab.h"
 
+
 %}
 %%
    
@@ -57,12 +58,12 @@ return		return RETURN;
 [_a-zA-Z0-9]+   {
 	yylval.sval = malloc(sizeof(char)*(strlen(yytext)+1));
 	if(yylval.sval==NULL) { 
-		puts("\t\t\t\t\t\tERROR"); 
+		puts("Compiler out of memory\n");
+		// TODO: Use parser's build in error fn 
 		exit(1); 
 	}
 	strcpy(yylval.sval,yytext);
-	printf("Parsed: %s,%s\n",yylval.sval,yytext);
-	return IDENTIFIER; 		/*PASS_ON*/
+	return IDENTIFIER;
 }
 
 %%

@@ -1,4 +1,3 @@
-#include "../compiler/compsl.tab.h"
 #include <stdio.h>
 
 int main()
@@ -11,10 +10,10 @@ int main()
 		"src/test/base-structure.csl",
 		"src/test/casting.csl",
 		"src/test/declarations.csl",
+		"src/test/addition.csl",
 		"src/test/expressions.csl",
 		"src/test/flow-control.csl"
 	};
-	  
 	  
 	for(int i=0;i<5;i++) {
 		printf("Parsing: %s  ",files[i]);

@@ -75,7 +75,7 @@ clean:
 
 
 # FLEX/BISON TARGETS
-$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l
+$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 	flex -o$@ $<
 
 $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.y

@@ -21,6 +21,6 @@ flex/bison
  
  1. Write tests & code for math, order of operations 
  3. Figure out how to keep track of line nos between compsl.l and .y . 
- 5. Fix randomness in compsl.[yl]
+ 5. Fix randomness in compsl.[yl] 
  7. Implement bison symbol renaming
-
+ 8. Error handling <<<<<<

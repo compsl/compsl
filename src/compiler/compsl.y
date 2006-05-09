@@ -11,11 +11,16 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include "node.h"
 #include "../intern/gen.h"
-#include <stdbool.h>
+#include "../extern/vm.h"
+#include "../extern/compart.h"
 
 #define YYERROR_VERBOSE 1
+
+// NOTE ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably
+
 
 extern FILE *yyin;
 
@@ -33,11 +38,63 @@ void yyerror(const char *fn, const char *msg) {
 int yywrap() {
         return 1;
 } 
+
+VM* cvm;
+compart *ccompart;
   
 //main() {
 //        yyparse();
 //        printf("Parsing successful\n");
 //} 
+
+
+
+expression* bin_bc_op(int bc,expression* a, expression* b) {
+	return a;
+	//TODO: this
+}
+
+
+expression* bin_lit_op(int op, expression* a, expression* b) {
+	if(!a->isFloat && !b->isFloat) {
+		if(op==PLUS)
+			a->val.in+=b->val.in;
+		else if(op==MINUS)
+			a->val.in-=b->val.in;
+		else {
+			puts("Unknown op");
+			exit(1); //TODO: this
+		}
+		free(b);
+		return a;
+	}
+	else {
+		float n1 = (a->isFloat)?a->val.fl:((float)a->val.in);
+		float n2 = (b->isFloat)?b->val.fl:((float)b->val.in);
+		if(op==PLUS)
+			n1+=n2;
+		else if(op==MINUS)
+			n1-=n2;
+		else {
+			puts("Unknown op");
+			exit(1); //TODO: this
+		}
+		a->isFloat=true;
+		a->val.fl=n1;
+		free(b);
+		return a;
+	}
+}
+
+// Post: dont use a or b, they're freed if need be
+expression* bin_op(int op,expression* a, expression* b) {
+	if(a->isLiteral && b->isLiteral) {
+		return bin_lit_op(op,a,b);
+	}
+	else {
+		return bin_bc_op(op,a,b);
+	}
+}
 
 %}
 
@@ -51,12 +108,13 @@ int yywrap() {
 }
 
 %token <fval> FLOAT_LIT;
-%token <ival> INT_LIT;
+%token <ival> INT_LIT; 
 %token <sval> IDENTIFIER;
-%token CUBBY GLOBAL DECLARE INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP PLUS MINUS MULT DIV MOD ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR;
+%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD;
 %type <expr> expression math retable;
-%type <bval> cast;
-%type <nval> file header_stuff do_declare cubbys cubby block stmts stmt control else decls decl modifiers ident_list more_ident_list, paramlist;
+%type <ival> cast;
+%type <nval> file header_stuff do_declare cubbys cubby block stmts stmt control else decls decl modifiers ident_list more_ident_list paramlist;
+
 
 %locations
 
@@ -69,16 +127,23 @@ header_stuff:
 		;
 		
 do_declare:
-		DECLARE OPENB decls CLOSEB;
+		DECLARE OPENB decls CLOSEB {
+			
+		}
 
 cubbys:
 		cubby cubbys | ;
 cubby:
 		CUBBY IDENTIFIER block {
+			
 			//printf("Cubby declared: %s\n",$2); 
-		};
+			
+			
+		}
 block:
-		OPENB stmts CLOSEB | stmt SEMI;
+		OPENB stmts CLOSEB
+		|
+		stmt SEMI;
 
 stmts:
 		stmt SEMI stmts 	|
@@ -108,23 +173,26 @@ expression:
 			}*/
 		}
 		|
-		retable
+		retable {
+			$$ = $1;
+		}
 		|
 		IDENTIFIER ASSIGN expression {
 			//printf("Identifier: %s\n",$1);
 		}
 		|
 		cast expression { 
-			//if($1==CSL_FLOAT) {
-				//if($2.isFloat) $$ = $2;
-				//else {
-					// TODO
-				//}
-			//}
-			//else {
-			//} 
+			if( $1 ==FLOAT && !$2->isFloat) {
+				$2->val.fl = (float)$2->val.in;
+				$2->isFloat=true;
+			}
+			else if($1 ==INT && $2->isFloat) {
+				$2->val.in = (int)$2->val.fl;
+				$2->isFloat=false;
+			} 
+			$$=$2; 
 		}
-		;
+		
 		
 
 paramlist:
@@ -139,11 +207,11 @@ moreparamlist:
 
 cast: 
 		OPENP INT CLOSEP {
-			$$ = CSL_INT;
+			$$ = INT; //TODO: to macro
 		}
 		| 
 		OPENP FLOAT CLOSEP {
-			$$ = CSL_FLOAT;
+			$$ = FLOAT;
 		}
 		;
 		
@@ -160,28 +228,48 @@ cast:
 		
 math:
 		expression PLUS expression {
-			
+			$$=bin_op(PLUS,$1,$3);
 		}
 		| 
-		expression MINUS expression
+		expression MINUS expression{
+			$$=bin_op(MINUS,$1,$3);
+		}
 		|
-		expression MULT expression
+		expression MULT expression{
+			$$=bin_op(MULT,$1,$3);
+		}
 		|
-		expression DIV expression
+		expression DIV expression{
+			$$=bin_op(DIV,$1,$3);
+		}
 		|
-		expression OR expression
+		expression OR expression{
+			$$=bin_op(OR,$1,$3);
+		}
 		|
-		expression AND expression
+		expression AND expression{
+			$$=bin_op(AND,$1,$3);
+		}
 		|
-		expression ISEQ expression
+		expression ISEQ expression{
+			$$=bin_op(ISEQ,$1,$3);
+		}
 		|
-		expression ISNEQ expression
+		expression ISNEQ expression{
+			$$=bin_op(ISNEQ,$1,$3);
+		}
 		|
-		expression ISGEQ expression
+		expression ISGEQ expression{
+			$$=bin_op(ISGEQ,$1,$3);
+		}
 		| 
-		expression ISGT expression
+		expression ISGT expression{
+			$$=bin_op(ISGT,$1,$3);
+		}
 		|
-		expression ISLT expression
+		expression ISLT expression{
+			$$=bin_op(ISLT,$1,$3);
+		}
 		| 
 		NOT expression
 		
@@ -191,15 +279,35 @@ math:
 		
 retable:
 		IDENTIFIER {
-			
-			//printf("Identifier: %s\n",$1);
+			expression *a = malloc(sizeof(expression));
+			a->isLiteral=false;
+			symbolinfo si = searchSym($1,ccompart);
+			if(si.id==0) {
+				printf("The variable \"%s\" is used but not declared",$1);
+				//exit(0);
+			}
+			else {
+				a->isFloat=si.isfloat;
+			}
+			// TODO set bytecode 
+			$$=a;
 		}
 		| 
-		FLOAT_LIT { //printf("%f\n",yylval.fval);
-			} 
+		FLOAT_LIT { 
+			expression *a = malloc(sizeof(expression));
+			a->isFloat=true;
+			a->isLiteral=true;
+			a->val.fl=$1;
+			$$ = a;
+		} 
 		| 
-		INT_LIT { //printf("%i\n",yylval.ival); 
-			}
+		INT_LIT { 
+			expression *a = malloc(sizeof(expression));
+			a->isFloat=false;
+			a->isLiteral=true;
+			a->val.in=$1;
+			$$ = a;
+		}
 		;
 
 

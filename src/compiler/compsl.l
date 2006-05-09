@@ -1,17 +1,30 @@
 
 %{
 #include <stdio.h>
+#include <stdbool.h>
 #include "node.h"
+#include "../extern/vm.h"
+#include "../extern/compart.h"
+#include "../intern/gen.h"
 #include "compsl.tab.h"
 
+extern VM *cvm;
+extern compart *ccompart;
 
 %}
 %%
    
 \/\/.*\n		{}; /*comment*/
-cubbyhole	return CUBBY;
+declare		{
+	cvm =createVM();
+	ccompart = createComp();
+	ccompart->vm=cvm;
+	return DECLARE;
+}
+cubbyhole	{
+	return CUBBY;
+}
 global		return GLOBAL;
-declare		return DECLARE;
 int			return INT;
 float		return FLOAT;
 if			return IF;

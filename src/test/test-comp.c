@@ -1,5 +1,8 @@
 #include <stdio.h>
 
+
+int goparse(char* fn);
+
 int main()
 {
 	printf("\nRunning compiler tests\n");

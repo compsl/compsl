@@ -39,15 +39,20 @@ int yywrap() {
         return 1;
 } 
 
+////////////////////////////////////////////////////////////////
+//Variables
+////////////////////////////////////////////////////////////////
+
 VM* cvm;
 compart *ccompart;
   
-//main() {
-//        yyparse();
-//        printf("Parsing successful\n");
-//} 
 
 
+////////////////////////////////////////////////////////////////
+// Functions
+////////////////////////////////////////////////////////////////
+
+// Binary operator helpers for bin_op()
 
 expression* bin_bc_op(int bc,expression* a, expression* b) {
 	return a;
@@ -86,7 +91,9 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 	}
 }
 
+
 // Post: dont use a or b, they're freed if need be
+
 expression* bin_op(int op,expression* a, expression* b) {
 	if(a->isLiteral && b->isLiteral) {
 		return bin_lit_op(op,a,b);
@@ -95,6 +102,33 @@ expression* bin_op(int op,expression* a, expression* b) {
 		return bin_bc_op(op,a,b);
 	}
 }
+
+
+// More helpers
+
+expression* resolveVar(char* name) {
+	symbolinfo foo = searchSym($1,ccompart);
+
+	if(foo.id!=0 && foo.isvar) {
+		expression *ex = malloc(sizeof(expression));
+		ex->isLiteral=false;
+	}
+	//TODO: resolveVar
+	return 0;
+}
+
+void autocast(bool toFloat,expression *e) {
+	if( toFloat && !e->isFloat) {
+		e->val.fl = (float)e->val.in;
+		e->isFloat=true;
+	}
+	else if(!toFloat && e->isFloat) {
+		e->val.in = (int)e->val.fl;
+		e->isFloat=false;
+	} 
+}
+
+
 
 %}
 
@@ -159,18 +193,18 @@ expression:
 		|
 		math
 		|
-		IDENTIFIER OPENP paramlist CLOSEP { // FUNCTION CALL
-			/*expression *ex = malloc(sizeof(expression));
-			symbolinfo foo = searchSym($1,curCompart);
-			if(!(foo.isvar)) {
+		IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
+			expression *ex = malloc(sizeof(expression));
+			symbolinfo foo = searchSym($1,ccompart);
+			if(foo.id!=0 && !foo.isvar) {
 				ex->isLiteral=false;
-				nativeFN bar = comp->vm->natives[foo.id];
-				//TODO get type from bar
-				//TODO check var list
+				nativeFN funk = ccompart->vm->natives[foo.id];
+				//TODO: get type from func
+				//TODO: check var list
 			}
 			else {
-				//TODO error here
-			}*/
+				printf("Function %s does not exist",$1);
+			}
 		}
 		|
 		retable {
@@ -178,19 +212,14 @@ expression:
 		}
 		|
 		IDENTIFIER ASSIGN expression {
-			//printf("Identifier: %s\n",$1);
+			expression *lhs = resolveVar($1);
+			autocast(lhs->isFloat,$3);
+			//TODO: here			
 		}
 		|
 		cast expression { 
-			if( $1 ==FLOAT && !$2->isFloat) {
-				$2->val.fl = (float)$2->val.in;
-				$2->isFloat=true;
-			}
-			else if($1 ==INT && $2->isFloat) {
-				$2->val.in = (int)$2->val.fl;
-				$2->isFloat=false;
-			} 
-			$$=$2; 
+			autocast($1==FLOAT,$2);
+			$$=$2;
 		}
 		
 		
@@ -207,15 +236,19 @@ moreparamlist:
 
 cast: 
 		OPENP INT CLOSEP {
-			$$ = INT; //TODO: to macro
+			$$ = INT; 
 		}
 		| 
 		OPENP FLOAT CLOSEP {
 			$$ = FLOAT;
 		}
 		;
+
 		
-		
+////////////////////////////////////////////////////////////
+// MATH		
+////////////////////////////////////////////////////////////
+
 %left         OR;
 %left         AND;
 %nonassoc     ISEQ ISNEQ;
@@ -271,8 +304,10 @@ math:
 			$$=bin_op(ISLT,$1,$3);
 		}
 		| 
-		NOT expression
-		
+		NOT expression {
+			//TODO: Not
+			
+		}
 		;
 		
 		
@@ -284,7 +319,6 @@ retable:
 			symbolinfo si = searchSym($1,ccompart);
 			if(si.id==0) {
 				printf("The variable \"%s\" is used but not declared",$1);
-				//exit(0);
 			}
 			else {
 				a->isFloat=si.isfloat;

@@ -20,7 +20,7 @@ typedef struct _expression_t {
 	union { 
 		int in; 
 		float fl; 
-		bytecode* bytecode; 
+		bytecode* bcode; 
 	} val;
 } expression;
 

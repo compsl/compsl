@@ -107,7 +107,7 @@ expression* bin_op(int op,expression* a, expression* b) {
 // More helpers
 
 expression* resolveVar(char* name) {
-	symbolinfo foo = searchSym($1,ccompart);
+	symbolinfo foo = searchSym(name,ccompart);
 
 	if(foo.id!=0 && foo.isvar) {
 		expression *ex = malloc(sizeof(expression));

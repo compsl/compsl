@@ -17,6 +17,7 @@ __attribute__ ((pure, fastcall)) symbolinfo searchSym(const char *name, compart 
 	{
 		res.isvar = res.local = res.constant = true;
 		res.array = com->ct.symbols[res.id].typeflags & IS_ARRAY;
+		res.isfloat = com->ct.symbols[res.id].typeflags & FLOAT_VAR;
 		return res;
 	}
 	
@@ -27,6 +28,7 @@ __attribute__ ((pure, fastcall)) symbolinfo searchSym(const char *name, compart 
 		res.isvar = res.local = true;
 		res.constant = false;
 		res.array = com->vt.symbols[res.id].typeflags & IS_ARRAY;
+		res.isfloat = com->vt.symbols[res.id].typeflags & FLOAT_VAR;
 		return res;
 	}
 	
@@ -38,6 +40,7 @@ __attribute__ ((pure, fastcall)) symbolinfo searchSym(const char *name, compart 
 		res.isvar = true;
 		res.local = res.constant = false;
 		res.array = com->vm->vt.symbols[res.id].typeflags & IS_ARRAY;
+		res.isfloat = com->vm->vt.symbols[res.id].typeflags & FLOAT_VAR;
 		return res;
 	}
 	

@@ -11,10 +11,11 @@ int main()
 	char * files[] = 
 	{
 		"src/test/base-structure.csl",
-		"src/test/casting.csl",
-		"src/test/declarations.csl",
+		"src/test/print-for-dbg.csl",
 		"src/test/addition.csl",
+		"src/test/declarations.csl",
 		"src/test/expressions.csl",
+		"src/test/casting.csl",
 		"src/test/flow-control.csl"
 	};
 	  

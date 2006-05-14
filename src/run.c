@@ -79,6 +79,7 @@ static void *jmptbl[] =
  	&&SFTL,
  	&&SFTR,
  //misc
+ 	&&PYES,
  	&&END,
  	&&HLT,
  	&&DBG
@@ -116,11 +117,11 @@ static void *jmptbl[] =
  				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
  				pc->a1, com->vt.symbols[pc->a1].name, lvs[pc->a1].size, (sp - 1)->i);
  			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
- 			#ifdef DEBUG
- 				goto DBG;
- 			#else
+#ifdef DEBUG
+				goto DBG;
+#else
  				goto HLT;
- 			#endif
+#endif
  			
  		}
  		goto TOP;
@@ -144,11 +145,11 @@ static void *jmptbl[] =
  			fprintf(stderr, 
  				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
  				pc->a1, com->vt.symbols[pc->a1].name, lvs[pc->a1].size, sp->i);
- 			#ifdef DEBUG
+#ifdef DEBUG
  				goto DBG;
- 			#else
+#else
  				goto HLT;
- 			#endif
+#endif
  		}
  		goto TOP;
  	DPOP:
@@ -245,7 +246,9 @@ static void *jmptbl[] =
  	FMOD:
  		sp--;	
  		//(sp - 1)->f = (sp - 1)->f - sp->f * truncf((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
- 		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
+ 		//(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
+ 		(sp - 1)->f = 42;
+ 		//TODO: uncomment above
  		goto TOP;
  	GPSH:
  		*sp = gvs[pc->a1].v;
@@ -302,12 +305,16 @@ static void *jmptbl[] =
  		(sp - 1)->i = (sp - 1)->i >> sp->i;
  		goto TOP;
  
- 	HLT:
+ 	PYES:
+ 		if(pc->a1) {puts("YES");}
+ 		else { puts("NO"); }
+ 		goto TOP;
  	
  	END:
+ 	HLT:
  		return;
  	DBG: // dump some state info
- #ifdef DEBUG
+#ifdef DEBUG
  	{
  		var *t;
  		intfloat *st;
@@ -336,7 +343,7 @@ static void *jmptbl[] =
  			if(t->size <= 0) 
  				fprintf(stderr, "\t%X:   %i %f\n",i, (int)(t->v.i), t->v.f);
  	}
- #endif
+#endif
  		goto TOP;
  	UNIMP:
  	

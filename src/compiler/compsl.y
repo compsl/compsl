@@ -16,10 +16,11 @@
 #include "../intern/gen.h"
 #include "../extern/vm.h"
 #include "../extern/compart.h"
+#include "../intern/bytecode.h"
 
 #define YYERROR_VERBOSE 1
 
-// NOTE ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably
+// NOTE: ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably
 
 
 extern FILE *yyin;
@@ -112,23 +113,40 @@ expression* resolveVar(char* name) {
 	if(foo.id!=0 && foo.isvar) {
 		expression *ex = malloc(sizeof(expression));
 		ex->isLiteral=false;
+		ex->isFloat=foo.isfloat;
+		return ex;
 	}
 	//TODO: resolveVar
 	return 0;
 }
 
 void autocast(bool toFloat,expression *e) {
-	if( toFloat && !e->isFloat) {
-		e->val.fl = (float)e->val.in;
-		e->isFloat=true;
+	if(e->isLiteral) {
+		if( toFloat && !e->isFloat) {
+			e->val.fl = (float)e->val.in;
+			e->isFloat=true;
+		}
+		else if(!toFloat && e->isFloat) {
+			e->val.in = (int)e->val.fl;
+			e->isFloat=false;
+		} 
 	}
-	else if(!toFloat && e->isFloat) {
-		e->val.in = (int)e->val.fl;
-		e->isFloat=false;
-	} 
+	else {
+		puts("Casting not fully implemented yet");
+	}
 }
 
 
+int bc_len(bytecode* bc) {
+	int len=0;
+	while(bc->code) {
+		bc++;
+		len++;
+	} 
+}
+
+///////////////////////////////////////////////////////////////////////
+// END FUNC DECLS
 
 %}
 
@@ -139,6 +157,8 @@ void autocast(bool toFloat,expression *e) {
 	node *nval;
 	bool bval;
 	expression *expr;
+	list *xlist;
+	bytecode *bc;
 }
 
 %token <fval> FLOAT_LIT;
@@ -147,8 +167,9 @@ void autocast(bool toFloat,expression *e) {
 %token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD;
 %type <expr> expression math retable;
 %type <ival> cast;
-%type <nval> file header_stuff do_declare cubbys cubby block stmts stmt control else decls decl modifiers ident_list more_ident_list paramlist;
-
+%type <nval> file header_stuff do_declare cubbys cubby block stmts control else decls decl modifiers ident_list more_ident_list;
+%type <bc> stmt;
+%type <xlist> paramlist;
 
 %locations
 
@@ -180,10 +201,33 @@ block:
 		stmt SEMI;
 
 stmts:
-		stmt SEMI stmts 	|
+		stmt SEMI stmts{
+			
+		}
+		|
 		control stmts | ;
 stmt:
-		expression | RETURN | BREAK
+		expression {
+			bytecode *code = expr_toBc($1);
+			int l = bc_len(code);
+			
+			bytecode *newCode=malloc(sizeof(bytecode)*(l+2));
+			bytecode *t = newCode;
+			
+			while( code->code ) { 
+				*t = *code; 
+				t++; 
+				code++; 
+			}
+			t->code = BC_POP;
+			t++;
+			t=0;
+			$$=newCode;
+			
+			//TODO check this
+		}
+		|
+		RETURN | BREAK
 		;
 		
 expression:
@@ -195,16 +239,29 @@ expression:
 		|
 		IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
 			expression *ex = malloc(sizeof(expression));
-			symbolinfo foo = searchSym($1,ccompart);
-			if(foo.id!=0 && !foo.isvar) {
-				ex->isLiteral=false;
-				nativeFN funk = ccompart->vm->natives[foo.id];
-				//TODO: get type from func
-				//TODO: check var list
+			
+			//Special case for debugging
+			if($1[0]=='y'&& $1[1]=='e' && $1[2]=='s' && $1[3]==0) {
+				bytecode *mcode = malloc(sizeof(bytecode));
+				mcode->code = BC_PYES;
+				mcode->a1 =1;
+				ex->val.bcode=mcode;
 			}
 			else {
-				printf("Function %s does not exist",$1);
+				symbolinfo foo = searchSym($1,ccompart);
+				if(foo.id!=0 && !foo.isvar) {
+					ex->isLiteral=false;
+					nativeFN funk = ccompart->vm->natives[foo.id];
+					//TODO: get type from func
+					//TODO: check var list
+				}
+				else {
+					printf("Function %s does not exist",$1);
+					
+				}
 			}
+			list_free($3);
+			$$ = ex;
 		}
 		|
 		retable {
@@ -214,6 +271,7 @@ expression:
 		IDENTIFIER ASSIGN expression {
 			expression *lhs = resolveVar($1);
 			autocast(lhs->isFloat,$3);
+			
 			//TODO: here			
 		}
 		|

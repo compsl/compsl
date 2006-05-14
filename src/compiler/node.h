@@ -24,7 +24,18 @@ typedef struct _expression_t {
 	} val;
 } expression;
 
+typedef struct llist {
+	void *obj;
+	void *next; //TODO: make llist type
+} llist;
 
+typedef struct _list_t {
+	int length;
+	llist *head;
+} list;
+
+void* list_get(list *, int);
+void list_free(list *);
 
 
 #endif 

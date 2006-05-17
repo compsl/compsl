@@ -1,11 +1,16 @@
 #include <stdbool.h>
 #include "../intern/bytecode.h"
+#include "../extern/vm.h"
+#include "../extern/compart.h"
 
 #ifndef NODE_H_
 #define NODE_H_
 
 #define CSL_FLOAT 2;
 #define CSL_INT 1;
+
+VM* cvm;
+compart *ccompart;
 
 typedef struct _node_t
 {

@@ -12,7 +12,6 @@ typedef struct
 	int16_t id;
 	bool isvar;// if this is false then symbol is a native or built in function
 	bool local;
-	bool constant;
 	bool array;
 	bool isfloat;
 }symbolinfo; // used for symbol table search (for compiler)

@@ -42,13 +42,24 @@ __attribute__ ((pure)) int16_t findVar(varTable *vt, const char *name)
 
 var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 {	
+	int16_t tmp = findVar(vt, name);
+	
+	if(tmp == -1)
+	{
 		vt->vars[vt->cnt].size = -1;
 		vt->vars[vt->cnt].v.i = 0;
-		
+			
 		vt->symbols[vt->cnt].id = vt->cnt;
 		vt->symbols[vt->cnt].name = malloc(sizeof(char)*(strlen(name) + 1));
 		strcpy(vt->symbols[vt->cnt].name, name);
 		vt->symbols[vt->cnt].typeflags = typeflags;
-		
+			
 		return &(vt->vars[vt->cnt++]);
+	}
+	else if(typeflags == vt->symbols[tmp].typeflags)
+	{
+		return tmp;
+	}
+
+	return NULL;
 }

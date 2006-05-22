@@ -30,8 +30,9 @@ typedef enum  {
 	BC_GPOP,	BC_GAPP,	BC_AND,		BC_OR,		//20-23
 	BC_NOT, 	BC_BAND,	BC_BOR,		BC_BXOR,	//24-27
 	BC_BNOT,	BC_SFTL,	BC_SFTR,
-	BC_PYES,	BC_END, 	BC_HLT, 	BC_DBG
-	} BC_DEF;
+	BC_PYES,	BC_END, 	BC_HLT, 	BC_DBG,
 	
+	BC_NONO = 255
+	} BC_DEF;
 
 #endif /*BYTECODE_H_*/

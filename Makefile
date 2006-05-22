@@ -13,20 +13,20 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-DEBUG=1
+#DEBUG=1
 
 CC=gcc
-CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99 -ffast-math -fno-math-errno -funsafe-math-optimizations -fno-trapping-math
+CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99
 # if none x86 need to disable this line
-CFLAGS += -mmmx -mno-ieee-fp
+#CFLAGS += -mmmx -mno-ieee-fp
 #if sse instructions not available need to disable this line
-CFLAGS += -msse -mfpmath=sse
+#CFLAGS += -msse -mfpmath=sse
 
 ifdef DEBUG
 	CFLAGS += -O0 -ggdb -D DEBUG
 else
 	#CFLAGS += -O2
-	CFLAGS += -O2 -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks -fmove-all-movables
+	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks -fmove-all-movables
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
 endif
@@ -54,12 +54,12 @@ STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
 #TARGETS
-all:  common static dynamic maketestonly
+all:  common static dynamic 
 
 common: derived depend compile
 
 
-depend:
+depend: $(SOURCES)
 	makedepend -fDependfile -- $(CFLAGS) -- $(SOURCES)
 
 derived: $(FB_COMPILER_SRCS)

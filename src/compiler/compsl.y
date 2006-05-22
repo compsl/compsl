@@ -24,8 +24,10 @@
 
 
 extern FILE *yyin;
+extern compart *ccompart;
 
-int goparse(char* fn) {
+int goparse(char* fn, compart *com) {
+	ccompart = com;
 	yyin = fopen( fn, "r" );
 	yyrestart(yyin);
 	return yyparse(fn);
@@ -39,10 +41,6 @@ void yyerror(const char *fn, const char *msg) {
 int yywrap() {
         return 1;
 } 
-
-////////////////////////////////////////////////////////////////
-//Variables
-////////////////////////////////////////////////////////////////
 
 
   
@@ -195,7 +193,9 @@ cubby:
 			
 		}
 block:
-		OPENB stmts CLOSEB
+		OPENB stmts CLOSEB {
+		
+		}
 		|
 		stmt SEMI;
 
@@ -210,23 +210,13 @@ stmt:
 			bytecode *code = expr_toBc($1);
 			int l = bc_len(code);
 			
-			bytecode *newCode=malloc(sizeof(bytecode)*(l+2));
-			bytecode *t = newCode;
+			code = realloc(code, sizeof(bytecode)*(l+2));
+			code[l].code = BC_DPOP;
+			code[l+1].code = BC_NONO;
 			
-			while( code->code ) { 
-				*t = *code; 
-				t++; 
-				code++; 
-			}
-			t->code = BC_POP;
-			t++;
-			t=0;
-			$$=newCode;
-			
-			//TODO check this
+			$$=code;
 		}
-		|
-		RETURN | BREAK
+		| BREAK
 		;
 		
 expression:

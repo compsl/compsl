@@ -11,7 +11,7 @@
 int main()
 {
 	VM *vm = createVM();
-	compart *com = createComp();
+	compart *com = createComp(vm);
 	bool ret = 0;
 	
 	
@@ -25,7 +25,6 @@ int main()
 			{.code = BC_END}  // end
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 2;
@@ -50,16 +49,15 @@ int main()
 			{.code = BC_END}  // end
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 0;
-		com->ct.vars[0].size =-1;
-		com->ct.vars[0].v.i = 3;
+		com->cons[0].size =-1;
+		com->cons[0].v.i = 3;
 		
 		runCubbyhole(com, 0);
 		
-		if(com->vt.vars[0].v.i == com->ct.vars[0].v.i)
+		if(com->vt.vars[0].v.i == com->cons[0].v.i)
 			printf("CPUSH: PASS!\n");
 		else {
 			printf("CPUSH: FAIL!\n");
@@ -77,7 +75,6 @@ int main()
 			{.code = BC_END} 
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 2;
@@ -104,7 +101,6 @@ int main()
 			{.code = BC_END}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 2;
@@ -131,7 +127,6 @@ int main()
 			{.code = BC_END}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 2;
@@ -158,7 +153,6 @@ int main()
 			{.code = BC_END}  // end NOTE MAKE SURE THIS IS THE CORRECT VALUE MAY CHANGE!!!
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 16;
@@ -187,7 +181,6 @@ int main()
 			{.code = BC_END} 
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.f = 2.0f;
@@ -214,7 +207,6 @@ int main()
 			{.code = BC_END} 
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.f = 2.0f;
@@ -241,7 +233,6 @@ int main()
 			{.code = BC_END} 
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.f = 2.0f;
@@ -268,7 +259,6 @@ int main()
 			{.code = BC_END} 
 		};
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.f = 2.0f;
@@ -297,7 +287,6 @@ int main()
 		};
 		
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 0;
@@ -334,7 +323,6 @@ int main()
 		};
 		
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 0;
@@ -369,12 +357,11 @@ int main()
 		};
 		
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
-		com->ct.vars[0].size = -1;
-		com->ct.vars[0].v.i = 1;
-		com->ct.vars[1].size = -1;
-		com->ct.vars[1].v.i = 2;
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 0;
@@ -410,12 +397,11 @@ int main()
 		};
 		
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
-		com->ct.vars[0].size = -1;
-		com->ct.vars[0].v.i = 1;
-		com->ct.vars[1].size = -1;
-		com->ct.vars[1].v.i = 2;
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 0;
@@ -448,12 +434,11 @@ int main()
 		};
 		
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
-		com->ct.vars[0].size = -1;
-		com->ct.vars[0].v.i = 1;
-		com->ct.vars[1].size = -1;
-		com->ct.vars[1].v.i = 2;
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 0;
@@ -489,12 +474,11 @@ int main()
 		};
 		
 		com->cubbys[0].code = code;
-		com->vm = vm;
 		
-		com->ct.vars[0].size = -1;
-		com->ct.vars[0].v.i = 1;
-		com->ct.vars[1].size = -1;
-		com->ct.vars[1].v.i = 2;
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
 		
 		com->vt.vars[0].size =-1;
 		com->vt.vars[0].v.i = 0;

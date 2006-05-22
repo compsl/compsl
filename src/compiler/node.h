@@ -9,9 +9,6 @@
 #define CSL_FLOAT 2;
 #define CSL_INT 1;
 
-VM* cvm;
-compart *ccompart;
-
 typedef struct _node_t
 {
 	char* foo;

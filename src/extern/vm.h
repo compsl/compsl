@@ -58,7 +58,12 @@ int32_t *vm_getInt(VM *vm, const char *name);
 /** add a native function to this vm, return true on success false otherwise
  * sets errno on fail
  */
-bool addFunc(VM *vm, var (*func)(var *)); //TODO work out how to spec params
+typedef struct native_param_t
+{
+	bool isFloat;
+	bool isArray;
+} nativeParam;
+bool addFunc(VM *vm, var (*func)(var *), const char *name, nativeParam *params, uint16_t numParam); //TODO work out how to spec params
 
 #ifdef __cplusplus
 }

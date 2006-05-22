@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "node.h"
 
-
+compart *ccompart;
 
 // gets the ind'th element in lst
 void* list_get(list * lst, int ind) {
@@ -22,22 +22,27 @@ void list_free(list * lst){
 }
 
 
-
+/*
+ * Note: doesnt free anything
+ */
 bytecode* expr_toBc(expression *exp) {
 	if(exp->isLiteral) {
 		bytecode* bc = malloc(sizeof(bytecode)*(2));
-		bc[0].code=BC_PUSH;
-		char hm[6];
-		hm[5]=0;
-		hm[4]=(exp->isFloat)?1:0;
-		*((float*)(&hm)) = exp->val.fl;
+		
+		bc[0].code=BC_CPUSH;
+		
+		intfloat tmp;
 		if(exp->isFloat)
-			(*com_addFloat(ccompart, hm))=exp->val.fl;
+		{
+			tmp.f = exp->val.fl;
+		}
 		else 
-			(*com_addFloat(ccompart, hm))=exp->val.in;
-			
-			
-		//TODO: push onto stack
+		{
+			tmp.i = exp->val.in;
+		}
+		bc[0].a1 = com_addConst(ccompart , tmp); 
+		bc[1].code=BC_NONO;
+		return bc;
 	}
 	else {
 		return exp->val.bcode;

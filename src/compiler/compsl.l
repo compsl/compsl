@@ -16,9 +16,6 @@ extern compart *ccompart;
    
 \/\/.*\n		{}; /*comment*/
 declare		{
-	cvm =createVM();
-	ccompart = createComp();
-	ccompart->vm=cvm;
 	return DECLARE;
 }
 cubbyhole	{

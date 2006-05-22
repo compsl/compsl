@@ -13,14 +13,17 @@
  *  3. write other stuff
  */
  
-compart *createComp(void)
+compart *createComp(VM *vm)
 {
 	compart *tmp = (compart *)malloc(sizeof(compart));
     if(tmp == NULL)
         return NULL;
 	
 	varTableCreate(&(tmp->vt), COMPART_MAX_VARS);
-	varTableCreate(&(tmp->ct), COMPART_MAX_CONSTS);
+	//varTableCreate(&(tmp->ct), COMPART_MAX_CONSTS);
+    tmp->numConst = 0;
+    
+    tmp->vm = vm;
     
     tmp->errorno = COMPSL_NOERR;
     
@@ -29,7 +32,7 @@ compart *createComp(void)
 void destroyComp(compart *c)
 {
 	varTableDestroy(&(c->vt));
-	varTableDestroy(&(c->ct));
+	//varTableDestroy(&(c->ct));
 	
 	free(c);
 }
@@ -66,4 +69,16 @@ int32_t *com_addInt(compart *com, const char *name)
 	}
 	else
 		return NULL;
+}
+
+int16_t com_addConst(compart *com, intfloat val)
+{
+	for(int i = 0; i < com->numConst; i++)
+	{
+		if((com->cons[i].v.i) == val.i)
+			return i;
+	}
+	
+	com->cons[com->numConst].v = val;
+	com->numConst ++;
 }

@@ -15,7 +15,9 @@ extern "C" {
 typedef struct _COMPART_t
 {
     varTable vt;
-    varTable ct;
+    //varTable ct;
+    var cons[COMPART_MAX_CONSTS];
+    uint16_t numConst;
     
     struct
     {
@@ -28,7 +30,7 @@ typedef struct _COMPART_t
     COMPSL_ERROR errorno; // error code of last error produced by this compartment
 } compart;
 
-compart *createComp(void);
+compart *createComp(VM *vm);
 void destroyComp(compart *);
 
 float *com_addFloat(compart *, const char *name);

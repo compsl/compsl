@@ -1,5 +1,6 @@
 #ifndef COMPSL_H_
 #define COMPSL_H_
+#include <stdbool.h>
 #include "vm.h"
 #include "compart.h"
 #include "var.h"

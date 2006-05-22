@@ -89,7 +89,7 @@ static void *jmptbl[] =
 	intfloat tmp;
 	
 	var *lvs = com->vt.vars;
-	var *lcs = com->ct.vars;
+	var *lcs = com->cons;
 	var *gvs = com->vm->vt.vars;
 	
 	bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
@@ -185,7 +185,7 @@ static void *jmptbl[] =
  		tmp.i = sp->i - (sp+1)->i;
  		less = tmp.i < 0;
  		equal = !tmp.i;
- 		greater = tmp.i > 0;
+ 		greater = !less;
  		goto TOP;
  	FADD:
 	 	sp--;
@@ -210,7 +210,7 @@ static void *jmptbl[] =
  		//equal = fabsf(tmp.f) <VM_FLOAT_EPSILON;
  		//equal = fabsf( 1.0f - (sp->f)/((sp + 1)->f)) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
  		equal = fabsf( tmp.f/(sp->f) ) < VM_FLOAT_EPSILON;
- 		greater = tmp.f > 0;
+ 		greater = !less;
  		goto TOP;
  	JMP:
  		pc += pc->sa - 1; // compensate for pc++ at top
@@ -246,8 +246,8 @@ static void *jmptbl[] =
  	FMOD:
  		sp--;	
  		//(sp - 1)->f = (sp - 1)->f - sp->f * truncf((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
- 		//(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
- 		(sp - 1)->f = 42;
+ 		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
+ 		//(sp - 1)->f = 42;
  		//TODO: uncomment above
  		goto TOP;
  	GPSH:

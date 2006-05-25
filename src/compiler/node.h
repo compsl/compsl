@@ -36,8 +36,14 @@ typedef struct _list_t {
 	llist *head;
 } list;
 
+
+int bc_len(bytecode *);
+
+list* list_new();
 void* list_get(list *, int);
 void list_free(list *);
+void list_addToFront(list *, void *);
+void* list_popFromFront(list *);
 
 
 #endif 

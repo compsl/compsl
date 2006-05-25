@@ -134,14 +134,6 @@ void autocast(bool toFloat,expression *e) {
 }
 
 
-int bc_len(bytecode* bc) {
-	int len=0;
-	while(bc->code) {
-		bc++;
-		len++;
-	} 
-}
-
 ///////////////////////////////////////////////////////////////////////
 // END FUNC DECLS
 
@@ -164,9 +156,9 @@ int bc_len(bytecode* bc) {
 %token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD;
 %type <expr> expression math retable;
 %type <ival> cast;
-%type <nval> file header_stuff do_declare cubbys cubby block stmts control else decls decl modifiers ident_list more_ident_list;
-%type <bc> stmt;
-%type <xlist> paramlist;
+%type <nval> file header_stuff do_declare cubbys cubby control else decls decl modifiers ident_list more_ident_list;
+%type <bc> stmt block;
+%type <xlist> paramlist stmts;
 
 %locations
 
@@ -194,29 +186,65 @@ cubby:
 		}
 block:
 		OPENB stmts CLOSEB {
-		
+			
+			int len=0;
+			llist *cur=$2->head;
+			while(cur) {
+				len+=bc_len(cur->obj);
+				cur=cur->next;
+			}
+			
+			bytecode *bck = malloc((len+1)*sizeof(bytecode));
+			while(cur) {
+				size_t curlen=bc_len(cur->obj)*sizeof(bytecode);
+				memcpy(bck, cur->obj, curlen);
+				bck+=curlen;
+				cur=cur->next;
+			}
+			
+			bck->code = BC_NONO;
+			
+			// TODO: Check for sanity
+			// TODO: Reduce bc_len calls
+			// TODO: Check for correct order
+			
+			
+			list_free($2);
+			$$=bck;
 		}
 		|
-		stmt SEMI;
+		stmt SEMI {
+			$$=$1;
+		};
 
+
+/*TODO: WHICH WAY IS PARSING GOING? =+++++++!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!+++++++++++++++++*/
 stmts:
-		stmt SEMI stmts{
-			
+		stmt SEMI stmts {
+			list_addToFront($3,$1);
+			$$=$3;
 		}
 		|
-		control stmts | ;
-stmt:
-		expression {
-			bytecode *code = expr_toBc($1);
-			int l = bc_len(code);
-			
-			code = realloc(code, sizeof(bytecode)*(l+2));
-			code[l].code = BC_DPOP;
-			code[l+1].code = BC_NONO;
-			
-			$$=code;
+		control stmts {
+			list_addToFront($2,$1);
+			$$=$2;
 		}
-		| BREAK
+		| 
+		{
+			$$=list_new();
+		};
+stmt:
+  		expression {
+		  bytecode *code = expr_toBc($1);
+		  int l = bc_len(code);
+			
+		  code = realloc(code, sizeof(bytecode)*(l+2));
+		  code[l].code = BC_DPOP;
+		  code[l+1].code = BC_NONO;
+		  
+		  $$=code;
+		}
+                | BREAK
 		;
 		
 expression:

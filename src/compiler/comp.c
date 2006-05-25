@@ -3,6 +3,13 @@
 
 compart *ccompart;
 
+list* list_new(void) {
+	list *lst = malloc(sizeof(list));
+	lst->length=0;
+	lst->head=0;
+	return lst;
+}
+
 // gets the ind'th element in lst
 void* list_get(list * lst, int ind) {
 	llist *root = lst->head;
@@ -16,9 +23,38 @@ void* list_get(list * lst, int ind) {
 	return 0;
 }
 	
-void list_free(list * lst){
+void list_free(list *lst){
 	//TODO: memory leak here
 	free(lst);
+}
+
+void list_addToFront(list *lst, void *newOb) {
+	llist *newL = malloc(sizeof(llist));
+	newL->obj=newOb;
+	newL->next=lst->head;
+	lst->head=newL;
+	lst->length++;
+}
+
+
+void* list_popFromFront(list *lst) {
+	if(lst->length<=0) return 0;
+	void *r=lst->head->obj;
+	llist *oldHead=lst->head;
+	lst->head=oldHead->next;
+	lst->length--;
+	free(oldHead);
+	return r;
+}
+
+
+
+int bc_len(bytecode* bc) {
+	int len=0;
+	while(bc->code!=BC_NONO) {
+		bc++;
+		len++;
+	} 
 }
 
 

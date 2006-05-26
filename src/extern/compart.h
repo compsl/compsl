@@ -18,6 +18,7 @@ typedef struct _COMPART_t
     //varTable ct;
     var cons[COMPART_MAX_CONSTS];
     uint16_t numConst;
+    uint16_t numCubbys;
     
     struct
     {
@@ -32,6 +33,9 @@ typedef struct _COMPART_t
 
 compart *createComp(VM *vm);
 void destroyComp(compart *);
+
+void com_addCubby(compart *, void *code, const char *name);
+void com_prStats(compart *);
 
 float *com_addFloat(compart *, const char *name);
 int32_t *com_addInt(compart *, const char *name);

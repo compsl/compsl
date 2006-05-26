@@ -1,12 +1,16 @@
 #include <stdio.h>
+#include "../extern/vm.h"
+#include "../extern/compart.h"
+#include "../extern/compsl.h"
 
-
-int goparse(char* fn);
+int goparse(char* fn, compart *);
 
 int main()
 {
-	printf("\nRunning compiler tests\n");
+	printf("\nCompiler tests\nCompiling..\n");
 	// fill this in
+	
+	const int NUM_FILES=2;
 	
 	char * files[] = 
 	{
@@ -19,12 +23,35 @@ int main()
 		"src/test/flow-control.csl"
 	};
 	  
-	for(int i=0;i<5;i++) {
+	  
+	VM *veem = createVM();
+	compart *com[NUM_FILES];
+
+	for(int i=0;i<NUM_FILES;i++) {
 		printf("Parsing: %s  ",files[i]);
+		
+		com[i] = createComp(veem);
 		fflush(stdout);
-		goparse(files[i]);
-		printf(":-)\n");
+		goparse(files[i], com[i]);
+
+		printf("\t:-)");
+		
+		printf("\t< "); 
+		com_prStats(com[i]);
+		printf(">\n");
+		
+
 	}
+	
+	puts("\nRunning some cubbys..");
+	
+	runCubbyhole(com[1], 0); 
+	
+	//TODO free com's
+	
+	destroyVM(veem);
+	
+	
 	
 	return 0;
 }

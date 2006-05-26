@@ -22,6 +22,7 @@ compart *createComp(VM *vm)
 	varTableCreate(&(tmp->vt), COMPART_MAX_VARS);
 	//varTableCreate(&(tmp->ct), COMPART_MAX_CONSTS);
     tmp->numConst = 0;
+    tmp->numCubbys = 0;
     
     tmp->vm = vm;
     
@@ -81,4 +82,17 @@ int16_t com_addConst(compart *com, intfloat val)
 	
 	com->cons[com->numConst].v = val;
 	com->numConst ++;
+}
+
+void com_addCubby(compart *com, void *code, const char *name) {
+	com->cubbys[com->numCubbys].code = code;
+	com->cubbys[com->numCubbys].name = name;	
+	com->numCubbys++;
+}
+
+void com_prStats(compart *com){
+	for(int i=0;i<com->numCubbys;i++) {
+		printf("(%s, %i) ",com->cubbys[i].name, bc_len(com->cubbys[i].code))	;
+	}	
+	
 }

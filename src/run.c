@@ -80,9 +80,11 @@ static void *jmptbl[] =
  	&&SFTR,
  //misc
  	&&PYES,
+ 	&&NONO,
  	&&END,
  	&&HLT,
  	&&DBG
+
  };
 	intfloat stack[VM_STACK_SIZE];
 	intfloat *sp = stack; // stack pointer
@@ -246,7 +248,9 @@ static void *jmptbl[] =
  	FMOD:
  		sp--;	
  		//(sp - 1)->f = (sp - 1)->f - sp->f * truncf((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
+#ifndef DEBUG
  		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
+#endif
  		//(sp - 1)->f = 42;
  		//TODO: uncomment above
  		goto TOP;
@@ -309,7 +313,8 @@ static void *jmptbl[] =
  		if(pc->a1) {puts("YES");}
  		else { puts("NO"); }
  		goto TOP;
- 	
+ 	NONO:
+		puts("OMG WTF NO!!!");	
  	END:
  	HLT:
  		return;

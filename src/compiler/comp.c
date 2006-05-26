@@ -51,10 +51,15 @@ void* list_popFromFront(list *lst) {
 
 int bc_len(bytecode* bc) {
 	int len=0;
-	while(bc->code!=BC_NONO) {
+	while(bc->code!=BC_NONO&&bc->code!=BC_END) {
 		bc++;
 		len++;
+		if(len>20000) {
+			puts("Non null terminated bytecode string, dying");
+			exit(4);
+		}
 	} 
+	return len;
 }
 
 

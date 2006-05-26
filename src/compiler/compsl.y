@@ -179,10 +179,7 @@ cubbys:
 		cubby cubbys | ;
 cubby:
 		CUBBY IDENTIFIER block {
-			
-			//printf("Cubby declared: %s\n",$2); 
-			
-			
+			com_addCubby(ccompart, $3, $2);
 		}
 block:
 		OPENB stmts CLOSEB {
@@ -195,22 +192,32 @@ block:
 			}
 			
 			bytecode *bck = malloc((len+1)*sizeof(bytecode));
-			while(cur) {
-				size_t curlen=bc_len(cur->obj)*sizeof(bytecode);
-				memcpy(bck, cur->obj, curlen);
-				bck+=curlen;
-				cur=cur->next;
+			bytecode *bcko = bck; 
+
+			if(0==bck) {
+				puts("Out of memory");
+				exit(345234);
 			}
 			
-			bck->code = BC_NONO;
+			cur=$2->head;
+			
+			while(cur) {
+				size_t curlen=bc_len(cur->obj);
+				memcpy(bck, cur->obj, curlen*sizeof(bytecode));
+				bck+=curlen;
+				cur=cur->next;
+
+			}
+
+
+			bck->code = BC_END;
 			
 			// TODO: Check for sanity
 			// TODO: Reduce bc_len calls
 			// TODO: Check for correct order
 			
-			
 			list_free($2);
-			$$=bck;
+			$$=bcko;
 		}
 		|
 		stmt SEMI {
@@ -244,7 +251,8 @@ stmt:
 		  
 		  $$=code;
 		}
-                | BREAK
+        | 
+        BREAK
 		;
 		
 expression:
@@ -259,9 +267,10 @@ expression:
 			
 			//Special case for debugging
 			if($1[0]=='y'&& $1[1]=='e' && $1[2]=='s' && $1[3]==0) {
-				bytecode *mcode = malloc(sizeof(bytecode));
-				mcode->code = BC_PYES;
-				mcode->a1 =1;
+				bytecode *mcode = malloc(2*sizeof(bytecode));
+				mcode[0].code = BC_PYES;
+				mcode[0].a1 =1;
+				mcode[1].code=BC_NONO;
 				ex->val.bcode=mcode;
 			}
 			else {

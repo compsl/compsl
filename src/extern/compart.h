@@ -20,7 +20,7 @@ typedef struct _COMPART_t
     uint16_t numConst;
     uint16_t numCubbys;
     
-    struct
+    struct _CUBBY_t
     {
     	void *code; // pointer to the bytecode of this cubby
     	char *name; // name of this cubby
@@ -42,6 +42,8 @@ int32_t *com_addInt(compart *, const char *name);
 
 float *com_getFloat(compart *, const char *name);
 int32_t *com_getInt(compart *, const char *name);
+
+uint16_t getCubbyID(compart *, const char *name);
 
 #ifdef __cplusplus
 }

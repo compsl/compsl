@@ -24,6 +24,12 @@ compart *createComp(VM *vm)
     tmp->numConst = 0;
     tmp->numCubbys = 0;
     
+    for(int i = 0; i < COMPART_MAX_CUBBYS; i++)
+    {
+    	tmp->cubbys[i].code = NULL;
+    	tmp->cubbys[i].name = NULL;
+    }
+    
     tmp->vm = vm;
     
     tmp->errorno = COMPSL_NOERR;
@@ -34,8 +40,28 @@ void destroyComp(compart *c)
 {
 	varTableDestroy(&(c->vt));
 	//varTableDestroy(&(c->ct));
-	
+
+	for(int i = 0; i < COMPART_MAX_CUBBYS && tmp->cubbys[i].code != NULL;; i++)
+    {
+    	free(tmp->cubbys[i].code);
+    	free(tmp->cubbys[i].name);
+    }
+    
+    
 	free(c);
+}
+
+int16_t getCubbyID(compart *, const char *name)
+{
+	int i;
+	
+	for(i = 0; i < COMPART_MAX_CUBBYS && tmp->cubbys[i].code != NULL;; i++)
+	{
+		if(!strcmp(name, tmp->cubbys[i].name)
+			return i; 
+	}
+	
+	return -1; // not found
 }
 
 float *com_getFloat(compart *com, const char *name)

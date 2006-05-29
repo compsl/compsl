@@ -13,7 +13,7 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-DEBUG=1
+#DEBUG=1
 
 CC=gcc
 CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99
@@ -43,7 +43,7 @@ FB_COMPILER_SRCS=$(CMPLRPATH)/lex.yy.c $(CMPLRPATH)/compsl.tab.c
 
 SOURCES :=  $(REG_SRCS) $(FB_COMPILER_SRCS)
 OBJECTS := $(SOURCES:.c=.o)
-#DEPS := $(SOURCES:.c=.d)
+DEPS := $(SOURCES:.c=.d)
 
 
 TESTSRCS := $(addprefix src/test/,test-interp.c test-comp.c test-api.c)
@@ -54,13 +54,13 @@ STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
 #TARGETS
-all:  common static dynamic 
+all: common static dynamic 
 
-common: derived depend compile
+common: derived deps compile
 
 
-depend: $(SOURCES)
-	makedepend -fDependfile -- $(CFLAGS) -- $(SOURCES)
+#depend: $(SOURCES)
+#	makedepend -fDependfile -- $(CFLAGS) -- $(SOURCES)
 
 derived: $(FB_COMPILER_SRCS)
 
@@ -91,11 +91,12 @@ maketestonly: $(TESTOBJS) static
 
 # INTERNAL TARGETS
 
-include Dependfile
+#include Dependfile
 
-#$(DEPS): $(SOURCES)
-#	$(CC) $(CFLAGS) -MM -MG $< -MF $@
-
+deps: $(DEPS)
+$(DEPS): $(SOURCES)
+	$(CC) $(CFLAGS) -MM -MG $< -MF $@
+include $(DEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c

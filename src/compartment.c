@@ -5,6 +5,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
 
 /*
  * TODO: 
@@ -41,23 +42,23 @@ void destroyComp(compart *c)
 	varTableDestroy(&(c->vt));
 	//varTableDestroy(&(c->ct));
 
-	for(int i = 0; i < COMPART_MAX_CUBBYS && tmp->cubbys[i].code != NULL;; i++)
+	for(int i = 0; i < COMPART_MAX_CUBBYS && c->cubbys[i].code != NULL; i++)
     {
-    	free(tmp->cubbys[i].code);
-    	free(tmp->cubbys[i].name);
+    	free(c->cubbys[i].code);
+    	free(c->cubbys[i].name);
     }
     
     
 	free(c);
 }
 
-int16_t getCubbyID(compart *, const char *name)
+int16_t getCubbyID(compart *com, const char *name)
 {
 	int i;
 	
-	for(i = 0; i < COMPART_MAX_CUBBYS && tmp->cubbys[i].code != NULL;; i++)
+	for(i = 0; i < COMPART_MAX_CUBBYS && com->cubbys[i].code != NULL; i++)
 	{
-		if(!strcmp(name, tmp->cubbys[i].name)
+		if(!strcmp(name, com->cubbys[i].name))
 			return i; 
 	}
 	
@@ -112,7 +113,7 @@ int16_t com_addConst(compart *com, intfloat val)
 
 void com_addCubby(compart *com, void *code, const char *name) {
 	com->cubbys[com->numCubbys].code = code;
-	com->cubbys[com->numCubbys].name = name;	
+	com->cubbys[com->numCubbys].name = name;
 	com->numCubbys++;
 }
 

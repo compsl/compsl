@@ -273,6 +273,13 @@ expression:
 				mcode[1].code=BC_NONO;
 				ex->val.bcode=mcode;
 			}
+			else if($1[0]=='n'&& $1[1]=='o' && $1[3]==0) {
+				bytecode *mcode = malloc(2*sizeof(bytecode));
+				mcode[0].code = BC_PYES;
+				mcode[0].a1 =0;
+				mcode[1].code=BC_NONO;
+				ex->val.bcode=mcode;			
+			}
 			else {
 				symbolinfo foo = searchSym($1,ccompart);
 				if(foo.id!=0 && !foo.isvar) {

@@ -2,11 +2,12 @@
 #John's hackish general purpose makefile hacked up - 17Mar06
 #
 #
-# Build compsl into a library 
+# Build compsl
 #
 #
 #Links
 # http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
+# http://www.cs.berkeley.edu/~smcpeak/autodepend/autodepend.html
 
 #TODO: figure out how to make the test link against version of the lib with debug
 # symbols but also have optimizations in the release worthy stuff ie: end up with two
@@ -35,37 +36,36 @@ CMPLRPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-#All sources except test and flex/bison generated sources
-REG_SRCS=src/compartment.c  src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c
+REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c
 
-#Derived srcs
-FB_COMPILER_SRCS=$(CMPLRPATH)/lex.yy.c $(CMPLRPATH)/compsl.tab.c
-
-SOURCES :=  $(REG_SRCS) $(FB_COMPILER_SRCS)
+DERIVED_SRCS=$(CMPLRPATH)/lex.yy.c $(CMPLRPATH)/compsl.tab.c
+DERIVED_FILES=$(DERIVED_SRCS) src/compiler/compsl.tab.h 
+SOURCES := $(REG_SRCS) $(DERIVED_SRCS)
 OBJECTS := $(SOURCES:.c=.o)
-DEPS := $(SOURCES:.c=.d)
-
 
 TESTSRCS := $(addprefix src/test/,test-interp.c test-comp.c test-api.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
+
+DEPS := $(SOURCES:.c=.d) $(TESTSRCS:.c=.d) 
+
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
 STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
-#TARGETS
+################################
+#TARGETS                       #
+################################
+
 all: common static dynamic 
 
-common: derived deps compile
+common: derived compile
 
-
-#depend: $(SOURCES)
-#	makedepend -fDependfile -- $(CFLAGS) -- $(SOURCES)
-
-derived: $(FB_COMPILER_SRCS)
+derived: $(DERIVED_SRCS)
 
 clean:
-	rm -f $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*) src/compiler/compsl.tab.h src/compiler/compsl.tab.c src/compiler/lex.yy.c
+	rm -f $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
+		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES)
 	         
 compile: $(SOURCES) $(OBJECTS)
 
@@ -81,28 +81,28 @@ test: maketestonly
 		$$test; \
 	done
 	
-# make test executibles, assumes that all tests are single object/source file
-# linked to libcompsl.a
+#Assumes that all tests are single object/source file linked to libcompsl.a
 maketestonly: $(TESTOBJS) static
 	for obj in $(TESTOBJS); do \
 		$(CC) -static $$obj -Lbin -l$(SHORTLIB) -o bin/$$(basename $$obj .o); \
 	done
 
 
-# INTERNAL TARGETS
+################################
+# INTERNAL TARGETS             #
+################################
 
-#include Dependfile
-
-deps: $(DEPS)
-$(DEPS): $(SOURCES)
-	$(CC) $(CFLAGS) -MM -MG $< -MF $@
-include $(DEPS)
-
+#Dash makes it not error if not found
+-include $(DEPS)
+	
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
 	$(CC) -c $(CFLAGS) -fno-gcse $< -o $@
-.c.o:
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -MM $(CFLAGS) src/run.c > src/run.d
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $*.c -o $*.o
+	$(CC) -MM $(CFLAGS) $*.c > $*.d
 
 $(STATIC_LIB_OUT):
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
@@ -111,7 +111,9 @@ $(DYN_LIB_OUT):
 	$(CC) -shared -Wl,-soname,$(LIBNAME).so.1 -o $(DYN_LIB_OUT)  $(OBJECTS)
 
 
-# FLEX/BISON TARGETS
+################################
+# FLEX/BISON TARGETS           #
+################################
 $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/lex.yy.c
 	flex -o$@ $<
@@ -121,5 +123,13 @@ $(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
 	bison -d $< -o $@
 
 
-#$(CMPLRPATH)/compsl.tab.h: 
-#$(CMPLRPATH)/compsl.tab.c
+################################
+# OLD                          #
+################################
+#$(DEPS): $(SOURCES)
+#	$(CC) $(CFLAGS) -MM -MG $< -MF $@
+
+#.c.o:
+#	$(CC) -c $(CFLAGS) $< -o $@
+
+	

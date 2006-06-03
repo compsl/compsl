@@ -3,6 +3,11 @@
 
 compart *ccompart;
 
+
+void internalCompileError(char* str) {
+	compileError(sprintf("Internal error: %s",str));	
+}
+
 list* list_new(void) {
 	list *lst = malloc(sizeof(list));
 	lst->length=0;
@@ -17,7 +22,7 @@ void* list_get(list * lst, int ind) {
 		root=root->next;
 	}
 	if(root!=0) { 
-		if(ind>=lst->length) {puts("ERROR in list_get"); }
+		if(ind>=lst->length) { internalCompileError("Internal error in list_get"); }
 		return root->obj;
 	}
 	return 0;
@@ -55,13 +60,29 @@ int bc_len(bytecode* bc) {
 		bc++;
 		len++;
 		if(len>20000) {
-			puts("Non null terminated bytecode string, dying");
+			internalCompileError("Non null terminated bytecode string");
 			exit(4);
 		}
 	} 
 	return len;
 }
 
+
+void autocast(bool toFloat,expression *e) {
+	if(e->isLiteral) {
+		if( toFloat && !e->isFloat) {
+			e->val.fl = (float)e->val.in;
+			e->isFloat=true;
+		}
+		else if(!toFloat && e->isFloat) {
+			e->val.in = (int)e->val.fl;
+			e->isFloat=false;
+		} 
+	}
+	else {
+		internalCompileError("Casting not fully implemented yet");
+	}
+}
 
 /*
  * Note: doesnt free anything

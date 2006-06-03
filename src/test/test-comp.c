@@ -10,7 +10,7 @@ int main()
 	printf("\nCompiler tests\nCompiling..\n");
 	// fill this in
 	
-	const int NUM_FILES=2;
+	const int NUM_FILES=3;
 	
 	char * files[] = 
 	{

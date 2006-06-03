@@ -5,8 +5,8 @@ declare
 
 cubbyhole testing
 {
+	yes(123);
 	yes();
-	yes();
-	no();
+	no(23423,nothing, test);
 } 
 

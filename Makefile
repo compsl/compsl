@@ -1,13 +1,14 @@
-#
-#John's hackish general purpose makefile hacked up - 17Mar06
-#
-#
-# Build compsl
-#
+
+
+#################################
+# Build compsl                  #
+#################################
+#Created: 17Mar06
 #
 #Links
 # http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
 # http://www.cs.berkeley.edu/~smcpeak/autodepend/autodepend.html
+# http://www.gnu.org/software/make/manual/make.html
 
 #TODO: figure out how to make the test link against version of the lib with debug
 # symbols but also have optimizations in the release worthy stuff ie: end up with two

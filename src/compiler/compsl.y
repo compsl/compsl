@@ -30,7 +30,9 @@ int goparse(char* fn, compart *com) {
 	ccompart = com;
 	yyin = fopen( fn, "r" );
 	yyrestart(yyin);
+	sprt=malloc(1024 * sizeof(char));
 	return yyparse(fn);
+	
 }
 
 void yyerror(const char *fn, const char *msg) {
@@ -107,7 +109,12 @@ expression* bin_op(int op,expression* a, expression* b) {
 expression* resolveVar(char* name) {
 	symbolinfo foo = searchSym(name,ccompart);
 
-	if(foo.id!=0 && foo.isvar) {
+	if(foo.id==-1) {
+		compileError(sprintf(sprt,"Symbol \"%s\" not resolved\nexiting.\n",name));
+		exit(1);
+	}
+	
+	if(foo.isvar) {
 		expression *ex = malloc(sizeof(expression));
 		ex->isLiteral=false;
 		ex->isFloat=foo.isfloat;
@@ -117,20 +124,10 @@ expression* resolveVar(char* name) {
 	return 0;
 }
 
-void autocast(bool toFloat,expression *e) {
-	if(e->isLiteral) {
-		if( toFloat && !e->isFloat) {
-			e->val.fl = (float)e->val.in;
-			e->isFloat=true;
-		}
-		else if(!toFloat && e->isFloat) {
-			e->val.in = (int)e->val.fl;
-			e->isFloat=false;
-		} 
-	}
-	else {
-		puts("Casting not fully implemented yet");
-	}
+void compileError(char *str) {
+	fprintf(stderr,"Compile error: %s",str);
+	exit(1);
+	//TODO: make friendly
 }
 
 
@@ -158,7 +155,7 @@ void autocast(bool toFloat,expression *e) {
 %type <ival> cast;
 %type <nval> file header_stuff do_declare cubbys cubby control else decls decl modifiers ident_list more_ident_list;
 %type <bc> stmt block;
-%type <xlist> paramlist stmts;
+%type <xlist> paramlist stmts moreparamlist;
 
 %locations
 
@@ -289,8 +286,7 @@ expression:
 					//TODO: check var list
 				}
 				else {
-					printf("Function %s does not exist",$1);
-					
+					compileError(sprintf("Function %s does not exist",$1));
 				}
 			}
 			list_free($3);
@@ -314,15 +310,27 @@ expression:
 		}
 		
 		
-
+/*TODO: direction*/
 paramlist:
-		expression moreparamlist
+		moreparamlist {
+			$$=$1
+		}
 		|
+		{
+			$$= list_new();
+		}
 		;
-		
-moreparamlist:
-		COMA expression  moreparamlist
-		|
+
+moreparamlist:	
+		expression COMA moreparamlist {
+			list_addToFront($3,$1);
+			$$=$3;
+		}
+		| expression {
+			list *lst = list_new();
+			list_addToFront(lst,$1);
+			$$=lst;
+		}
 		;
 
 cast: 
@@ -409,7 +417,7 @@ retable:
 			a->isLiteral=false;
 			symbolinfo si = searchSym($1,ccompart);
 			if(si.id==0) {
-				printf("The variable \"%s\" is used but not declared",$1);
+				compileError(sprintf("The variable \"%s\" is used but not declared",$1));
 			}
 			else {
 				a->isFloat=si.isfloat;

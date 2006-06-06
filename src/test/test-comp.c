@@ -10,7 +10,7 @@ int main()
 	printf("\nCompiler tests\nCompiling..\n");
 	// fill this in
 	
-	const int NUM_FILES=3;
+	const int NUM_FILES=5;
 	
 	char * files[] = 
 	{
@@ -28,7 +28,7 @@ int main()
 	compart *com[NUM_FILES];
 
 	for(int i=0;i<NUM_FILES;i++) {
-		printf("Parsing: %s  ",files[i]);
+		printf("Compiling: %s  ",files[i]);
 		
 		com[i] = createComp(veem);
 		fflush(stdout);

@@ -1,6 +1,7 @@
 declare
 {
-
+	int nothing;
+	float  test;
 } 
 
 cubbyhole testing

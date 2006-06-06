@@ -49,8 +49,8 @@ void destroyVM(VM *vm);
 
 //NOTE: the string of the name of new vars is copyed and the copy is retained by the VM
 //      for the purpose of identifying the variable. Same goes for native functions.
-float *vm_addFloat(VM *vm, const char *name);// add a float to the vm's global vars, and return a pointer to it
 int32_t *vm_addInt(VM *vm, const char *name);
+float *vm_addFloat(VM *vm, const char *name);// add a float to the vm's global vars, and return a pointer to it
 
 float *vm_getFloat(VM *vm, const char *name);
 int32_t *vm_getInt(VM *vm, const char *name);

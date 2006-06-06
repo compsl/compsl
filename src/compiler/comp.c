@@ -5,7 +5,8 @@ compart *ccompart;
 
 
 void internalCompileError(char* str) {
-	compileError(sprintf("Internal error: %s",str));	
+	sprintf(sprt,"Internal error: %s",str);
+	compileError(sprt);	
 }
 
 list* list_new(void) {
@@ -59,7 +60,7 @@ int bc_len(bytecode* bc) {
 	while(bc->code!=BC_NONO&&bc->code!=BC_END) {
 		bc++;
 		len++;
-		if(len>20000) {
+		if(len>10000) {
 			internalCompileError("Non null terminated bytecode string");
 			exit(4);
 		}
@@ -89,8 +90,8 @@ void autocast(bool toFloat,expression *e) {
  */
 bytecode* expr_toBc(expression *exp) {
 	if(exp->isLiteral) {
-		bytecode* bc = malloc(sizeof(bytecode)*(2));
-		
+		bytecode* bc = malloc(sizeof(bytecode)*2);
+		if(bc==0) internalCompileError("Out of memory");
 		bc[0].code=BC_CPUSH;
 		
 		intfloat tmp;

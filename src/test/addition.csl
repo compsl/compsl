@@ -1,7 +1,7 @@
 
 declare
 {
-
+	int a;
 } 
 
 cubbyhole testing

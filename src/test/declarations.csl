@@ -5,12 +5,12 @@
 
 declare
 {
-	int fsdf;
-	float asdf;
-	int sadf;
-	float sadf,s_sdafsf;
-	global int sadfs,sfasdf,sadfsfd,sadf;
-	global float ya;
+	int a;
+	float b;
+	int sa3df;
+	float sa4df, s_s5dafsf;
+	global int sad6fs,sf7asdf,s8adfsfd,sa9df;
+	global float y0a;
 }
 
 cubbyhole init

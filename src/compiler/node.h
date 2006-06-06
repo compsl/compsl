@@ -48,7 +48,7 @@ void* list_popFromFront(list *);
 void compileError(char *str);
 void autocast(bool toFloat,expression *e);
 
-char *sprt;
+extern char *sprt;
 
 
 #endif 

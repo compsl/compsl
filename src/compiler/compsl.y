@@ -25,6 +25,7 @@
 
 extern FILE *yyin;
 extern compart *ccompart;
+char *sprt;
 
 int goparse(char* fn, compart *com) {
 	ccompart = com;
@@ -67,8 +68,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 		else if(op==MINUS)
 			a->val.in-=b->val.in;
 		else {
-			puts("Unknown op");
-			exit(1); //TODO: this
+			internalCompileError("Unknown operator in bin_lit_op()");
 		}
 		free(b);
 		return a;
@@ -106,26 +106,38 @@ expression* bin_op(int op,expression* a, expression* b) {
 
 // More helpers
 
-expression* resolveVar(char* name) {
+expression* readVar(char* name) {
 	symbolinfo foo = searchSym(name,ccompart);
 
 	if(foo.id==-1) {
-		compileError(sprintf(sprt,"Symbol \"%s\" not resolved\nexiting.\n",name));
+		sprintf(sprt,"Symbol \"%s\" not resolved\nexiting.\n",name);
+		compileError(sprt);
 		exit(1);
 	}
 	
 	if(foo.isvar) {
 		expression *ex = malloc(sizeof(expression));
+		bytecode *bc = malloc(2*sizeof(bytecode));
+		if(!foo.local) {
+			bc->code = BC_GPSH;
+			// TODO: args
+		}
+		else {
+			bc->code = BC_PUSH;
+			// TODO: args
+		}
+		bc[1].code = BC_NONO;
+		ex->val.bcode=bc;
 		ex->isLiteral=false;
 		ex->isFloat=foo.isfloat;
+		
 		return ex;
 	}
-	//TODO: resolveVar
 	return 0;
 }
 
 void compileError(char *str) {
-	fprintf(stderr,"Compile error: %s",str);
+	fprintf(stderr,"Compile error: %s\n",str);
 	exit(1);
 	//TODO: make friendly
 }
@@ -150,12 +162,12 @@ void compileError(char *str) {
 %token <fval> FLOAT_LIT;
 %token <ival> INT_LIT; 
 %token <sval> IDENTIFIER;
-%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD;
+%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS;
 %type <expr> expression math retable;
-%type <ival> cast;
-%type <nval> file header_stuff do_declare cubbys cubby control else decls decl modifiers ident_list more_ident_list;
+%type <ival> cast post_modifier intfloat_keyword;
+%type <nval> file header_stuff do_declare cubbys cubby control else decl modifiers;
 %type <bc> stmt block;
-%type <xlist> paramlist stmts moreparamlist;
+%type <xlist> paramlist stmts moreparamlist decls ident_list more_ident_list;
 
 %locations
 
@@ -192,8 +204,7 @@ block:
 			bytecode *bcko = bck; 
 
 			if(0==bck) {
-				puts("Out of memory");
-				exit(345234);
+				internalCompileError("Out of memory");
 			}
 			
 			cur=$2->head;
@@ -286,7 +297,8 @@ expression:
 					//TODO: check var list
 				}
 				else {
-					compileError(sprintf("Function %s does not exist",$1));
+					sprintf("Function %s does not exist",$1);
+					compileError(sprt);
 				}
 			}
 			list_free($3);
@@ -298,8 +310,8 @@ expression:
 		}
 		|
 		IDENTIFIER ASSIGN expression {
-			expression *lhs = resolveVar($1);
-			autocast(lhs->isFloat,$3);
+			//expression *lhs = resolveVar($1);
+			//autocast(lhs->isFloat,$3);
 			
 			//TODO: here			
 		}
@@ -413,17 +425,18 @@ math:
 		
 retable:
 		IDENTIFIER {
-			expression *a = malloc(sizeof(expression));
-			a->isLiteral=false;
-			symbolinfo si = searchSym($1,ccompart);
-			if(si.id==0) {
-				compileError(sprintf("The variable \"%s\" is used but not declared",$1));
-			}
-			else {
-				a->isFloat=si.isfloat;
-			}
+			//expression *a = malloc(sizeof(expression));
+//			a->isLiteral=false;
+	//		symbolinfo si = searchSym($1,ccompart);
+		//	if(si.id==0) {
+			//	sprintf("The variable \"%s\" is used but not declared",$1);
+				//compileError(sprt);
+//			}
+	//		else {
+		//		a->isFloat=si.isfloat;
+			//}
 			// TODO set bytecode 
-			$$=a;
+			$$=readVar($1);
 		}
 		| 
 		FLOAT_LIT { 
@@ -462,20 +475,99 @@ decls:
 		decl SEMI decls | ;
 			
 decl:	
-		modifiers INT ident_list
-		|
-		modifiers FLOAT ident_list 
-		;
+		modifiers intfloat_keyword ident_list post_modifier {
+			if($1) {
+				if($2) {
+					char* iden;
+					while(iden = (char*)list_popFromFront($3)) {
+						vm_addFloat(ccompart->vm,iden);
+						free(iden);
+					}
+				}
+				else {
+					char* iden;
+					while(iden = (char*)list_popFromFront($3)) {
+						vm_addInt(ccompart->vm,iden);
+						free(iden);
+					}
+				}
+			}
+			else {
+				if($2) {
+					char* iden;
+					while(iden = (char*)list_popFromFront($3)) {
+						com_addFloat(ccompart,iden);
+						free(iden);
+					}
+				}
+				else {
+					char* iden;
+					while(iden = (char*)list_popFromFront($3)) {
+						com_addInt(ccompart,iden);
+						free(iden);
+					}
+				}
+			}
+			free($3);
+		};
+		
+		
+intfloat_keyword:
+		INT  { 
+			$$=0; 
+		}
+		| 
+		FLOAT { 
+			$$=1; 
+		};
 		
 modifiers:
-		GLOBAL | ;
+		GLOBAL { 
+			$$=1; 
+		}
+		|  {
+			$$=0;
+		};
+
+post_modifier:
+		OPENS expression CLOSES {
+			if(!$2->isLiteral) {
+				compileError("Array declaration with non-literal length\n");
+			}
+			autocast(false,$2);
+			$$ = $2->val.in;
+			if($$<0) {
+				sprintf(sprt, "Array declared with length %i\n",$$);
+				compileError(sprt);
+			}
+			free($2);
+		}
+		| 
+		{
+			$$=-1;
+		}
 
 		
 ident_list:
-		IDENTIFIER more_ident_list;
-more_ident_list:
-		COMA IDENTIFIER more_ident_list
+		more_ident_list {
+			$$=$1
+		}
 		|
+		{
+			$$= list_new();
+		}
+		;
+
+more_ident_list:	
+		IDENTIFIER COMA more_ident_list {
+			list_addToFront($3,$1);
+			$$=$3;
+		}
+		| IDENTIFIER {
+			list *lst = list_new();
+			list_addToFront(lst,$1);
+			$$=lst;
+		}
 		;		
 				
 %%

@@ -36,6 +36,8 @@ return		return RETURN;
 \}			return CLOSEB;
 \(			return OPENP; /*"parenthesis"*/
 \)			return CLOSEP;
+\[			return OPENS;
+\]			return CLOSES;
 \+			return PLUS;
 -			return MINUS;
 \*			return MULT;
@@ -68,9 +70,7 @@ return		return RETURN;
 [_a-zA-Z0-9]+   {
 	yylval.sval = malloc(sizeof(char)*(strlen(yytext)+1));
 	if(yylval.sval==NULL) { 
-		puts("Compiler out of memory\n");
-		// TODO: Use parser's build in error fn 
-		exit(1); 
+		internalCompileError("Out of memory");
 	}
 	strcpy(yylval.sval,yytext);
 	return IDENTIFIER;

@@ -25,7 +25,7 @@ extern "C" {
 typedef struct _nativeFN_t
 {
         char *name; // name of this function
-        var (*func)(var *); // pointer the function to call
+        intfloat (*func)(var *); // pointer the function to call
         
         bool retFloat; // true if the return type is a float false it's int
         

@@ -170,9 +170,9 @@ static void *jmptbl[] =
  		{
  			if(natives[pc->a1].paramFlags[i] & IS_ARRAY)
  				if(pc->a2 == 0)
-	 				natives[pc->a1].params[i] = lvs[*(--sp)];
+	 				natives[pc->a1].params[i] = lvs[(--sp)->i];
 	 			else
-	 				natives[pc->a1].params[i] = gvs[*(--sp)];
+	 				natives[pc->a1].params[i] = gvs[(--sp)->i];
  			else
  				natives[pc->a1].params[i].v = *(--sp);
  		}

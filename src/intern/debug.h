@@ -30,10 +30,5 @@
 #define COMP_DPRINTF(...) 	
 #endif
 
-
-
-
-void dbg_noop(void);
-
 #endif
 

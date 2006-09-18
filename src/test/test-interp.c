@@ -496,6 +496,34 @@ int main()
 		}
 	}
 	
+//	{// CALL
+//		bytecode code[] = 
+//		{ 
+//			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+//			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+//			{.code = BC_CALL, { {.a1= 0} }}, // call
+//			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+//			{.code = BC_END} 
+//		};
+//		com->cubbys[0].code = code;
+//		
+//		com->vt.vars[0].size =-1;
+//		com->vt.vars[0].v.i = 2;
+//		com->vt.vars[1].size =-1;
+//		com->vt.vars[1].v.i = 3;
+//		
+//		com->vm->natives= 
+//		
+//		runCubbyhole(com, 0);
+//		
+//		if(com->vt.vars[0].v.i == 5)
+//			printf("ADD: PASS!\n");
+//		else {
+//			ret = 1;
+//			printf("ADD: FAIL!\n");
+//		}
+//	}
+	
 	//TODO: test APUSH/APOP
 	
 	/*

@@ -94,6 +94,8 @@ static void *jmptbl[] =
 	var *lcs = com->cons;
 	var *gvs = com->vm->vt.vars;
 	
+	nativeFN *natives = com->vm->natives;
+	
 	bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
 	
 	bool less, equal, greater; // comparison flags
@@ -163,8 +165,13 @@ static void *jmptbl[] =
  		*(sp - 2) = tmp;
  		goto TOP;
  	CALL: 
- 	//TODO: writeme
- 		goto UNIMP;
+ 	//TODO: testme
+ 		for(int i=0; i<natives[pc->a1].numParam; i++)
+ 			natives[pc->a1].params[i] = *(--sp);
+ 		*sp = (natives[pc->a1].func)(natives[pc->a1].params);
+ 		sp++;
+ 		
+ 		goto TOP;
  	ADD:
  		sp--;
  		(sp - 1)->i = (sp - 1)->i + sp->i;

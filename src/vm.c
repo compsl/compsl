@@ -45,6 +45,7 @@ void destroyVM(VM *vm)
 			free(vm->natives[i].params);
 			free(vm->natives[i].paramFlags);
 		}
+		free(vm->natives[i].name);
 	}
 	
     free(vm->natives);

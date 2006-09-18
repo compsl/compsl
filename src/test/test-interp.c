@@ -8,6 +8,9 @@
 #include "../intern/bytecode.h"
 #include "../extern/compsl.h"
 
+
+var callTester(var *args); // function called to test CALL bytecode
+
 int main()
 {
 	VM *vm = createVM();
@@ -496,33 +499,37 @@ int main()
 		}
 	}
 	
-//	{// CALL
-//		bytecode code[] = 
-//		{ 
-//			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
-//			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
-//			{.code = BC_CALL, { {.a1= 0} }}, // call
-//			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
-//			{.code = BC_END} 
-//		};
-//		com->cubbys[0].code = code;
-//		
-//		com->vt.vars[0].size =-1;
-//		com->vt.vars[0].v.i = 2;
-//		com->vt.vars[1].size =-1;
-//		com->vt.vars[1].v.i = 3;
-//		
-//		com->vm->natives= 
-//		
-//		runCubbyhole(com, 0);
-//		
-//		if(com->vt.vars[0].v.i == 5)
-//			printf("ADD: PASS!\n");
-//		else {
-//			ret = 1;
-//			printf("ADD: FAIL!\n");
-//		}
-//	}
+	{// CALL
+		bytecode code[] = 
+		{ 
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+			{.code = BC_CALL, { {.a1= 0} }}, // call
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END} 
+		};
+		com->cubbys[0].code = code;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 2;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 3;
+		
+		com->vm->natives[0].func= &callTester;
+		com->vm->natives[0].numParam = 2;
+		com->vm->natives[0].params = malloc(2 * sizeof(var));
+		com->vm->natives[0].paramFlags = malloc(2 * sizeof(uint8_t));
+		com->vm->natives[0].paramFlags[0]=com->vm->natives[0].paramFlags[1]=0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 5)
+			printf("CALL: PASS!\n");
+		else {
+			ret = 1;
+			printf("CALL: FAIL!\n");
+		}
+	}
 	
 	//TODO: test APUSH/APOP
 	
@@ -543,4 +550,12 @@ int main()
 	destroyComp(com);
 	destroyVM(vm);
 	return ret; //return 0 else make's unhappy
+}
+
+var callTester(var *args)
+{
+	var v; 
+	v.v.i = args[0].v.i + args[1].v.i;
+	printf("CALL PART 1 PASS\n\targs: %i %i\n",args[0].v, args[1].v);
+	return v; 
 }

@@ -44,7 +44,7 @@ CMPLRPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c src/debug.c
+REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c
 
 DERIVED_SRCS=$(CMPLRPATH)/lex.yy.c $(CMPLRPATH)/compsl.tab.c
 DERIVED_FILES=$(DERIVED_SRCS) src/compiler/compsl.tab.h 

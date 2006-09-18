@@ -91,7 +91,7 @@ bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *para
 	if(vm->ncnt == VM_NATIVEFN_INIT_SIZE)
 	{
 		//TODO: add setting errno here
-		return FALSE;
+		return false;
 	}
 	
 	vm->natives[vm->ncnt].func = func;
@@ -100,6 +100,6 @@ bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *para
 
 	// add call to john's api here to parse decalaration list
 	
-	return TRUE;
+	return true;
 }
 

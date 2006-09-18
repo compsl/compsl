@@ -3,12 +3,13 @@
 #include "../extern/vm.h"
 #include "../extern/compart.h"
 
-#include "../intern/debug.h"
+//#include "../intern/debug.h"
 
 #ifndef NODE_H_
 #define NODE_H_
 
-#define DPRINTF(...) COMP_DPRINTF(__VA_ARGS__) 
+#define DPRINTF(...) 
+//COMP_DPRINTF(__VA_ARGS__) 
 
 
 #define CSL_FLOAT 2;

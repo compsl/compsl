@@ -17,7 +17,7 @@
 #include "../extern/vm.h"
 #include "../extern/compart.h"
 #include "../intern/bytecode.h"
-#include "../intern/debug.h"
+//#include "../intern/debug.h"
 
 #define YYERROR_VERBOSE 1
 

@@ -63,7 +63,22 @@ typedef struct native_param_t
 	bool isFloat;
 	bool isArray;
 } nativeParam;
-bool addFunc(VM *vm, var (*func)(var *), const char *name, nativeParam *params, uint16_t numParam); //TODO work out how to spec params
+//bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, nativeParam *params, uint16_t numParam); //TODO work out how to spec params
+/**
+ * add a native function to this vm, return true on success false otherwise
+ * sets errno on fail
+ * 
+ * vm the vm to add to
+ * func the function to call
+ * retFloat true if the function returns a float, false if it returns an int
+ * name the name of the function
+ * params a list of types in formate:
+ * 		<base type>([])
+ * ex int array: int[]
+ * ex int:		int
+ * ex two ints and a float: int int float[]
+ */
+bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *params, bool retFloat);
 
 #ifdef __cplusplus
 }

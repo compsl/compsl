@@ -11,6 +11,7 @@
 #define INT_VAR 0
 #define FLOAT_VAR 1
 #define IS_ARRAY 2
+#define IS_GLBL 4
 
 /**
  * search for a variable in the specified list

@@ -38,6 +38,15 @@ void destroyVM(VM *vm)
 	
 	varTableDestroy(&(vm->vt));
 	
+	for(int i=0; i<vm->ncnt; i++)
+	{
+		if(vm->natives[i].numParam != 0)
+		{
+			free(vm->natives[i].params);
+			free(vm->natives[i].paramFlags);
+		}
+	}
+	
     free(vm->natives);
     free(vm);
 }
@@ -74,5 +83,23 @@ int32_t *vm_addInt(VM *vm, const char *name)
 	}
 	else
 		return NULL;
+}
+
+
+bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *params, bool retFloat)
+{
+	if(vm->ncnt == VM_NATIVEFN_INIT_SIZE)
+	{
+		//TODO: add setting errno here
+		return FALSE;
+	}
+	
+	vm->natives[vm->ncnt].func = func;
+	vm->natives[vm->ncnt].name = name;
+	vm->natives[vm->ncnt].retFloat = retFloat;
+
+	// add call to john's api here to parse decalaration list
+	
+	return TRUE;
 }
 

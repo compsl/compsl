@@ -1,3 +1,17 @@
 
 1. all strings representing variable names are duplicated, the duplicate is used
    and is thus the responibilty of the interpreter to free.
+
+2. Should we make common functions like sin, cos, tan, sqrt, asin, acos, atan,
+   atan2, pow, log, sign floor, ceil, min/max, rand, etc. instructions for speed
+   since if these are used a lot the overhead of the CALL bytecode is going to 
+   be very significant, espcialy since none of these take more than 2 args, and
+   do not take arrays, so they will probably signifcantly faster if they have
+   their own bytecode. (for example rand(), probably takes about 3 times as long
+   to call as run... same with floor/ceil/sign)
+   
+3.
+
+4.
+
+5.

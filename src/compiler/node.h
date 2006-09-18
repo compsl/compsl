@@ -45,6 +45,7 @@ typedef struct _list_t {
 
 
 int bc_len(bytecode *);
+bytecode* expr_toBc(expression *exp);
 
 list* list_new(void);
 void* list_get(list *, int);
@@ -52,8 +53,10 @@ void list_free(list *);
 void list_addToFront(list *, void *);
 void* list_popFromFront(list *);
 
-void compileError(char *str);
+void internalCompileError(const char* str);
+void compileError(const char *str);
 void autocast(bool toFloat,expression *e);
+
 
 extern char *sprt;
 

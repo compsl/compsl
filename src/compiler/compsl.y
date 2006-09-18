@@ -72,6 +72,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 			a->val.in-=b->val.in;
 		else {
 			internalCompileError("Unknown operator in bin_lit_op()");
+			return 0;
 		}
 		free(b);
 		return a;
@@ -115,7 +116,7 @@ expression* readVar(char* name) {
 	if(foo.id==-1) {
 		sprintf(sprt,"Symbol \"%s\" not resolved\nexiting.\n",name);
 		compileError(sprt);
-		exit(1);
+		return 0;
 	}
 	
 	if(foo.isvar) {
@@ -139,9 +140,10 @@ expression* readVar(char* name) {
 	return 0;
 }
 
-void compileError(char *str) {
+void compileError(const char *str) {
 	fprintf(stderr,"Compile error: %s\n",str);
-	exit(1);
+	//	exit(1);
+	//YYABORT; 
 	//TODO: make friendly
 }
 
@@ -219,6 +221,7 @@ block:
 
 			if(0==bck) {
 				internalCompileError("Out of memory");
+				YYERROR;
 			}
 			
 			cur=$2->head;
@@ -333,6 +336,7 @@ expression:
 				else if(foo.isvar) {
 					sprintf(sprt,"Variable %s used as a function call",$1);
 					compileError(sprt);
+					YYERROR;
 				}
 				else {
 					DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
@@ -516,14 +520,14 @@ decl:
 			if($1) {
 				if($2) {
 					char* iden;
-					while(iden = (char*)list_popFromFront($3)) {
+					while((iden = (char*)list_popFromFront($3))) {
 						vm_addFloat(ccompart->vm,iden);
 						free(iden);
 					}
 				}
 				else {
 					char* iden;
-					while(iden = (char*)list_popFromFront($3)) {
+					while((iden = (char*)list_popFromFront($3))) {
 						vm_addInt(ccompart->vm,iden);
 						free(iden);
 					}
@@ -532,14 +536,14 @@ decl:
 			else {
 				if($2) {
 					char* iden;
-					while(iden = (char*)list_popFromFront($3)) {
+					while((iden = (char*)list_popFromFront($3))) {
 						com_addFloat(ccompart,iden);
 						free(iden);
 					}
 				}
 				else {
 					char* iden;
-					while(iden = (char*)list_popFromFront($3)) {
+					while((iden = (char*)list_popFromFront($3))) {
 						com_addInt(ccompart,iden);
 						free(iden);
 					}
@@ -570,12 +574,14 @@ post_modifier:
 		OPENS expression CLOSES {
 			if(!$2->isLiteral) {
 				compileError("Array declaration with non-literal length\n");
+				YYERROR;
 			}
 			autocast(false,$2);
 			$$ = $2->val.in;
 			if($$<0) {
 				sprintf(sprt, "Array declared with length %i\n",$$);
 				compileError(sprt);
+				YYERROR;
 			}
 			free($2);
 		}

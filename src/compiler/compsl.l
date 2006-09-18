@@ -30,6 +30,7 @@ else		return ELSE;
 while		return WHILE;
 break		return BREAK;
 return		return RETURN;
+continue	return CONTINUE;
 ;			return SEMI;
 ,			return COMA;
 \{			return OPENB; /*"bracket"*/

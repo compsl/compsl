@@ -17,6 +17,7 @@
 #include "../extern/vm.h"
 #include "../extern/compart.h"
 #include "../intern/bytecode.h"
+#include "../intern/debug.h"
 
 #define YYERROR_VERBOSE 1
 
@@ -28,12 +29,14 @@ extern compart *ccompart;
 char *sprt;
 
 int goparse(char* fn, compart *com) {
+	DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
 	ccompart = com;
 	yyin = fopen( fn, "r" );
 	yyrestart(yyin);
 	sprt=malloc(1024 * sizeof(char));
-	return yyparse(fn);
-	
+	int ret = yyparse(fn);
+	DPRINTF(">> DONE PARSE\n\n");
+	return ret;
 }
 
 void yyerror(const char *fn, const char *msg) {
@@ -162,10 +165,11 @@ void compileError(char *str) {
 %token <fval> FLOAT_LIT;
 %token <ival> INT_LIT; 
 %token <sval> IDENTIFIER;
-%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS;
+%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE; 
 %type <expr> expression math retable;
 %type <ival> cast post_modifier intfloat_keyword;
 %type <nval> file header_stuff do_declare cubbys cubby control else decl modifiers;
+%type <sval> cubby_id;
 %type <bc> stmt block;
 %type <xlist> paramlist stmts moreparamlist decls ident_list more_ident_list;
 
@@ -179,26 +183,36 @@ file:
 header_stuff: 
 		;
 		
-do_declare:
+do_declare: {
+			DPRINTF("Doing declare\n");
+		}
 		DECLARE OPENB decls CLOSEB {
-			
+
 		}
 
 cubbys:
 		cubby cubbys | ;
-cubby:
-		CUBBY IDENTIFIER block {
-			com_addCubby(ccompart, $3, $2);
+cubby:	
+		cubby_id block {
+			com_addCubby(ccompart, $2, $1);
 		}
+cubby_id:
+		CUBBY IDENTIFIER {
+			DPRINTF("> Cubby: %s\n",$2);
+			$$=$2;
+		}
+
+		
 block:
 		OPENB stmts CLOSEB {
-			
+			DPRINTF("Appending %i statements\n",$2->length);
 			int len=0;
 			llist *cur=$2->head;
 			while(cur) {
 				len+=bc_len(cur->obj);
 				cur=cur->next;
 			}
+
 			
 			bytecode *bck = malloc((len+1)*sizeof(bytecode));
 			bytecode *bcko = bck; 
@@ -250,17 +264,31 @@ stmts:
 		};
 stmt:
   		expression {
-		  bytecode *code = expr_toBc($1);
-		  int l = bc_len(code);
-			
-		  code = realloc(code, sizeof(bytecode)*(l+2));
-		  code[l].code = BC_DPOP;
-		  code[l+1].code = BC_NONO;
-		  
-		  $$=code;
+			bytecode *code = expr_toBc($1);
+			int l = bc_len(code);
+			DPRINTF("Statement of %i bytecodes\n",l);
+			code = realloc(code, sizeof(bytecode)*(l+2));
+			code[l].code = BC_DPOP;
+			code[l+1].code = BC_NONO;
+			$$=code;
 		}
         | 
-        BREAK
+        BREAK {
+        	DPRINTF("Break statement\n");
+			bytecode *code = malloc(sizeof(bytecode)*2);
+			code[0].code = BC_JMP; //JMP 0 = break, tobe parsed in block
+			code[0].a = 0; 
+			code[1].code = BC_NONO;
+			$$=code;
+        }
+        |
+        CONTINUE {
+        	DPRINTF("Continue statement\n");
+			bytecode *code = malloc(sizeof(bytecode)*2);
+			code[0].code = BC_NOOP; //NOOP 0 = continue, tobe parsed in block
+			code[1].code = BC_NONO;        	
+			$$=code;
+        }
 		;
 		
 expression:
@@ -273,7 +301,7 @@ expression:
 		IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
 			expression *ex = malloc(sizeof(expression));
 			
-			//Special case for debugging
+			//Special cases for debugging
 			if($1[0]=='y'&& $1[1]=='e' && $1[2]=='s' && $1[3]==0) {
 				bytecode *mcode = malloc(2*sizeof(bytecode));
 				mcode[0].code = BC_PYES;
@@ -288,17 +316,37 @@ expression:
 				mcode[1].code=BC_NONO;
 				ex->val.bcode=mcode;			
 			}
+			
+			// Its a built in function call
 			else {
 				symbolinfo foo = searchSym($1,ccompart);
-				if(foo.id!=0 && !foo.isvar) {
+				
+				//TODO: what does searchSym return for not found?
+				if(foo.id!=0 && foo.id!=-1 && !foo.isvar) {
+					DPRINTF("Functions \"%s\" found with id %i\n",$1,foo.id);
 					ex->isLiteral=false;
 					nativeFN funk = ccompart->vm->natives[foo.id];
 					//TODO: get type from func
 					//TODO: check var list
+					
+				}
+				else if(foo.isvar) {
+					sprintf("Variable %s used as a function call",$1);
+					compileError(sprt);
 				}
 				else {
-					sprintf("Function %s does not exist",$1);
-					compileError(sprt);
+					DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
+					
+					bytecode *mcode = malloc(2*sizeof(bytecode));
+					mcode[0].code = BC_PYES;
+					mcode[0].a1 =0;
+					mcode[1].code=BC_NONO;
+					ex->val.bcode=mcode;			
+					
+					//TODO: remove comments below and remove code above
+					
+					//sprintf("Function %s does not exist",$1);
+					//compileError(sprt);
 				}
 			}
 			list_free($3);
@@ -425,17 +473,6 @@ math:
 		
 retable:
 		IDENTIFIER {
-			//expression *a = malloc(sizeof(expression));
-//			a->isLiteral=false;
-	//		symbolinfo si = searchSym($1,ccompart);
-		//	if(si.id==0) {
-			//	sprintf("The variable \"%s\" is used but not declared",$1);
-				//compileError(sprt);
-//			}
-	//		else {
-		//		a->isFloat=si.isfloat;
-			//}
-			// TODO set bytecode 
 			$$=readVar($1);
 		}
 		| 

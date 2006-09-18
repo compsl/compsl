@@ -26,7 +26,6 @@ cubbyhole init
 	exit(2);
 	asd = exit(2) + asdf;
 	dfs= -343;
-	return;
 	break;
 }
 

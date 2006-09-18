@@ -108,6 +108,7 @@ bytecode* expr_toBc(expression *exp) {
 		return bc;
 	}
 	else {
+		if(exp->val.bcode==0) internalCompileError("Error in expr_toBc");
 		return exp->val.bcode;
 	}
 }

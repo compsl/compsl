@@ -15,7 +15,11 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-DEBUG=1
+
+#TODO: fix here
+DBG_MODS=DEBUG_COMP DEBUG_FOO
+DBG_ENVS=$(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
+
 
 CC=gcc
 CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99
@@ -25,10 +29,13 @@ CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align 
 #CFLAGS += -msse -mfpmath=sse
 
 ifdef DEBUG
-	CFLAGS += -O0 -ggdb -D DEBUG
+	CFLAGS += -O0 -ggdb -D DEBUG $(DBG_ENVS)
 else
 	#CFLAGS += -O2
-	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks -fmove-all-movables
+	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks 
+
+#-fmove-all-movables
+
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
 endif
@@ -37,7 +44,7 @@ CMPLRPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c
+REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c src/debug.c
 
 DERIVED_SRCS=$(CMPLRPATH)/lex.yy.c $(CMPLRPATH)/compsl.tab.c
 DERIVED_FILES=$(DERIVED_SRCS) src/compiler/compsl.tab.h 
@@ -67,7 +74,7 @@ derived: $(DERIVED_SRCS)
 clean:
 	rm -f $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
 		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES)
-	         
+
 compile: $(SOURCES) $(OBJECTS)
 
 static: common $(STATIC_LIB_OUT)
@@ -81,7 +88,7 @@ test: maketestonly
 	for test in  $(TEST_EXES); do \
 		$$test; \
 	done
-	
+
 #Assumes that all tests are single object/source file linked to libcompsl.a
 maketestonly: $(TESTOBJS) static
 	for obj in $(TESTOBJS); do \
@@ -95,7 +102,7 @@ maketestonly: $(TESTOBJS) static
 
 #Dash makes it not error if not found
 -include $(DEPS)
-	
+
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
 	$(CC) -c $(CFLAGS) -fno-gcse $< -o $@
@@ -133,4 +140,4 @@ $(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
 #.c.o:
 #	$(CC) -c $(CFLAGS) $< -o $@
 
-	
+

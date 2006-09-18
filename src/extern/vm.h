@@ -77,9 +77,9 @@ typedef struct native_param_t
  * 		<base type>([])
  * ex int array: int[]
  * ex int:		int
- * ex two ints and a float: int int float[]
+ * ex two ints and a float array: int int float[]
  */
-bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *params, bool retFloat);
+bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *params, bool retFloat, bool isVoid);
 
 #ifdef __cplusplus
 }

@@ -53,8 +53,6 @@ int main()
 	
 	destroyVM(veem);
 	
-	
-	
 	return 0;
 }
 
@@ -63,6 +61,7 @@ intfloat compsl_printInt(var *args) { printf("Value: %i", args[0].v.i); return (
 
 void addPrint(VM *vm)
 {
+	// add printf
 	vm->natives[0].func= &compsl_printFloat;
 	vm->natives[0].numParam = 1;
 	vm->natives[0].params = malloc(sizeof(var));
@@ -71,6 +70,7 @@ void addPrint(VM *vm)
 	vm->natives[0].isVoid=true;
 	vm->natives[0].name = "printf";
 
+	//add printi
 	vm->natives[1].func= &compsl_printInt;
 	vm->natives[1].numParam = 1;
 	vm->natives[1].params = malloc(sizeof(var));

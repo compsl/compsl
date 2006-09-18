@@ -8,6 +8,10 @@
 
 //TODO unbreak all the code broken by swiching to varTable instead of just sructs in the vm
 
+/*TODO: add error checking and set compsl errorno, where possible, otherwise just
+ * cleanup and return error condition
+ */
+
 /**
  * create a new VM
  */

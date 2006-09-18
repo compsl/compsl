@@ -9,7 +9,7 @@
 #include "../extern/compsl.h"
 
 
-var callTester(var *args); // function called to test CALL bytecode
+intfloat callTester(var *args); // function called to test CALL bytecode
 
 int main()
 {
@@ -520,7 +520,7 @@ int main()
 		com->vm->natives[0].params = malloc(2 * sizeof(var));
 		com->vm->natives[0].paramFlags = malloc(2 * sizeof(uint8_t));
 		com->vm->natives[0].paramFlags[0]=com->vm->natives[0].paramFlags[1]=0;
-		
+		com->vm->natives[0].isVoid = false;
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.i == 5)
@@ -552,10 +552,10 @@ int main()
 	return ret; //return 0 else make's unhappy
 }
 
-var callTester(var *args)
+intfloat callTester(var *args)
 {
-	var v; 
-	v.v.i = args[0].v.i + args[1].v.i;
-	printf("CALL PART 1 PASS\n\targs: %i %i\n",args[0].v, args[1].v);
+	intfloat v; 
+	v.i = args[0].v.i + args[1].v.i;
+	printf("CALL PART 1 PASS\n\targs: %i %i\n",args[0].v.i, args[1].v.i);
 	return v; 
 }

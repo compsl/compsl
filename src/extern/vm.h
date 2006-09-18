@@ -27,7 +27,8 @@ typedef struct _nativeFN_t
         char *name; // name of this function
         intfloat (*func)(var *); // pointer the function to call
         
-        bool retFloat; // true if the return type is a float false it's int
+        bool isVoid; //true iff function does not return a value
+        bool retFloat; // true iff the return type is a float
         
         var *params; // the list of paramaters to pass to it
         uint8_t *paramFlags;// OR together the apropriat flags ex float array = FLOAT_VAR | IS_ARRAY

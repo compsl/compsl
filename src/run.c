@@ -176,8 +176,11 @@ static void *jmptbl[] =
  			else
  				natives[pc->a1].params[i].v = *(--sp);
  		}
- 		*sp = (natives[pc->a1].func)(natives[pc->a1].params);
- 		sp++;
+ 		if(!natives[pc->a1].isVoid)
+ 		{
+	 		*sp = (natives[pc->a1].func)(natives[pc->a1].params);
+ 			sp++;
+ 		}
  		
  		goto TOP;
  	ADD:

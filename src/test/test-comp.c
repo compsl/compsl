@@ -2,6 +2,7 @@
 #include "../extern/vm.h"
 #include "../extern/compart.h"
 #include "../extern/compsl.h"
+#include "../intern/vars.h"
 
 int goparse(char* fn, compart *);
 

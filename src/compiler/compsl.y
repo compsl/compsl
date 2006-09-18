@@ -44,7 +44,7 @@ void yyerror(const char *fn, const char *msg) {
 	exit(2);
 }
 
-int yywrap() {
+int yywrap(void) {
         return 1;
 } 
 
@@ -331,7 +331,7 @@ expression:
 					
 				}
 				else if(foo.isvar) {
-					sprintf("Variable %s used as a function call",$1);
+					sprintf(sprt,"Variable %s used as a function call",$1);
 					compileError(sprt);
 				}
 				else {

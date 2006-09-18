@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
+#include <stdio.h>
 
 /*
  * TODO: 
@@ -109,11 +110,13 @@ int16_t com_addConst(compart *com, intfloat val)
 	
 	com->cons[com->numConst].v = val;
 	com->numConst ++;
+	return com->numConst - 1;
 }
 
 void com_addCubby(compart *com, void *code, const char *name) {
 	com->cubbys[com->numCubbys].code = code;
-	com->cubbys[com->numCubbys].name = name;
+	com->cubbys[com->numCubbys].name = malloc(strlen(name)*sizeof(char));
+	strcpy(com->cubbys[com->numCubbys].name, name);
 	com->numCubbys++;
 }
 

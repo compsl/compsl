@@ -3,13 +3,12 @@
 #include "../extern/vm.h"
 #include "../extern/compart.h"
 
-//#include "../intern/debug.h"
+#include "../intern/debug.h"
 
 #ifndef NODE_H_
 #define NODE_H_
 
-#define DPRINTF(...) 
-//COMP_DPRINTF(__VA_ARGS__) 
+#define DPRINTF(...) COMP_DPRINTF(__VA_ARGS__) 
 
 
 #define CSL_FLOAT 2;
@@ -47,7 +46,7 @@ typedef struct _list_t {
 
 int bc_len(bytecode *);
 
-list* list_new();
+list* list_new(void);
 void* list_get(list *, int);
 void list_free(list *);
 void list_addToFront(list *, void *);

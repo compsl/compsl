@@ -101,14 +101,14 @@ bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *para
 	
 	vm->natives[vm->ncnt].func = func;
 	vm->natives[vm->ncnt].name = malloc((strlen(name) + 1) * sizeof(char));
-	strcpy(name,vm->natives[vm->ncnt].name);
+	strcpy(vm->natives[vm->ncnt].name,name);
 	vm->natives[vm->ncnt].retFloat = retFloat;
 	vm->natives[vm->ncnt].isVoid = isVoid;
 
 	// parse params here.
 	
 	char *tmp = malloc((strlen(params) + 1)* sizeof(char));
-	strcpy(params,tmp);
+	strcpy(tmp,params);
 	char * tok = strtok(tmp," ,");
 	int tokCount = 0;
 	while(tok != NULL)
@@ -121,7 +121,7 @@ bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *para
 	vm->natives[vm->ncnt].paramFlags = malloc(tokCount * sizeof(uint8_t));
 	vm->natives[vm->ncnt].params = malloc(tokCount * sizeof(var));
 	
-	strcpy(params,tmp);
+	strcpy(tmp,params);
 	tok = strtok(tmp," ,");
 	tokCount=0;
 	while(tok != NULL)

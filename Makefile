@@ -65,7 +65,9 @@ DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 #TARGETS                       #
 ################################
 
-all: common static dynamic 
+all: common static dynamic Makefile
+
+Makefile: clean
 
 common: derived compile
 
@@ -89,10 +91,11 @@ test: maketestonly
 		$$test; \
 	done
 
+
 #Assumes that all tests are single object/source file linked to libcompsl.a
 maketestonly: $(TESTOBJS) static
 	for obj in $(TESTOBJS); do \
-		$(CC) -static $$obj -Lbin -l$(SHORTLIB) -o bin/$$(basename $$obj .o); \
+		$(CC) -MD -static $$obj -Lbin -l$(SHORTLIB) -o bin/$$(basename $$obj .o); \
 	done
 
 
@@ -101,6 +104,8 @@ maketestonly: $(TESTOBJS) static
 ################################
 
 #Dash makes it not error if not found
+
+
 -include $(DEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse

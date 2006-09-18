@@ -27,7 +27,7 @@
 #ifdef DEBUG_COMP
 #define COMP_DPRINTF(...) fprintf(stderr, __VA_ARGS__)
 #else 
-#define COMP_DPRINTF(...) dbg_noop()
+#define COMP_DPRINTF(...) 	
 #endif
 
 

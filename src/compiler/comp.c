@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include "node.h"
+#include "../extern/compart.h"
 
 compart *ccompart;
 
 
-void internalCompileError(char* str) {
+void internalCompileError(const char* str) {
 	sprintf(sprt,"Internal error: %s",str);
 	compileError(sprt);	
 }

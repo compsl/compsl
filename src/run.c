@@ -167,7 +167,15 @@ static void *jmptbl[] =
  	CALL: 
  	//TODO: testme
  		for(int i=0; i<natives[pc->a1].numParam; i++)
- 			natives[pc->a1].params[i] = *(--sp);
+ 		{
+ 			if(natives[pc->a1].paramFlags[i] & IS_ARRAY)
+ 				if(pc->a2 == 0)
+	 				natives[pc->a1].params[i] = lvs[*(--sp)];
+	 			else
+	 				natives[pc->a1].params[i] = gvs[*(--sp)];
+ 			else
+ 				natives[pc->a1].params[i].v = *(--sp);
+ 		}
  		*sp = (natives[pc->a1].func)(natives[pc->a1].params);
  		sp++;
  		

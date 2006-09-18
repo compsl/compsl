@@ -1,36 +1,14 @@
 # DO NOT DELETE
 
 src/compartment.o: src/extern/vm.h /usr/include/malloc.h
-src/compartment.o: /usr/include/features.h /usr/include/sys/cdefs.h
-src/compartment.o: /usr/include/gnu/stubs.h
-src/compartment.o: /usr/lib/gcc/i686-pc-linux-gnu/3.4.5/include/stddef.h
-src/compartment.o: /usr/include/inttypes.h /usr/include/stdint.h
-src/compartment.o: /usr/include/bits/wchar.h /usr/include/bits/wordsize.h
-src/compartment.o: /usr/lib/gcc/i686-pc-linux-gnu/3.4.5/include/stdbool.h
 src/compartment.o: src/extern/var.h src/extern/compslerr.h
 src/compartment.o: src/extern/compart.h src/extern/vm.h src/intern/vars.h
 src/compartment.o: src/extern/var.h src/extern/vm.h src/extern/compart.h
 src/compartment.o: src/intern/vars.h src/extern/var.h /usr/include/stdlib.h
 src/error.o: src/extern/compslerr.h /usr/include/stdio.h
-src/error.o: /usr/include/features.h /usr/include/sys/cdefs.h
-src/error.o: /usr/include/gnu/stubs.h
-src/error.o: /usr/lib/gcc/i686-pc-linux-gnu/3.4.5/include/stddef.h
-src/error.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
-src/error.o: /usr/include/bits/typesizes.h /usr/include/libio.h
-src/error.o: /usr/include/_G_config.h /usr/include/wchar.h
-src/error.o: /usr/include/bits/wchar.h /usr/include/gconv.h
-src/error.o: /usr/lib/gcc/i686-pc-linux-gnu/3.4.5/include/stdarg.h
-src/error.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
 src/gen.o: src/intern/gen.h src/extern/var.h src/extern/vm.h
 src/gen.o: src/extern/compart.h src/intern/vars.h /usr/include/inttypes.h
-src/gen.o: /usr/include/features.h /usr/include/sys/cdefs.h
-src/gen.o: /usr/include/gnu/stubs.h /usr/include/stdint.h
-src/gen.o: /usr/include/bits/wchar.h /usr/include/bits/wordsize.h
-src/gen.o: /usr/lib/gcc/i686-pc-linux-gnu/3.4.5/include/stdbool.h
 src/gen.o: src/extern/var.h src/intern/vars.h src/intern/panic.h
-src/gen.o: /usr/include/malloc.h
-src/gen.o: /usr/lib/gcc/i686-pc-linux-gnu/3.4.5/include/stddef.h
-src/gen.o: /usr/include/string.h
 src/run.o: src/extern/vm.h /usr/include/malloc.h /usr/include/features.h
 src/run.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 src/run.o: /usr/lib/gcc/i686-pc-linux-gnu/3.4.5/include/stddef.h

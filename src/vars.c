@@ -58,7 +58,7 @@ var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 	}
 	else if(typeflags == vt->symbols[tmp].typeflags)
 	{
-		return tmp;
+		return &(vt->vars[tmp]);
 	}
 
 	return NULL;

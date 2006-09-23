@@ -8,11 +8,12 @@
 #define VM_H_
 
 #include <malloc.h>
-#include <inttypes.h>
+//#include <inttypes.h>
 #include <stdbool.h>
 
 #include "var.h"
 #include "compslerr.h"
+#include "port.h"
 
 #define VM_STACK_SIZE 256
 #define VM_MAX_GVARS 256

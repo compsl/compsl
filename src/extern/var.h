@@ -1,6 +1,6 @@
 #ifndef VAR_H_
 #define VAR_H_
-#include <inttypes.h>
+#include "port.h"
 
 #ifdef __cplusplus
 extern "C" {

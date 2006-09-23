@@ -5,7 +5,7 @@
 #include "../extern/vm.h"
 #include "../extern/compart.h"
 #include "../intern/vars.h"
-#include <inttypes.h>
+#include "../extern/port.h"
 #include <stdbool.h>
 
 #define INT_VAR 0

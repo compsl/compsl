@@ -1,7 +1,7 @@
 #ifndef BYTECODE_H_
 #define BYTECODE_H_
 
-#include <inttypes.h>
+#include "../extern/port.h"
 
 typedef struct
 {

@@ -2,6 +2,7 @@
 #include "extern/var.h"
 #include "intern/vars.h"
 #include "intern/panic.h"
+#include "intern/builtins.h"
 #include <inttypes.h>
 #include <stdbool.h>
 #include <malloc.h>
@@ -36,12 +37,31 @@ __attribute__ ((pure, fastcall)) symbolinfo searchSym(const char *name, compart 
 	res.array = res.isvar = res.local = false;
 	res.id = -1;
 	
-	//TODO: write function search
+	for(int i = 0; i < com->vm->ncnt; i++)
+	{
+		if(!strcmp(name, com->vm->natives[i].name))
+		{
+			res.id=i;
+			res.isvar = false;
+			res.local = false;
+			res.array = false;
+			res.isfloat = com->vm->natives[i].retFloat;
+		}
+	}
+	
 	
 	return res;
+}
+
+float compsl_rand()
+{
 }
 
 void panic(const char *s)
 {
 	//TODO: writeme
+	puts(s);
+	
+	//TODO: what to do, we want this to be a fatal contidion for the lib
+	// but we don't want to make the caller die...
 }

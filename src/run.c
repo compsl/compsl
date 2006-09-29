@@ -13,12 +13,16 @@
 #include <math.h>
 #include <inttypes.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #ifndef __GNUC__
 #error "gotta have gcc!"
 #endif
 
 #define VM_FLOAT_EPSILON 0.001f
+
+void init_genrand(unsigned long s);
+double genrand_real1(void);
 
 void runCubbyhole(compart *com, int id)
 {
@@ -78,7 +82,28 @@ static void *jmptbl[] =
  //bit shifting
  	&&SFTL,
  	&&SFTR,
- //misc
+//builtins
+	&&ABS,
+	&&ABSF,
+	&&SIN,
+	&&COS,
+	&&TAN,
+	&&ASIN,
+	&&ACOS,
+	&&ATAN,
+	&&SQRT,
+	&&LN,
+	&&FLOOR,
+	&&CEIL,
+	&&RAND,
+	&&ATAN2,
+	&&POW,
+	&&MIN,
+	&&MAX,
+	&&MINF,
+	&&MAXF,
+	&&HYPOT,
+//misc
  	&&PYES,
  	&&NONO,
  	&&END,
@@ -101,6 +126,9 @@ static void *jmptbl[] =
 	bool less, equal, greater; // comparison flags
 	less = equal = greater = false;
 	
+	//seed the rng
+	init_genrand(time(0));
+	
 	TOP: 
 		pc++;
 		goto *jmptbl[pc->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
@@ -110,8 +138,8 @@ static void *jmptbl[] =
 		*sp = lvs[pc->a1].v;
 		sp++;
 		goto TOP;
- 	APUSH://TODO: test this
- 		if(lvs[pc->a1].size > (sp - 1)->i || (sp - 1)->i < 0)
+ 	APUSH:
+ 		if(lvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0)
  		{
  			*(sp - 1) = lvs[pc->a1].p[(sp - 1)->i];
  		}
@@ -139,10 +167,10 @@ static void *jmptbl[] =
 		goto TOP;
  	APOP:
  		//TODO: test this
- 		sp -= 2;
- 		if(lvs[pc->a1].size > sp->i || sp->i < 0)
+ 		sp -=2;
+ 		if(lvs[pc->a1].size > (sp + 1)->i && (sp+1)->i >= 0)
  		{
- 			lvs[pc->a1].p[sp->i] = *(sp + 1);
+ 			lvs[pc->a1].p[(sp+1)->i] = *sp;
  		}
  		else
  		{
@@ -170,9 +198,9 @@ static void *jmptbl[] =
  		{
  			if(natives[pc->a1].paramFlags[i] & IS_ARRAY)
  				if(natives[pc->a1].paramFlags[i] & IS_GLBL)
-	 				natives[pc->a1].params[i] = lvs[(--sp)->i];
-	 			else
 	 				natives[pc->a1].params[i] = gvs[(--sp)->i];
+	 			else
+	 				natives[pc->a1].params[i] = lvs[(--sp)->i];
  			else
  				natives[pc->a1].params[i].v = *(--sp);
  		}
@@ -204,8 +232,8 @@ static void *jmptbl[] =
  		sp-=2;
  		tmp.i = sp->i - (sp+1)->i;
  		less = tmp.i < 0;
+ 		greater = tmp.i > 0;
  		equal = !tmp.i;
- 		greater = !less;
  		goto TOP;
  	FADD:
 	 	sp--;
@@ -227,10 +255,8 @@ static void *jmptbl[] =
 	 	sp-=2;
  		tmp.f = sp->f - (sp + 1)->f;
  		less = tmp.f < 0;
- 		//equal = fabsf(tmp.f) <VM_FLOAT_EPSILON;
- 		//equal = fabsf( 1.0f - (sp->f)/((sp + 1)->f)) < VM_FLOAT_EPSILON; // compensate for float inaccuracys
- 		equal = fabsf( tmp.f/(sp->f) ) < VM_FLOAT_EPSILON;
- 		greater = !less;
+		greater = tmp.f > 0;
+ 		equal = __builtin_fdimf(sp->f, (sp + 1)->f) < VM_FLOAT_EPSILON;
  		goto TOP;
  	JMP:
  		pc += pc->sa - 1; // compensate for pc++ at top
@@ -266,9 +292,9 @@ static void *jmptbl[] =
  	FMOD:
  		sp--;	
  		//(sp - 1)->f = (sp - 1)->f - sp->f * truncf((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
-#ifndef DEBUG
- 		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
-#endif
+//#ifndef DEBUG
+ 		(sp - 1)->f = __builtin_fmodf((sp - 1)->f, sp->f);
+//#endif
  		//(sp - 1)->f = 42;
  		//TODO: uncomment above
  		goto TOP;
@@ -277,15 +303,47 @@ static void *jmptbl[] =
 		sp++;
 		goto TOP;
  	GAPS:
- 		//TODO: writeme
- 		goto UNIMP;
+		if(gvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0)
+ 		{
+ 			*(sp - 1) = gvs[pc->a1].p[(sp - 1)->i];
+ 		}
+ 		else
+ 		{
+ 			fprintf(stderr, 
+ 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
+ 				pc->a1, com->vt.symbols[pc->a1].name, gvs[pc->a1].size, (sp - 1)->i);
+ 			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
+#ifdef DEBUG
+				goto DBG;
+#else
+ 				goto HLT;
+#endif
+ 			
+ 		}
+ 		goto TOP;
  	GPOP:
  		sp--;
  		gvs[pc->a1].v = *sp;
 		goto TOP;
  	GAPP:
- //TODO: writeme
- 		goto UNIMP;
+ 		//TODO: test this
+ 		sp -=2;
+ 		if(gvs[pc->a1].size > (sp + 1)->i && (sp+1)->i >= 0)
+ 		{
+ 			gvs[pc->a1].p[(sp+1)->i] = *sp;
+ 		}
+ 		else
+ 		{
+ 			fprintf(stderr, 
+ 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
+ 				pc->a1, com->vt.symbols[pc->a1].name, gvs[pc->a1].size, sp->i);
+#ifdef DEBUG
+ 				goto DBG;
+#else
+ 				goto HLT;
+#endif
+ 		}
+ 		goto TOP;
  		
  //begin of boolean + bitwise opers
  
@@ -326,13 +384,87 @@ static void *jmptbl[] =
  		sp--;
  		(sp - 1)->i = (sp - 1)->i >> sp->i;
  		goto TOP;
- 
+	
+//bultins
+	
+	ABS:
+		(sp - 1)->i = __builtin_abs((sp - 1)->i);
+ 		goto TOP;
+	
+	ABSF:
+		(sp - 1)->f = __builtin_fabsf((sp - 1)->f);
+		goto TOP;
+	SIN:
+		(sp - 1)->f = __builtin_sinf((sp - 1)->f);
+		goto TOP;
+	COS:
+		(sp - 1)->f = __builtin_cosf((sp - 1)->f);
+		goto TOP;
+	TAN:
+		(sp - 1)->f = __builtin_tanf((sp - 1)->f);
+		goto TOP;
+	ASIN:
+		(sp - 1)->f = __builtin_asinf((sp - 1)->f);
+		goto TOP;
+	ACOS:
+		(sp - 1)->f = __builtin_acosf((sp - 1)->f);
+		goto TOP;
+	ATAN:
+		(sp - 1)->f = __builtin_atanf((sp - 1)->f);
+		goto TOP;
+	SQRT:
+		(sp - 1)->f = __builtin_sqrtf((sp - 1)->f);
+		goto TOP;
+	LN:
+		(sp - 1)->f = __builtin_logf((sp - 1)->f);
+		goto TOP;
+	FLOOR:
+		(sp - 1)->f = __builtin_floorf((sp - 1)->f);
+		goto TOP;
+	CEIL:
+		(sp - 1)->f = __builtin_ceilf((sp - 1)->f);
+		goto TOP;
+	RAND:
+		sp->f = (float)(genrand_real1());
+		sp++;
+		goto TOP;
+	ATAN2:
+		sp--;
+		(sp - 1)->f = __builtin_atan2f(sp->f, (sp - 1)->f);
+		goto TOP;
+	POW:
+		sp--;
+		(sp - 1)->f = __builtin_powf(sp->f, (sp - 1)->f);
+		goto TOP;
+	MIN:
+		sp--;
+		(sp - 1)->i = (sp->i < (sp - 1)->i)?sp->i:(sp - 1)->i;
+		goto TOP;
+	MAX:
+		sp--;
+		(sp - 1)->i = (sp->i > (sp - 1)->i)?sp->i:(sp - 1)->i;
+		goto TOP;
+	MINF:
+		sp--;
+		(sp - 1)->f = __builtin_fminf(sp->f, (sp - 1)->f);
+		goto TOP;
+	MAXF:
+		sp--;
+		(sp - 1)->f = __builtin_fmaxf(sp->f, (sp - 1)->f);
+		goto TOP;
+	HYPOT:
+		sp--;
+		(sp - 1)->f = __builtin_hypotf(sp->f, (sp - 1)->f);
+		goto TOP;
+//misc	
  	PYES:
  		if(pc->a1) {puts("YES");}
  		else { puts("NO"); }
  		goto TOP;
  	NONO:
 		puts("OMG WTF NO!!!");	
+	//icky things	
+	
  	END:
  	HLT:
  		return;

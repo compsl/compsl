@@ -32,7 +32,7 @@ ifdef DEBUG
 	CFLAGS += -O0 -ggdb -D DEBUG $(DBG_ENVS)
 else
 	#CFLAGS += -O2
-	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fweb -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks 
+	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks 
 
 #-fmove-all-movables
 
@@ -44,7 +44,7 @@ CMPLRPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c
+REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c src/mt.c
 
 DERIVED_SRCS=$(CMPLRPATH)/lex.yy.c $(CMPLRPATH)/compsl.tab.c
 DERIVED_FILES=$(DERIVED_SRCS) src/compiler/compsl.tab.h 
@@ -54,7 +54,7 @@ OBJECTS := $(SOURCES:.c=.o)
 TESTSRCS := $(addprefix src/test/,test-interp.c test-comp.c test-api.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
 
-DEPS := $(SOURCES:.c=.d) $(TESTSRCS:.c=.d) 
+DEPS := $(SOURCES:.c=.dep) 
 
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
@@ -65,9 +65,9 @@ DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 #TARGETS                       #
 ################################
 
-all: common static dynamic Makefile
+all: common static dynamic
 
-Makefile: clean
+
 
 common: derived compile
 
@@ -111,11 +111,11 @@ maketestonly: $(TESTOBJS) static
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
 	$(CC) -c $(CFLAGS) -fno-gcse $< -o $@
-	$(CC) -MM $(CFLAGS) src/run.c > src/run.d
+	$(CC) -MM $(CFLAGS) src/run.c > src/run.dep
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $*.c -o $*.o
-	$(CC) -MM $(CFLAGS) $*.c > $*.d
+	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -MM $(CFLAGS) $*.c > $*.dep
 
 $(STATIC_LIB_OUT):
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
@@ -127,14 +127,15 @@ $(DYN_LIB_OUT):
 ################################
 # FLEX/BISON TARGETS           #
 ################################
-$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
-	rm -f $(CMPLRPATH)/lex.yy.c
-	flex -o$@ $<
+
 
 $(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
-	rm -f $(CMPLRPATH)/compsl.tab.c
+	rm -f $(CMPLRPATH)/compsl.tab.c ; \
 	bison -d $< -o $@
 
+$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
+	rm -f $(CMPLRPATH)/lex.yy.c; \
+	flex -o$@ $<
 
 ################################
 # OLD                          #

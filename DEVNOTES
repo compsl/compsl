@@ -10,6 +10,9 @@
    their own bytecode. (for example rand(), probably takes about 3 times as long
    to call as run... same with floor/ceil/sign)
    
+	1 arg float   sin,cos,tan,sqrt,asin,acos,atan,ln,floor,ceil,rand
+	2 arg float   atan2, pow, min, max
+
 3.
 
 4.

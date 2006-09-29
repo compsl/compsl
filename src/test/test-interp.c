@@ -7,6 +7,7 @@
 #include "../extern/var.h"
 #include "../intern/bytecode.h"
 #include "../extern/compsl.h"
+#include "../intern/vars.h"
 
 
 intfloat callTester(var *args); // function called to test CALL bytecode
@@ -499,11 +500,207 @@ int main()
 		}
 	}
 	
+	{ // JMLE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMLE, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 1)
+			printf("JMLE 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.i == 1)
+				printf("JMLE 1: FAIL! Didn't go far enough\n");
+			else
+				printf("JMLE 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMPE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMLE, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 1)
+			printf("JMLE 2: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.i == 1)
+				printf("JMLE 2: FAIL! Didn't go far enough\n");
+			else
+				printf("JMLE 2: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMLE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMLE, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 2 && com->vt.vars[1].v.i == 1)
+			printf("JMLE 3: PASS!\n");
+		else 
+		{
+			printf("JMLE 3: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+
+	{ // JMPG/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMPG, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 1)
+			printf("JMPG 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.i == 1)
+				printf("JMPG 1: FAIL! Didn't go far enough\n");
+			else
+				printf("JMPG 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+
+	{ // JMPG/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMPG, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 2 && com->vt.vars[1].v.i == 1)
+			printf("JMPG 2: PASS!\n");
+		else 
+		{
+			printf("JMPG 2: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
 	{// CALL
 		bytecode code[] = 
 		{ 
 			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
 			{.code = BC_PUSH, { {.a1 =1} } }, //push local at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CALL, { {.a1= 0} }}, // call
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END} 
@@ -515,15 +712,27 @@ int main()
 		com->vt.vars[1].size =-1;
 		com->vt.vars[1].v.i = 3;
 		
+		com->cons[0].size =-1;
+		com->cons[0].v.i = 2;
+		com->vt.vars[2].size = 2;
+		com->vt.vars[2].p	= malloc(sizeof(intfloat)*2);
+		com->vt.vars[2].p[0].i = 2;
+		com->vt.vars[2].p[1].i = 4;
+		
 		com->vm->natives[0].func= &callTester;
-		com->vm->natives[0].numParam = 2;
-		com->vm->natives[0].params = malloc(2 * sizeof(var));
-		com->vm->natives[0].paramFlags = malloc(2 * sizeof(uint8_t));
+		com->vm->natives[0].numParam = 3;
+		com->vm->natives[0].params = malloc(3 * sizeof(var));
+		com->vm->natives[0].paramFlags = malloc(3 * sizeof(uint8_t));
 		com->vm->natives[0].paramFlags[0]=com->vm->natives[0].paramFlags[1]=0;
+		
+		com->vm->natives[0].paramFlags[2]=IS_ARRAY;
 		com->vm->natives[0].isVoid = false;
+		
+		puts("CALL:");
+		
 		runCubbyhole(com, 0);
 		
-		if(com->vt.vars[0].v.i == 5)
+		if(com->vt.vars[0].v.i == 11)
 			printf("CALL: PASS!\n");
 		else {
 			ret = 1;
@@ -531,7 +740,86 @@ int main()
 		}
 	}
 	
-	//TODO: test APUSH/APOP
+	{//APUSH 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, {{.a1 =0}}},
+			{.code = BC_APUSH, {{.a1 = 0}}}, 
+			{.code = BC_CPUSH, {{.a1 =1}}}, 
+			{.code = BC_APUSH, {{.a1 = 0}}}, 
+			
+			{.code = BC_POP, {{.a1 = 1}}},
+			{.code = BC_POP, {{.a1 = 2}}},
+			
+			{.code = BC_END}
+		};
+		com->cubbys[0].code = code;
+		
+		
+		com->cons[0].size =-1;
+		com->cons[0].v.i = 0;
+		com->cons[1].size =-1;
+		com->cons[1].v.i = 1;
+		
+		com->vt.vars[0].size = 2;
+		com->vt.vars[0].p	= malloc(sizeof(intfloat)*2);
+		com->vt.vars[0].p[0].i = 2;
+		com->vt.vars[0].p[1].i = 3;
+		
+		com->vt.vars[1].size = -1 ;
+		com->vt.vars[2].size = -1 ;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[1].v.i == 3 && com->vt.vars[2].v.i == 2)
+			printf("APUSH: PASS!\n");
+		else {
+			ret = 1;
+			printf("APUSH: FAIL!\n\t%i %i",com->vt.vars[0].p[0].i,com->vt.vars[0].p[1].i);
+		}
+		free(com->vt.vars[0].p);
+	}
+	
+	{//APOP
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, {{.a1 =0}}},
+			{.code = BC_CPUSH, {{.a1 =0}}},
+			{.code = BC_CPUSH, {{.a1 =2}}}, 
+			{.code = BC_CPUSH, {{.a1 =1}}},
+			
+			{.code = BC_APOP, {{.a1 = 0}}},
+			{.code = BC_APOP, {{.a1 = 0}}},
+			
+			{.code = BC_END}
+		};
+		com->cubbys[0].code = code;
+		
+		
+		com->cons[0].size =-1;
+		com->cons[0].v.i = 0;
+		com->cons[1].size =-1;
+		com->cons[1].v.i = 1;
+		
+		com->cons[2].size =-1;
+		com->cons[2].v.i = 4;
+		
+		com->vt.vars[0].size = 2;
+		com->vt.vars[0].p	= malloc(sizeof(intfloat)*2);
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].p[0].i == 0 && com->vt.vars[0].p[1].i == 4)
+			printf("APOP: PASS!\n");
+		else {
+			ret = 1;
+			printf("APOP: FAIL!\n\t%i %i",com->vt.vars[0].p[0].i,com->vt.vars[0].p[1].i);
+		}
+		
+		free(com->vt.vars[0].p);
+	}
+	
+//test builtins
 	
 	/*
 	//example case
@@ -543,6 +831,9 @@ int main()
 			{.code = BC_NOOP},
 			{.code = BC_END}
 		};
+		com->cubbys[0].code = code;
+		
+		runCubbyhole(com, 0);
 	}*/
 	
 	//end tests
@@ -555,7 +846,12 @@ int main()
 intfloat callTester(var *args)
 {
 	intfloat v; 
-	v.i = args[0].v.i + args[1].v.i;
-	printf("CALL PART 1 PASS\n\targs: %i %i\n",args[0].v.i, args[1].v.i);
+	
+	printf("\tCALL PART 1 PASS\n");
+	if(args[2].size == 2)
+		puts("\tCALL PART 2 PASS");
+	
+	v.i = args[0].v.i + args[1].v.i +args[2].p[0].i + args[2].p[1].i;
+	
 	return v; 
 }

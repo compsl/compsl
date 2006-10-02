@@ -92,13 +92,6 @@ test: maketestonly
 	done
 
 
-#Assumes that all tests are single object/source file linked to libcompsl.a
-maketestonly: $(TESTOBJS) static
-	for obj in $(TESTOBJS); do \
-		$(CC) -MD -static $$obj -Lbin -l$(SHORTLIB) -o bin/$$(basename $$obj .o); \
-	done
-
-
 ################################
 # INTERNAL TARGETS             #
 ################################
@@ -116,6 +109,8 @@ src/run.o: src/run.c
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 	$(CC) -MM $(CFLAGS) $*.c > $*.dep
+
+
 
 $(STATIC_LIB_OUT):
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
@@ -136,6 +131,15 @@ $(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
 $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/lex.yy.c; \
 	flex -o$@ $<
+
+
+####################################################
+#Assumes that all tests are single object/source file linked to libcompsl.a
+maketestonly: $(TESTOBJS) static
+	for obj in $(TESTOBJS); do \
+		$(CC) -MD -static $$obj -Lbin -l$(SHORTLIB) -o bin/$$(basename $$obj .o); \
+	done
+
 
 ################################
 # OLD                          #

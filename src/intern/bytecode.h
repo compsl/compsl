@@ -18,18 +18,53 @@ typedef struct
   };
 } bytecode;
 
+// all instructions working with variables take address in a1 unless otherwise
+// stated
+
 typedef enum  { 
-	BC_NOOP = 0, BC_PUSH, 	BC_APUSH, 	BC_CPUSH, 	//00-03
-	BC_POP, 	BC_APOP,	BC_DPOP, 	BC_SWAP, 	//04-07
-	BC_CALL, 	BC_ADD, 	BC_SUB, 	BC_MUL, 	//08-0B
-	BC_DIV ,	BC_CMP,		BC_FADD,	BC_FSUB, 	//0C-0F
-	BC_FMUL, 	BC_FDIV,	BC_FCMP,	BC_JMP, 	//10-13
-	BC_JMPL,	BC_JMPE,	BC_JMPG,	BC_JMLE, 	//14-17
-	BC_JMNE, 	BC_JMGE,	BC_FLIN,	BC_INFL, 	//18-1B
-	BC_MOD,		BC_FMOD,	BC_GPSH,	BC_GAPS, 	//1C-1F
-	BC_GPOP,	BC_GAPP,	BC_AND,		BC_OR,		//20-23
-	BC_NOT, 	BC_BAND,	BC_BOR,		BC_BXOR,	//24-27
-	BC_BNOT,	BC_SFTL,	BC_SFTR,
+	BC_NOOP = 0, // do nothing
+	BC_PUSH, 	//push local var
+	BC_APUSH, 	//push element from local array (index on stack)
+	BC_CPUSH, 	//push constant
+	BC_POP, 	//pop to local var
+	BC_APOP,	//pop into local array (value on top of stack, index is next)
+	BC_DPOP, 	//pop and discard value
+	BC_SWAP, 	//swap top two stack elements
+	BC_CALL, 	//call native (addr in a1, args on stack, ltr w/rightmost @ top)
+	BC_ADD, 	//add top 2 stack elements (integer)
+	BC_SUB, 	//subtract top 2 stack elements b = pop; a = pop; push a - b;
+	BC_MUL, 	//multiply top 2 stack elements 
+	BC_DIV ,	//divide top 2 stack elements b = pop; a = pop; push a / b;
+	BC_CMP,		//compare top 2 stack elements b = pop; a = pop; push a <>= b;
+	BC_FADD,	//same as ADD but for float
+	BC_FSUB, 	//same as SUB but for float
+	BC_FMUL, 	//same as MUL but for float
+	BC_FDIV,	//same as DIV but for float
+	BC_FCMP,	//same as CMP but for float
+	BC_JMP, 	//jump to offeset in sa from current positon
+	BC_JMPL,	//jump if last compare was less
+	BC_JMPE,	//jump if last compare was equal
+	BC_JMPG,	//jump if last compare was greater
+	BC_JMLE, 	//jump if last compare was less or equal
+	BC_JMNE, 	//jump if last compare was not equal
+	BC_JMGE,	//jump if last compare was greater or equal
+	BC_FLIN,	//cast float to int (top of stack)
+	BC_INFL, 	//cast int to float (top of stack)
+	BC_MOD,		//modulus of top 2 stack b = pop; a = pop; push a % b;
+	BC_FMOD,	//same as MOD only for float
+	BC_GPSH,	//same as PUSH but for global
+	BC_GAPS, 	//samp as APUSH but for global
+	BC_GPOP,	//same as POP but for global
+	BC_GAPP,	//same as APOP but for global
+	BC_AND,		//boolean and of top two stack elements
+	BC_OR,		//boolean or of top two stack elements
+	BC_NOT, 	//boolean not of top stack element
+	BC_BAND,	//bitwise and of top two stack elements
+	BC_BOR,		//bitwise or of top two stack elements
+	BC_BXOR,	//bitwise xor of top two stack elements
+	BC_BNOT,	//bitwise not of top stack element
+	BC_SFTL,	//shift left, top of stack is shift, next is value
+	BC_SFTR,	//shift right, top of stack is shift, next is value
 	
 	//builtins
 	BC_ABS,		BC_ABSF,	BC_SIN,		BC_COS,		//28-2B

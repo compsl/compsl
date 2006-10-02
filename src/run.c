@@ -168,9 +168,9 @@ static void *jmptbl[] =
  	APOP:
  		//TODO: test this
  		sp -=2;
- 		if(lvs[pc->a1].size > (sp + 1)->i && (sp+1)->i >= 0)
+ 		if(lvs[pc->a1].size > (sp)->i && (sp)->i >= 0)
  		{
- 			lvs[pc->a1].p[(sp+1)->i] = *sp;
+ 			lvs[pc->a1].p[(sp)->i] = *(sp+1);
  		}
  		else
  		{
@@ -280,10 +280,10 @@ static void *jmptbl[] =
  		if(greater || equal) pc += pc->sa - 1;// compensate for pc++ at top
  		goto TOP;
  	FLIN: 
- 		sp->i = (int)(sp->f);
+ 		(sp-1)->i = (int)((sp-1)->f);
  		goto TOP;
  	INFL:
- 		sp->f = (float)(sp->i);
+ 		(sp-1)->f = (float)((sp-1)->i);
  		goto TOP;
  	MOD:
  		sp--;	
@@ -328,9 +328,9 @@ static void *jmptbl[] =
  	GAPP:
  		//TODO: test this
  		sp -=2;
- 		if(gvs[pc->a1].size > (sp + 1)->i && (sp+1)->i >= 0)
+ 		if(gvs[pc->a1].size > (sp)->i && (sp)->i >= 0)
  		{
- 			gvs[pc->a1].p[(sp+1)->i] = *sp;
+ 			gvs[pc->a1].p[(sp)->i] = *(sp+1);
  		}
  		else
  		{

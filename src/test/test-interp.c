@@ -695,6 +695,161 @@ int main()
 		}
 	}
 	
+	
+	{ // JMGE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMGE, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 1)
+			printf("JMGE 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.i == 1)
+				printf("JMGE 1: FAIL! Didn't go far enough\n");
+			else
+				printf("JMGE 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMGE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMGE, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 1)
+			printf("JMGE 2: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.i == 1)
+				printf("JMGE 2: FAIL! Didn't go far enough\n");
+			else
+				printf("JMGE 2: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+
+	{ // JMGE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CMP }, // compare
+			{.code = BC_JMGE, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 2 && com->vt.vars[1].v.i == 1)
+			printf("JMGE 3: PASS!\n");
+		else 
+		{
+			printf("JMGE 3: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	
+	{ //FLIN/INFL
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =0} }}, 
+			{.code = BC_FLIN},
+			{.code = BC_POP , { {.a1 =0} }},
+			{.code = BC_PUSH, { {.a1 =0} }}, 
+			{.code = BC_INFL},
+			{.code = BC_POP , { {.a1 =1} }},
+			{.code = BC_END}
+		};
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.5f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		puts("FLIN/INFL:");
+		
+		if(com->vt.vars[0].v.i == 1)
+			puts("\tFLIN: PASS");
+		else
+			printf("\tFLIN: FAIL!\n\t\t%i\n", com->vt.vars[0].v.i);
+			
+		if(com->vt.vars[1].v.f == (float)1)
+			puts("\tINFL: PASS");
+		else
+			printf("\tINFL: FAIL!\n\t\t%f\n", com->vt.vars[1].v.f);
+	}
+	
 	{// CALL
 		bytecode code[] = 
 		{ 
@@ -785,8 +940,8 @@ int main()
 		{ 
 			{.code = BC_CPUSH, {{.a1 =0}}},
 			{.code = BC_CPUSH, {{.a1 =0}}},
-			{.code = BC_CPUSH, {{.a1 =2}}}, 
-			{.code = BC_CPUSH, {{.a1 =1}}},
+			{.code = BC_CPUSH, {{.a1 =1}}}, 
+			{.code = BC_CPUSH, {{.a1 =2}}},
 			
 			{.code = BC_APOP, {{.a1 = 0}}},
 			{.code = BC_APOP, {{.a1 = 0}}},

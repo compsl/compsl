@@ -14,12 +14,13 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <float.h>
 
 #ifndef __GNUC__
 #error "gotta have gcc!"
 #endif
 
-#define VM_FLOAT_EPSILON 0.001f
+#define VM_FLOAT_EPSILON FLT_EPSILON
 
 void init_genrand(unsigned long s);
 double genrand_real1(void);

@@ -844,7 +844,7 @@ int main()
 		else
 			printf("\tFLIN: FAIL!\n\t\t%i\n", com->vt.vars[0].v.i);
 			
-		if(com->vt.vars[1].v.f == (float)1)
+		if(abs(com->vt.vars[1].v.f - (float)1) < 0.0001)
 			puts("\tINFL: PASS");
 		else
 			printf("\tINFL: FAIL!\n\t\t%f\n", com->vt.vars[1].v.f);
@@ -975,7 +975,38 @@ int main()
 	}
 	
 //test builtins
-	
+
+	{
+        bytecode code[] = 
+        { 
+            {.code = BC_CPUSH, { {.a1 =0, .a2 = 0} }}, 
+            {.code = BC_CPUSH, { {.a1 =1, .a2 = 0} }},
+            {.code = BC_ABS },
+            {.code = BC_POP, {{.a1 = 1, .a2 = 0}}},
+            {.code = BC_ABS },
+            {.code = BC_POP, {{.a1 = 0, .a2 = 0}}},
+            {.code = BC_END}
+        };
+        
+        com->cons[0].size =-1;
+        com->cons[0].v.i = -1;
+        com->cons[1].size =-1;
+        com->cons[1].v.i = 2;
+        
+        com->vt.vars[0].size =-1;
+        com->vt.vars[0].v.i = 0;
+        com->vt.vars[1].size =-1;
+        com->vt.vars[1].v.i = 0;
+        
+        com->cubbys[0].code = code;
+        
+        runCubbyhole(com, 0);
+        
+        if(com->vt.vars[0].v.i == 1 &&  com->vt.vars[1].v.i == 2)
+            printf("ABS: PASS!\n");
+        else
+            printf("ABS: FAIL!\n");
+    }
 	/*
 	//example case
 	{ // new block so code[] goes out of scope, this way we can re-use it's name in each test case

@@ -15,21 +15,41 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
+#Figure out how we wanna make libm get linked with tests on linux
 
+ifndef _ARCH
+	_ARCH := $(strip $(shell uname -s))
+	export _ARCH
+endif
+
+ifeq ($(_ARCH),Linux)
+	LINKLIBS := -lm 
+endif
 #TODO: fix here
 DBG_MODS=DEBUG_COMP DEBUG_FOO
 DBG_ENVS=$(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
 
+BISON = bison
+FLEX = flex
+
+CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99
+CFLAGS+=-fbuiltin -fsingle-precision-constant
 
 CC=gcc
-CFLAGS=-ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -std=gnu99
+
+# Fixes for building on UofT's computers
+#CC=gcc-3.4
+
+#NOTE: on linux we seem to need to link against libm, so we need to adjust some of the linking
+#to do this...
+
 # if none x86 need to disable this line
 #CFLAGS += -mmmx -mno-ieee-fp
 #if sse instructions not available need to disable this line
-#CFLAGS += -msse -mfpmath=sse
+CFLAGS += -msse -mfpmath=sse
 
 ifdef DEBUG
-	CFLAGS += -O0 -ggdb -D DEBUG $(DBG_ENVS)
+	CFLAGS += -O0 -ffast-math -ggdb -D DEBUG $(DBG_ENVS)
 else
 	#CFLAGS += -O2
 	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks 
@@ -103,7 +123,7 @@ test: maketestonly
 
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
-	$(CC) -c $(CFLAGS) -fno-gcse $< -o $@
+	$(CC) -c $(CFLAGS) -fno-gcse $< $(LINKLIBS) -o $@
 	$(CC) -MM $(CFLAGS) src/run.c > src/run.dep
 
 %.o: %.c
@@ -116,8 +136,7 @@ $(STATIC_LIB_OUT):
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
 $(DYN_LIB_OUT): 
-	$(CC) -shared -Wl,-soname,$(LIBNAME).so.1 -o $(DYN_LIB_OUT)  $(OBJECTS)
-
+	$(CC) -shared -Wl,-soname,$(LIBNAME).so.1 -o $(DYN_LIB_OUT) $(OBJECTS) $(LINKLIBS)
 
 ################################
 # FLEX/BISON TARGETS           #
@@ -126,18 +145,18 @@ $(DYN_LIB_OUT):
 
 $(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/compsl.tab.c ; \
-	bison -d $< -o $@
+	$(BISON) -d $< -o $@
 
 $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/lex.yy.c; \
-	flex -o$@ $<
+	$(FLEX) -o$@ $<
 
 
 ####################################################
 #Assumes that all tests are single object/source file linked to libcompsl.a
 maketestonly: $(TESTOBJS) static
 	for obj in $(TESTOBJS); do \
-		$(CC) -MD -static $$obj -Lbin -l$(SHORTLIB) -o bin/$$(basename $$obj .o); \
+		$(CC) -fbuiltin -MD -static $$obj -Lbin -l$(SHORTLIB) $(LINKLIBS) -o bin/$$(basename $$obj .o); \
 	done
 
 

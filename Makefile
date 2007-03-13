@@ -96,7 +96,7 @@ common: derived compile
 derived: $(DERIVED_SRCS)
 
 clean:
-	rm -f $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
+	-rm -f -- $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
 		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES)
 
 compile: $(SOURCES) $(OBJECTS)

@@ -83,6 +83,8 @@ TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
+.PHONY: maketestonly test cleantest compile static dynamic common all clean
+
 ################################
 #TARGETS                       #
 ################################
@@ -108,19 +110,18 @@ cleantest:
 	make clean 
 	make test
 
-test: maketestonly
-	for test in  $(TEST_EXES); do \
-		$$test; \
+test: $(TEST_EXES)
+	@for test in $^; do \
+		echo Running $$test; \
+		$$test ; \
+		echo DONE; \
 	done
-
 
 ################################
 # INTERNAL TARGETS             #
 ################################
 
 #Dash makes it not error if not found
-
-
 -include $(DEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
@@ -144,20 +145,21 @@ $(DYN_LIB_OUT):
 # FLEX/BISON TARGETS           #
 ################################
 
-
-$(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
-	rm -f $(CMPLRPATH)/compsl.tab.c ; \
+$(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.y
+	rm -f $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h
 	$(BISON) -d $< -o $@
 
 $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
-	rm -f $(CMPLRPATH)/lex.yy.c; \
+	rm -f $(CMPLRPATH)/lex.yy.c
 	$(FLEX) -o$@ $<
 
 
 ####################################################
 #Assumes that all tests are single object/source file linked to libcompsl.a
-maketestonly: $(TESTOBJS) static
-	for obj in $(TESTOBJS); do \
-		$(CC) ${MYCFLAGS} -MD -static $$obj -Lbin -l$(SHORTLIB) $(PLATLIBS) -o bin/$$(basename $$obj .o); \
-	done
+bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
+	$(CC) ${MYCFLAGS} -MD -static $< -Lbin -l$(SHORTLIB) $(PLATLIBS) -o $@
 
+#maketestonly: $(TESTOBJS) static
+#	for obj in $(TESTOBJS); do \
+#		$(CC) ${MYCFLAGS} -MD -static $$obj -Lbin -l$(SHORTLIB) $(PLATLIBS) -o bin/$$(basename $$obj .o); \
+#	done

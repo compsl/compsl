@@ -57,10 +57,10 @@ endif
 MYCFLAGS := -std=gnu99 -fbuiltin
 ALL_CFLAGS = ${CFLAGS} ${MYCFLAGS}
 
-#CC=gcc
+CC=gcc
 
 # Fixes for building on UofT's computers
-CC=gcc-3.4
+#CC=gcc-3.4
 
 CMPLRPATH=src/compiler
 SHORTLIB=compsl

@@ -45,8 +45,8 @@ void destroyComp(compart *c)
 
 	for(int i = 0; i < COMPART_MAX_CUBBYS && c->cubbys[i].code != NULL; i++)
     {
-    	free(c->cubbys[i].code);
-    	free(c->cubbys[i].name);
+    	free(c->cubbys[i].code); c->cubbys[i].code = NULL;
+    	free(c->cubbys[i].name); c->cubbys[i].name = NULL;
     }
     
     

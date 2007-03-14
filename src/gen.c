@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdio.h>
 
 __attribute__ ((pure, fastcall)) symbolinfo searchSym(const char *name, compart *com) 
 {
@@ -51,10 +52,6 @@ __attribute__ ((pure, fastcall)) symbolinfo searchSym(const char *name, compart 
 	
 	
 	return res;
-}
-
-float compsl_rand()
-{
 }
 
 void panic(const char *s)

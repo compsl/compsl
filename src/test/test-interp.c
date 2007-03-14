@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <float.h>
+#include <math.h>
 
 #include "../extern/vm.h"
 #include "../extern/compart.h"

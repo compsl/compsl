@@ -15,6 +15,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <float.h>
+#include <time.h>
 
 #ifndef __GNUC__
 #error "gotta have gcc!"

@@ -28,7 +28,7 @@ extern FILE *yyin;
 extern compart *ccompart;
 char *sprt;
 
-int goparse(char* fn, compart *com) {
+int goparse(const char* fn, compart *com) {
 	DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
 	ccompart = com;
 	yyin = fopen( fn, "r" );

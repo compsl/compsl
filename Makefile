@@ -34,7 +34,8 @@ DBG_ENVS=$(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
 BISON = bison
 FLEX = flex
 
-CFLAGS = -ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-noreturn -Wunreachable-code -fsingle-precision-constant
+CFLAGS  = -fsingle-precision-constant
+CFLAGS += -ftabstop=4 -Wall -Wextra -Wbad-function-cast -Wcast-align -Wwrite-strings -Wmissing-noreturn -Wunreachable-code
 
 
 #NOTE: on linux we seem to need to link against libm, so we need to adjust some of the linking
@@ -152,7 +153,7 @@ $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h
 	$(BISON) -d $< -o $@
 
-$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
+$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y $(CMPLRPATH)/compsl.tab.h
 	rm -f $(CMPLRPATH)/lex.yy.c
 	$(FLEX) -o$@ $<
 
@@ -162,7 +163,7 @@ $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	$(CC) ${MYCFLAGS} -MD -static $< -Lbin -l$(SHORTLIB) $(PLATLIBS) -o $@
 
-#maketestonly: $(TESTOBJS) $(OBJECTS)
+#maketestonly: $(TESTOBJS) $(OBJECTS) static
 #	for obj in $(TESTOBJS); do \
 #		$(CC) ${MYCFLAGS} -MD -static $$obj -Lbin $(PLATLIBS) $(OBJECTS) -o bin/$$(basename $$obj .o); \
 #	done

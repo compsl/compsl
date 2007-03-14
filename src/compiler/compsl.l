@@ -2,6 +2,8 @@
 %{
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
 #include "node.h"
 #include "../extern/vm.h"
 #include "../extern/compart.h"

@@ -152,7 +152,13 @@ bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *para
 			free(vm->natives[vm->ncnt].params);
 			free(vm->natives[vm->ncnt].paramFlags);
 			free(vm->natives[vm->ncnt].name);
-
+			
+			free(tmp);
+			
+			vm->natives[vm->ncnt].params =
+				vm->natives[vm->ncnt].paramFlags =
+				vm->natives[vm->ncnt].name = NULL;
+			
 			//set errorno here
 			
 			return false; // FAILURE!!!!!!111
@@ -160,6 +166,8 @@ bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *para
 		tokCount++;
 		tok= strtok(NULL," ,");
 	}
+	
+	free(tmp);
 		
 	vm->ncnt++; // we are done adding another native!
 	

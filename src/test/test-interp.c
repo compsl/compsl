@@ -845,11 +845,7 @@ int main()
 		else
 			printf("\tFLIN: FAIL!\n\t\t%i\n", com->vt.vars[0].v.i);
 			
-<<<<<<< test-interp.c
-		if(fabs(com->vt.vars[1].v.f - 1.0f) < FLT_EPSILON)
-=======
 		if(abs(com->vt.vars[1].v.f - (float)1) < 0.0001)
->>>>>>> 1.12
 			puts("\tINFL: PASS");
 		else
 			printf("\tINFL: FAIL!\n\t\t%f\n", com->vt.vars[1].v.f);

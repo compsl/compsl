@@ -35,24 +35,20 @@ VM *createVM(void)
  * destroy a VM
  */
 void destroyVM(VM *vm)
-{
-	int i;
-    for(i = 0; i < vm->ncnt; i++)
-		free(vm->natives[i].name);
-	
+{	
 	varTableDestroy(&(vm->vt));
 	
 	for(int i=0; i<vm->ncnt; i++)
 	{
 		if(vm->natives[i].numParam != 0)
 		{
-			free(vm->natives[i].params);
-			free(vm->natives[i].paramFlags);
+			free(vm->natives[i].params); vm->natives[i].params = NULL; 
+			free(vm->natives[i].paramFlags); vm->natives[i].paramFlags = NULL;
 		}
-		free(vm->natives[i].name);
+		free(vm->natives[i].name); vm->natives[i].name = NULL;
 	}
 	
-    free(vm->natives);
+    free(vm->natives); vm->natives = NULL; 
     free(vm);
 }
 

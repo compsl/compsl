@@ -1026,6 +1026,8 @@ int main()
 	
 	//end tests
 	
+	com->cubbys[0].code = NULL;
+	
 	destroyComp(com);
 	destroyVM(vm);
 	return ret; //return 0 else make's unhappy

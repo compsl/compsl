@@ -17,6 +17,8 @@
 
 #Figure out how we wanna make libm get linked with tests on linux
 
+DEBUG = 1
+
 ifndef _ARCH
 	_ARCH := $(strip $(shell uname -s))
 	export _ARCH
@@ -44,7 +46,8 @@ CFLAGS = -ftabstop=4 -Wall -Wextra -Wfloat-equal -Wbad-function-cast -Wcast-alig
 CFLAGS += -msse -mfpmath=sse
 
 ifdef DEBUG
-	CFLAGS += -O0 -ffast-math -ggdb -D DEBUG $(DBG_ENVS)
+	CFLAGS += -O0 -ffast-math -ggdb 
+	#CFLAGS += -D DEBUG $(DBG_ENVS)
 else
 	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks 
 
@@ -135,10 +138,10 @@ src/run.o: src/run.c
 
 
 
-$(STATIC_LIB_OUT):
+$(STATIC_LIB_OUT): $(OBJECTS)
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
-$(DYN_LIB_OUT): 
+$(DYN_LIB_OUT): $(OBJECTS)
 	$(CC) -shared -Wl,-soname,$(LIBNAME).so.1 $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT)
 
 ################################
@@ -159,7 +162,7 @@ $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	$(CC) ${MYCFLAGS} -MD -static $< -Lbin -l$(SHORTLIB) $(PLATLIBS) -o $@
 
-#maketestonly: $(TESTOBJS) static
+#maketestonly: $(TESTOBJS) $(OBJECTS)
 #	for obj in $(TESTOBJS); do \
-#		$(CC) ${MYCFLAGS} -MD -static $$obj -Lbin -l$(SHORTLIB) $(PLATLIBS) -o bin/$$(basename $$obj .o); \
+#		$(CC) ${MYCFLAGS} -MD -static $$obj -Lbin $(PLATLIBS) $(OBJECTS) -o bin/$$(basename $$obj .o); \
 #	done

@@ -87,7 +87,7 @@ int32_t *vm_addInt(VM *vm, const char *name)
 }
 
 
-bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *params, bool retFloat, bool isVoid)
+bool addFunc(VM *vm, compsl_nat func, const char *name, const char *params, bool retFloat, bool isVoid)
 {
 	if(vm->ncnt == VM_NATIVEFN_INIT_SIZE)
 	{

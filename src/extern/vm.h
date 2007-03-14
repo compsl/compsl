@@ -23,10 +23,12 @@
 extern "C" {
 #endif
 
+typedef intfloat (*compsl_nat)(var *);
+
 typedef struct _nativeFN_t
 {
         char *name; // name of this function
-        intfloat (*func)(var *); // pointer the function to call
+        compsl_nat func; // pointer the function to call
         
         bool isVoid; //true iff function does not return a value
         bool retFloat; // true iff the return type is a float
@@ -51,6 +53,10 @@ void destroyVM(VM *vm);
 
 //NOTE: the string of the name of new vars is copyed and the copy is retained by the VM
 //      for the purpose of identifying the variable. Same goes for native functions.
+
+// note that when adding vars if an identical var is already present a pointer to it 
+// is simply returned, and no new var is added to the table. 
+
 int32_t *vm_addInt(VM *vm, const char *name);
 float *vm_addFloat(VM *vm, const char *name);// add a float to the vm's global vars, and return a pointer to it
 
@@ -80,7 +86,8 @@ typedef struct native_param_t
  * ex int:		int
  * ex two ints and a float array: int int float[]
  */
-bool addFunc(VM *vm, intfloat (*func)(var *), const char *name, const char *params, bool retFloat, bool isVoid);
+
+bool addFunc(VM *vm, compsl_nat func, const char *name, const char *params, bool retFloat, bool isVoid);
 
 #ifdef __cplusplus
 }

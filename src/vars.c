@@ -21,11 +21,12 @@ void varTableDestroy(varTable *vt)
 		if(vt->symbols[i].typeflags & IS_ARRAY)
 		{
 			free(vt->vars[i].p);// free the array
+			vt->vars[i].p = NULL;
 		}
 	}
 	
-	free(vt->symbols);
-	free(vt->vars);
+	free(vt->symbols); vt->symbols = NULL;
+	free(vt->vars); vt->vars = NULL;
 }
 
 __attribute__ ((pure)) int16_t findVar(varTable *vt, const char *name)

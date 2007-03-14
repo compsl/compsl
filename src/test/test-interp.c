@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <float.h>
 
 #include "../extern/vm.h"
 #include "../extern/compart.h"
@@ -193,7 +194,7 @@ int main()
 		
 		runCubbyhole(com, 0);
 		
-		if(com->vt.vars[0].v.f == 2.5f)
+		if(fabs(com->vt.vars[0].v.f - 2.5f) < FLT_EPSILON)
 			printf("FADD: PASS!\n");
 		else {
 			ret = 1;
@@ -219,7 +220,7 @@ int main()
 		
 		runCubbyhole(com, 0);
 		
-		if(com->vt.vars[0].v.f == 1.5f)
+		if(fabs(com->vt.vars[0].v.f - 1.5f) < FLT_EPSILON)
 			printf("FSUB: PASS!\n");
 		else {
 			ret = 1;
@@ -245,7 +246,7 @@ int main()
 		
 		runCubbyhole(com, 0);
 		
-		if(com->vt.vars[0].v.f == 1.0f)
+		if(fabs(com->vt.vars[0].v.f - 1.0f) < FLT_EPSILON)
 			printf("FMUL: PASS!\n");
 		else {
 			ret = 1;
@@ -271,7 +272,7 @@ int main()
 		
 		runCubbyhole(com, 0);
 		
-		if(com->vt.vars[0].v.f == 4.0f)
+		if(fabs(com->vt.vars[0].v.f - 4.0f) < FLT_EPSILON)
 			printf("FDIV: PASS!\n");
 		else {
 			ret = 1;
@@ -844,7 +845,11 @@ int main()
 		else
 			printf("\tFLIN: FAIL!\n\t\t%i\n", com->vt.vars[0].v.i);
 			
+<<<<<<< test-interp.c
+		if(fabs(com->vt.vars[1].v.f - 1.0f) < FLT_EPSILON)
+=======
 		if(abs(com->vt.vars[1].v.f - (float)1) < 0.0001)
+>>>>>>> 1.12
 			puts("\tINFL: PASS");
 		else
 			printf("\tINFL: FAIL!\n\t\t%f\n", com->vt.vars[1].v.f);

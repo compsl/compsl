@@ -129,8 +129,6 @@ src/run.o: src/run.c
 	$(CC) -c $(ALL_CFLAGS) $< -o $@
 	$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
 
-
-
 $(STATIC_LIB_OUT): $(OBJECTS)
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
@@ -145,12 +143,13 @@ $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h
 	$(BISON) -d $< -o $@
 
-$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y $(CMPLRPATH)/compsl.tab.h
+$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.tab.h
 	rm -f $(CMPLRPATH)/lex.yy.c
 	$(FLEX) -o$@ $<
 
 
 ####################################################
-#Assumes that all tests are single object/source file linked to libcompsl.a
+# Testers - aussume each test is one sourcefile
+####################################################
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	$(CC) ${MYCFLAGS} -MD -static $< $(OBJECTS) $(PLATLIBS) -o $@

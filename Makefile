@@ -161,7 +161,7 @@ $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y $(CMPLRPATH)/
 ####################################################
 #Assumes that all tests are single object/source file linked to libcompsl.a
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
-	$(CC) ${MYCFLAGS} -MD -static $< -Lbin -l$(SHORTLIB) $(PLATLIBS) -o $@
+	$(CC) ${MYCFLAGS} -MD -static $< $(OBJECTS) $(PLATLIBS) -o $@
 
 #maketestonly: $(TESTOBJS) $(OBJECTS) static
 #	for obj in $(TESTOBJS); do \

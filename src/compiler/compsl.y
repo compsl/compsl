@@ -10,9 +10,11 @@
 
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include "node.h"
+#include "compsl.tab.h"
 #include "../intern/gen.h"
 #include "../extern/vm.h"
 #include "../extern/compart.h"

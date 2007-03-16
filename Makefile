@@ -15,9 +15,11 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-#Figure out how we wanna make libm get linked with tests on linux
+BISON = bison
+FLEX  = flex
+CC	  = gcc
 
-DEBUG = 1
+#DEBUG = 1
 
 ifndef _ARCH
 	_ARCH := $(strip $(shell uname -s))
@@ -27,31 +29,28 @@ endif
 ifeq ($(_ARCH),Linux)
 	PLATLIBS := -lm 
 endif
+
 #TODO: fix here
-DBG_MODS=DEBUG_COMP DEBUG_FOO
-DBG_ENVS=$(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
+DBG_MODS = DEBUG_COMP DEBUG_FOO
+DBG_ENVS = $(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
 
-BISON = bison
-FLEX = flex
+CFLAGS  = -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
+#CFLAGS += -Wunreachable-code
 
-CFLAGS  = -fsingle-precision-constant
-CFLAGS += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings -Wunreachable-code
-
-
-#NOTE: on linux we seem to need to link against libm, so we need to adjust some of the linking
-#to do this... DONE!
-
+CFLAGS += -fsingle-precision-constant -ffast-math
 # if none x86 need to disable this line
-#ALL_CFLAGS += -mmmx -mno-ieee-fp
+CFLAGS += -mmmx -mno-ieee-fp
 #if sse instructions not available need to disable this line
-CFLAGS += -msse -mfpmath=sse
+#CFLAGS += -msse -mfpmath=sse
 
 ifdef DEBUG
-	CFLAGS += -O0 -ffast-math -ggdb 
+	CFLAGS += -O0 -ggdb 
 	#CFLAGS += -D DEBUG $(DBG_ENVS)
 else
-	CFLAGS += -O2 -ffast-math -fdata-sections -ffunction-sections -fbranch-target-load-optimize -frename-registers -fsingle-precision-constant -funroll-loops -finline-functions -fsched-spec-load -fsched2-use-superblocks 
-
+	CFLAGS += -O2 -fdata-sections -ffunction-sections -frename-registers
+	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
+	CFLAGS += -fsched-spec-load
+	#CFLAGS += -fbranch-target-load-optimize -fsched2-use-superblocks
 #-fmove-all-movables
 
 	# TODO: figure out if we need the -fno-strict-aliasing option.
@@ -60,11 +59,6 @@ endif
 
 MYCFLAGS := -std=gnu99 -fbuiltin
 ALL_CFLAGS = ${CFLAGS} ${MYCFLAGS}
-
-CC=gcc
-
-# Fixes for building on UofT's computers
-#CC=gcc-3.4
 
 CMPLRPATH=src/compiler
 SHORTLIB=compsl
@@ -153,3 +147,4 @@ $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.tab.h
 ####################################################
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	$(CC) ${MYCFLAGS} -MD -static $< $(OBJECTS) $(PLATLIBS) -o $@
+

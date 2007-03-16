@@ -4,7 +4,7 @@
 #include "../extern/compsl.h"
 #include "../intern/vars.h"
 
-int goparse(char* fn, compart *);
+int goparse(const char* fn, compart *);
 
 void addPrint(VM *vm); // add a printi(int) and printf(float) functions to the vm 
 

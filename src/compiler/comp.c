@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "node.h"
 #include "../extern/compart.h"
+#include "../intern/compart.h"
 #include "../intern/vars.h"
 
 compart *ccompart;

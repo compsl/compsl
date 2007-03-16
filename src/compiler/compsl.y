@@ -16,6 +16,7 @@
 #include "../intern/gen.h"
 #include "../extern/vm.h"
 #include "../extern/compart.h"
+#include "../intern/compart.h"
 #include "../intern/bytecode.h"
 //#include "../intern/debug.h"
 

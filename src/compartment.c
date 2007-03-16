@@ -1,5 +1,6 @@
 #include "extern/vm.h"
 #include "extern/compart.h"
+#include "intern/compartment.h"
 #include "intern/vars.h"
 #include "extern/var.h"
 #include <malloc.h>
@@ -7,6 +8,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 /*
  * TODO: 
@@ -49,7 +51,6 @@ void destroyComp(compart *c)
     	free(c->cubbys[i].name); c->cubbys[i].name = NULL;
     }
     
-    
 	free(c);
 }
 
@@ -63,17 +64,26 @@ int16_t getCubbyID(compart *com, const char *name)
 			return i; 
 	}
 	
+	com->errorno = COMPSL_NO_SUCH_CUBBY;
 	return -1; // not found
 }
 
 float *com_getFloat(compart *com, const char *name)
 {
-    return &(com->vt.vars[findVar(&(com->vt), name)].v.f);	
+	int i = findVar(&(com->vt), name);
+	if(i > 0)
+    	return &(com->vt.vars[findVar(&(com->vt), name)].v.f);
+    com->errorno = COMPSL_NO_SUCH_VAR;
+    return NULL;	
 }
 
 int32_t *com_getInt(compart *com, const char *name)
 {
-	return &(com->vt.vars[findVar(&(com->vt), name)].v.i);
+	int i = findVar(&(com->vt), name);
+	if(i > 0)
+    	return &(com->vt.vars[findVar(&(com->vt), name)].v.i);
+    com->errorno = COMPSL_NO_SUCH_VAR;
+    return NULL;	
 }
 
 float *com_addFloat(compart *com, const char *name)
@@ -85,7 +95,10 @@ float *com_addFloat(compart *com, const char *name)
 		return &(tmp->v.f);
 	}
 	else
+	{
+		com->errorno = COMPSL_VARS_FULL;
 		return NULL;
+	}
 }
 
 int32_t *com_addInt(compart *com, const char *name)
@@ -97,11 +110,19 @@ int32_t *com_addInt(compart *com, const char *name)
 		return &(tmp->v.i);
 	}
 	else
+	{
+		com->errorno = COMPSL_VARS_FULL;
 		return NULL;
+	}
 }
 
 int16_t com_addConst(compart *com, intfloat val)
 {
+	if(com->numConst >= COMPART_MAX_CONSTS)
+	{
+		com->errorno = COMPSL_CONST_FULL;
+		return -1;
+	}
 	for(int i = 0; i < com->numConst; i++)
 	{
 		if((com->cons[i].v.i) == val.i)
@@ -113,16 +134,23 @@ int16_t com_addConst(compart *com, intfloat val)
 	return com->numConst - 1;
 }
 
-void com_addCubby(compart *com, void *code, const char *name) {
+int com_addCubby(compart *com, void *code, const char *name) 
+{
+	if(com->numCubbys >= COMPART_MAX_CUBBYS)
+	{
+		com->errorno = COMPSL_CUBBYS_FULL;
+		return false;
+	}
 	com->cubbys[com->numCubbys].code = code;
 	com->cubbys[com->numCubbys].name = malloc(strlen(name)*sizeof(char));
 	strcpy(com->cubbys[com->numCubbys].name, name);
 	com->numCubbys++;
+	return true;
 }
 
 void com_prStats(compart *com){
 	for(int i=0;i<com->numCubbys;i++) {
-		printf("(%s, %i) ",com->cubbys[i].name, bc_len(com->cubbys[i].code))	;
+		printf("(%s, %i) ",com->cubbys[i].name, bc_len(com->cubbys[i].code));
 	}	
 	
 }

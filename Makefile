@@ -35,7 +35,7 @@ BISON = bison
 FLEX = flex
 
 CFLAGS  = -fsingle-precision-constant
-CFLAGS += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings -Wmissing-noreturn -Wunreachable-code
+CFLAGS += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings -Wunreachable-code
 
 
 #NOTE: on linux we seem to need to link against libm, so we need to adjust some of the linking

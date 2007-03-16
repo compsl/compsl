@@ -14,8 +14,6 @@
 	typedef signed char    int8_t;
 	typedef unsigned short uint16_t;
 	typedef short          int16_t;
-   /* Yes, in theory there could still be a 16-bit character type and shorts are
-      32-bits in size...if you find such an architecture, let me know =P */
 
 /* 32-bit */
 	typedef unsigned       uint32_t;

@@ -502,7 +502,7 @@ static void *jmptbl[] =
  	}
 #endif
  		goto TOP;
- 	UNIMP:
- 	
- 	panic("unimplemented instruction");
+// 	UNIMP:
+// 	
+// 	panic("unimplemented instruction");
 }

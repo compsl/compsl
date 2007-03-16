@@ -3,7 +3,7 @@
 
 #include "node.h"
 #include "../extern/compart.h"
-#include "../intern/compart.h"
+#include "../intern/compartment.h"
 #include "../intern/vars.h"
 
 compart *ccompart;

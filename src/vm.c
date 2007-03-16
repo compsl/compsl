@@ -95,15 +95,21 @@ bool addFunc(VM *vm, compsl_nat func, const char *name, const char *params, bool
 		return false;
 	}
 	
+	char *tmp;
+	
 	vm->natives[vm->ncnt].func = func;
-	vm->natives[vm->ncnt].name = malloc((strlen(name) + 1) * sizeof(char));
-	strcpy(vm->natives[vm->ncnt].name,name);
+	
+	//done with tmp so that name can be delcared const char
+	tmp = malloc((strlen(name) + 1) * sizeof(char));
+	strcpy(tmp,name);
+	vm->natives[vm->ncnt].name = tmp;
+	
 	vm->natives[vm->ncnt].retFloat = retFloat;
 	vm->natives[vm->ncnt].isVoid = isVoid;
 
 	// parse params here.
 	
-	char *tmp = malloc((strlen(params) + 1)* sizeof(char));
+	tmp = malloc((strlen(params) + 1)* sizeof(char));
 	strcpy(tmp,params);
 	char * tok = strtok(tmp," ,");
 	int tokCount = 0;

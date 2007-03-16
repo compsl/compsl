@@ -27,7 +27,7 @@ typedef intfloat (*compsl_nat)(var *);
 
 typedef struct _nativeFN_t
 {
-        char *name; // name of this function
+        const char *name; // name of this function
         compsl_nat func; // pointer the function to call
         
         bool isVoid; //true iff function does not return a value

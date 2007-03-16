@@ -258,7 +258,7 @@ static void *jmptbl[] =
  		tmp.f = sp->f - (sp + 1)->f;
  		less = tmp.f < 0;
 		greater = tmp.f > 0;
- 		equal = __builtin_fdimf(sp->f, (sp + 1)->f) < VM_FLOAT_EPSILON;
+ 		equal = fdimf(sp->f, (sp + 1)->f) < VM_FLOAT_EPSILON;
  		goto TOP;
  	JMP:
  		pc += pc->sa - 1; // compensate for pc++ at top
@@ -295,7 +295,7 @@ static void *jmptbl[] =
  		sp--;	
  		//(sp - 1)->f = (sp - 1)->f - sp->f * truncf((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
 //#ifndef DEBUG
- 		(sp - 1)->f = __builtin_fmodf((sp - 1)->f, sp->f);
+ 		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
 //#endif
  		//(sp - 1)->f = 42;
  		//TODO: uncomment above
@@ -390,41 +390,41 @@ static void *jmptbl[] =
 //bultins
 	
 	ABS:
-		(sp - 1)->i = __builtin_abs((sp - 1)->i);
+		(sp - 1)->i = abs((sp - 1)->i);
  		goto TOP;
 	
 	ABSF:
-		(sp - 1)->f = __builtin_fabsf((sp - 1)->f);
+		(sp - 1)->f = fabsf((sp - 1)->f);
 		goto TOP;
 	SIN:
-		(sp - 1)->f = __builtin_sinf((sp - 1)->f);
+		(sp - 1)->f = sinf((sp - 1)->f);
 		goto TOP;
 	COS:
-		(sp - 1)->f = __builtin_cosf((sp - 1)->f);
+		(sp - 1)->f = cosf((sp - 1)->f);
 		goto TOP;
 	TAN:
-		(sp - 1)->f = __builtin_tanf((sp - 1)->f);
+		(sp - 1)->f = tanf((sp - 1)->f);
 		goto TOP;
 	ASIN:
-		(sp - 1)->f = __builtin_asinf((sp - 1)->f);
+		(sp - 1)->f = asinf((sp - 1)->f);
 		goto TOP;
 	ACOS:
-		(sp - 1)->f = __builtin_acosf((sp - 1)->f);
+		(sp - 1)->f = acosf((sp - 1)->f);
 		goto TOP;
 	ATAN:
-		(sp - 1)->f = __builtin_atanf((sp - 1)->f);
+		(sp - 1)->f = atanf((sp - 1)->f);
 		goto TOP;
 	SQRT:
-		(sp - 1)->f = __builtin_sqrtf((sp - 1)->f);
+		(sp - 1)->f = sqrtf((sp - 1)->f);
 		goto TOP;
 	LN:
-		(sp - 1)->f = __builtin_logf((sp - 1)->f);
+		(sp - 1)->f = logf((sp - 1)->f);
 		goto TOP;
 	FLOOR:
-		(sp - 1)->f = __builtin_floorf((sp - 1)->f);
+		(sp - 1)->f = floorf((sp - 1)->f);
 		goto TOP;
 	CEIL:
-		(sp - 1)->f = __builtin_ceilf((sp - 1)->f);
+		(sp - 1)->f = ceilf((sp - 1)->f);
 		goto TOP;
 	RAND:
 		sp->f = (float)(genrand_real1());
@@ -432,11 +432,11 @@ static void *jmptbl[] =
 		goto TOP;
 	ATAN2:
 		sp--;
-		(sp - 1)->f = __builtin_atan2f(sp->f, (sp - 1)->f);
+		(sp - 1)->f = atan2f(sp->f, (sp - 1)->f);
 		goto TOP;
 	POW:
 		sp--;
-		(sp - 1)->f = __builtin_powf(sp->f, (sp - 1)->f);
+		(sp - 1)->f = powf(sp->f, (sp - 1)->f);
 		goto TOP;
 	MIN:
 		sp--;
@@ -448,15 +448,15 @@ static void *jmptbl[] =
 		goto TOP;
 	MINF:
 		sp--;
-		(sp - 1)->f = __builtin_fminf(sp->f, (sp - 1)->f);
+		(sp - 1)->f = fminf(sp->f, (sp - 1)->f);
 		goto TOP;
 	MAXF:
 		sp--;
-		(sp - 1)->f = __builtin_fmaxf(sp->f, (sp - 1)->f);
+		(sp - 1)->f = fmaxf(sp->f, (sp - 1)->f);
 		goto TOP;
 	HYPOT:
 		sp--;
-		(sp - 1)->f = __builtin_hypotf(sp->f, (sp - 1)->f);
+		(sp - 1)->f = hypotf(sp->f, (sp - 1)->f);
 		goto TOP;
 //misc	
  	PYES:

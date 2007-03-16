@@ -56,7 +56,7 @@ void destroyVM(VM *vm)
 float *vm_getFloat(VM *vm, const char *name)
 {
 	int i = findVar(&(vm->vt), name);
-	if(i > 0)
+	if(i >= 0)
     	return &(vm->vt.vars[i].v.f);
     	
     vm->errorno = COMPSL_NO_SUCH_VAR;
@@ -66,7 +66,7 @@ float *vm_getFloat(VM *vm, const char *name)
 int32_t *vm_getInt(VM *vm, const char *name)
 {
 	int i = findVar(&(vm->vt), name);
-	if(i > 0)
+	if(i >= 0)
 		return &(vm->vt.vars[i].v.i);
 	vm->errorno = COMPSL_NO_SUCH_VAR;
     return NULL;

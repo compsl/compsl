@@ -3,6 +3,8 @@
 #include "intern/compartment.h"
 #include "intern/vars.h"
 #include "extern/var.h"
+#include "compiler/node.h"
+
 #include <malloc.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -71,7 +73,7 @@ int16_t getCubbyID(compart *com, const char *name)
 float *com_getFloat(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
-	if(i > 0)
+	if(i >= 0)
     	return &(com->vt.vars[findVar(&(com->vt), name)].v.f);
     com->errorno = COMPSL_NO_SUCH_VAR;
     return NULL;	
@@ -80,7 +82,7 @@ float *com_getFloat(compart *com, const char *name)
 int32_t *com_getInt(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
-	if(i > 0)
+	if(i >= 0)
     	return &(com->vt.vars[findVar(&(com->vt), name)].v.i);
     com->errorno = COMPSL_NO_SUCH_VAR;
     return NULL;	
@@ -89,7 +91,7 @@ int32_t *com_getInt(compart *com, const char *name)
 float *com_addFloat(compart *com, const char *name)
 {
 	var *tmp;
-	if(com->vt.cnt < VM_MAX_GVARS)
+	if(com->vt.cnt < COMPART_MAX_VARS)
 	{
 		tmp = addVar(&(com->vt), FLOAT_VAR, name);
 		return &(tmp->v.f);
@@ -104,7 +106,7 @@ float *com_addFloat(compart *com, const char *name)
 int32_t *com_addInt(compart *com, const char *name)
 {
 	var *tmp;
-	if(com->vt.cnt < VM_MAX_GVARS)
+	if(com->vt.cnt < COMPART_MAX_VARS)
 	{
 		tmp = addVar(&(com->vt), INT_VAR, name);
 		return &(tmp->v.i);

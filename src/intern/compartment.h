@@ -1,5 +1,5 @@
-#ifndef COMPART_H_
-#define COMPART_H_
+#ifndef COMPARTMENT_H_
+#define COMPARTMENT_H_
 
 #include "../extern/compart.h"
 
@@ -10,7 +10,7 @@ extern "C" {
  * pointed at by code, and named name
  * return true on success, false otherwise
  */
-void com_addCubby(compart *, void *code, const char *name);
+int com_addCubby(compart *, void *code, const char *name);
 void com_prStats(compart *);
 
 #ifdef __cplusplus

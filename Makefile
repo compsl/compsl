@@ -87,32 +87,24 @@ TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
-.PHONY: maketestonly test cleantest compile static dynamic common all clean
+.PHONY: test cleantest compile static dynamic all clean
+
 
 ################################
 #TARGETS                       #
 ################################
 
-all: common static dynamic
-
-
-
-common: derived compile
-
-derived: $(DERIVED_SRCS)
+all: static dynamic
 
 clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
 		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES)
 
-compile: $(SOURCES) $(OBJECTS)
+static: $(STATIC_LIB_OUT)
 
-static: common $(STATIC_LIB_OUT)
-dynamic: common $(DYN_LIB_OUT)
+dynamic: $(DYN_LIB_OUT)
 
-cleantest: 
-	make clean 
-	make test
+cleantest: clean test 
 
 test: $(TEST_EXES)
 	@for test in $^; do \
@@ -162,8 +154,3 @@ $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.y $(CMPLRPATH)/
 #Assumes that all tests are single object/source file linked to libcompsl.a
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	$(CC) ${MYCFLAGS} -MD -static $< $(OBJECTS) $(PLATLIBS) -o $@
-
-#maketestonly: $(TESTOBJS) $(OBJECTS) static
-#	for obj in $(TESTOBJS); do \
-#		$(CC) ${MYCFLAGS} -MD -static $$obj -Lbin $(PLATLIBS) $(OBJECTS) -o bin/$$(basename $$obj .o); \
-#	done

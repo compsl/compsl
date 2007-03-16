@@ -57,7 +57,7 @@ float *vm_getFloat(VM *vm, const char *name)
 {
 	int i = findVar(&(vm->vt), name);
 	if(i > 0)
-    	return &(vm->vt.vars[i, name)].v.f);
+    	return &(vm->vt.vars[i].v.f);
     	
     vm->errorno = COMPSL_NO_SUCH_VAR;
     return NULL;

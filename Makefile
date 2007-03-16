@@ -87,14 +87,14 @@ TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 STATIC_LIB_OUT := bin/$(LIBNAME).a
 DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
-.PHONY: test cleantest compile static dynamic all clean
+.PHONY: test cleantest all clean
 
 
 ################################
 #TARGETS                       #
 ################################
 
-all: static dynamic
+all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
 clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \

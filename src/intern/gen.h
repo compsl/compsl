@@ -22,6 +22,6 @@ typedef struct
  * Post: if symbol doesn't exist returns a symbolinfo with id=0
  * 		 else returns info on symbol
  */
-symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure, fastcall));
+symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure));
 
 #endif /*GEN_H_*/

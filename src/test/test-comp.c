@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "../extern/vm.h"
 #include "../extern/compart.h"
+#include "../intern/compartment.h"
 #include "../extern/compsl.h"
 #include "../intern/vars.h"
 

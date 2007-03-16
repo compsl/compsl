@@ -45,7 +45,8 @@ void destroyVM(VM *vm)
 			free(vm->natives[i].params); vm->natives[i].params = NULL; 
 			free(vm->natives[i].paramFlags); vm->natives[i].paramFlags = NULL;
 		}
-		free(vm->natives[i].name); vm->natives[i].name = NULL;
+		free((void *)(vm->natives[i].name)); 
+		vm->natives[i].name = (const char *)NULL;
 	}
 	
     free(vm->natives); vm->natives = NULL; 
@@ -54,12 +55,21 @@ void destroyVM(VM *vm)
 
 float *vm_getFloat(VM *vm, const char *name)
 {
-    return &(vm->vt.vars[findVar(&(vm->vt), name)].v.f);	
+	int i = findVar(&(vm->vt);
+	if(i > 0)
+    	return &(vm->vt.vars[i, name)].v.f);
+    	
+    vm->errorno = COMPSL_NO_SUCH_VAR;
+    return NULL;
 }
 
 int32_t *vm_getInt(VM *vm, const char *name)
 {
-	return &(vm->vt.vars[findVar(&(vm->vt), name)].v.i);
+	int i = findVar(&(vm->vt);
+	if(i > 0)
+		return &(vm->vt.vars[findVar(&(vm->vt), name)].v.i);
+	vm->errorno = COMPSL_NO_SUCH_VAR;
+    return NULL;
 }
 
 float *vm_addFloat(VM *vm, const char *name)
@@ -71,7 +81,10 @@ float *vm_addFloat(VM *vm, const char *name)
 		return &(tmp->v.f);
 	}
 	else
+	{
+		vm->errorno = COMPSL_VARS_FULL;
 		return NULL;
+	}
 }
 
 int32_t *vm_addInt(VM *vm, const char *name)
@@ -83,7 +96,10 @@ int32_t *vm_addInt(VM *vm, const char *name)
 		return &(tmp->v.i);
 	}
 	else
+	{
+		vm->errorno = COMPSL_VARS_FULL;
 		return NULL;
+	}
 }
 
 
@@ -91,7 +107,7 @@ bool addFunc(VM *vm, compsl_nat func, const char *name, const char *params, bool
 {
 	if(vm->ncnt == VM_NATIVEFN_INIT_SIZE)
 	{
-		//TODO: add setting errno here
+		vm->errorno = COMPSL_FUNC_FULL;
 		return false;
 	}
 	
@@ -153,16 +169,14 @@ bool addFunc(VM *vm, compsl_nat func, const char *name, const char *params, bool
 		{
 			free(vm->natives[vm->ncnt].params);
 			free(vm->natives[vm->ncnt].paramFlags);
-			free(vm->natives[vm->ncnt].name);
+			free((void *)(vm->natives[vm->ncnt].name));
 			
 			free(tmp);
+			vm->natives[vm->ncnt].name = NULL;
+			vm->natives[vm->ncnt].params = NULL;
+			vm->natives[vm->ncnt].paramFlags = NULL;
 			
-			vm->natives[vm->ncnt].params =
-				vm->natives[vm->ncnt].paramFlags =
-				vm->natives[vm->ncnt].name = NULL;
-			
-			//set errorno here
-			
+			vm->errorno = COMPSL_BAD_PARM_FRMT;
 			return false; // FAILURE!!!!!!111
 		}
 		tokCount++;

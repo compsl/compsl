@@ -84,7 +84,7 @@
 </target>
 <target name="debug all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
-<buildArguments>-k -DDEBUG</buildArguments>
+<buildArguments>-k -D DEBUG</buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>

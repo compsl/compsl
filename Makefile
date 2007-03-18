@@ -135,8 +135,9 @@ $(DYN_LIB_OUT): $(OBJECTS)
 ################################
 # FLEX/BISON TARGETS           #
 ################################
+$(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.tab.c
 
-$(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.y
+$(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h
 	$(BISON) -d  $(CMPLRPATH)/compsl.y -o $(CMPLRPATH)/compsl.tab.c
 

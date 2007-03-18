@@ -138,7 +138,7 @@ $(DYN_LIB_OUT): $(OBJECTS)
 
 $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.y
 	rm -f $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h
-	$(BISON) -d $< -o $@
+	$(BISON) -d  $(CMPLRPATH)/compsl.y -o $(CMPLRPATH)/compsl.tab.c
 
 $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.tab.h
 	rm -f $(CMPLRPATH)/lex.yy.c

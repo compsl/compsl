@@ -28,6 +28,4 @@ void varTableCreate(varTable *vt, uint16_t size);
 // also free the names of the vars
 void varTableDestroy(varTable *vt);
 
-int16_t com_addConst(compart *com, intfloat val);
-
 #endif /*VARS_H_*/

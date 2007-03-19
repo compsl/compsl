@@ -2,6 +2,7 @@
 #define COMPARTMENT_H_
 
 #include "../extern/compart.h"
+#include "../extern/port.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,6 +13,7 @@ extern "C" {
  */
 int com_addCubby(compart *, void *code, const char *name);
 void com_prStats(compart *);
+int16_t com_addConst(compart *com, intfloat val);
 
 #ifdef __cplusplus
 }

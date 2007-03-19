@@ -52,6 +52,7 @@ var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 			
 		vt->symbols[vt->cnt].id = vt->cnt;
 		vt->symbols[vt->cnt].name = malloc(sizeof(char)*(strlen(name) + 1));
+		if(vt->symbols[vt->cnt].name == NULL) return NULL;
 		strcpy(vt->symbols[vt->cnt].name, name);
 		vt->symbols[vt->cnt].typeflags = typeflags;
 			

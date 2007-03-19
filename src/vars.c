@@ -31,8 +31,7 @@ void varTableDestroy(varTable *vt)
 
 __attribute__ ((pure)) int16_t findVar(const varTable *vt, const char *name)
 {
-	int i;
-	for(i = 0; i < vt->cnt; i++)
+	for(int i = 0; i < vt->cnt; i++)
 	{
 		if(strcmp(vt->symbols[i].name, name) == 0)// is this the one?
 			return i;

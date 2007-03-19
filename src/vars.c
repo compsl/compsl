@@ -29,7 +29,7 @@ void varTableDestroy(varTable *vt)
 	free(vt->vars); vt->vars = NULL;
 }
 
-__attribute__ ((pure)) int16_t findVar(varTable *vt, const char *name)
+__attribute__ ((pure)) int16_t findVar(const varTable *vt, const char *name)
 {
 	int i;
 	for(i = 0; i < vt->cnt; i++)

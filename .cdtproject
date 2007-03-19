@@ -96,6 +96,13 @@
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
+<target name="cleantest" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments>-k -j2</buildArguments>
+<buildTarget>cleantest DEBUG=1</buildTarget>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
+</target>
 </buildTargets>
 </item>
 <item id="cdt_resolver">

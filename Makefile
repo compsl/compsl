@@ -19,8 +19,6 @@ BISON = bison
 FLEX  = flex
 CC    = gcc
 
-#DEBUG = 1
-
 ifndef _ARCH
 	_ARCH := $(strip $(shell uname -s))
 	export _ARCH
@@ -34,7 +32,7 @@ endif
 DBG_MODS = DEBUG_COMP DEBUG_FOO
 DBG_ENVS = $(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
 
-CFLAGS  = -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
+CFLAGS  += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 #CFLAGS += -Wunreachable-code
 
 CFLAGS += -fsingle-precision-constant -ffast-math
@@ -44,7 +42,7 @@ CFLAGS += -mmmx -mno-ieee-fp
 #CFLAGS += -msse -mfpmath=sse
 
 ifdef DEBUG
-	CFLAGS += -O0 -ggdb 
+	CFLAGS += -O0 -ggdb -DDEBUG
 	#CFLAGS += -D DEBUG $(DBG_ENVS)
 else
 	CFLAGS += -O2 -fdata-sections -ffunction-sections -frename-registers
@@ -147,4 +145,3 @@ $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.tab.h
 ####################################################
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	$(CC) ${MYCFLAGS} -MD $< $(OBJECTS) $(PLATLIBS) -o $@
-

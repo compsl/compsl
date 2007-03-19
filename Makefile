@@ -88,7 +88,7 @@ DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 #TARGETS                       #
 ################################
 
-all: derived $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
+all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
 # TODO: why is derived needed and why is src/compiler/compsl.tab.h.h being made?
 derived: $(DERIVED_SRCS)

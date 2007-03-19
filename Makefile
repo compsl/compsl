@@ -90,15 +90,11 @@ DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 
 all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
-# TODO: why is derived needed and why is src/compiler/compsl.tab.h.h being made?
-derived: $(DERIVED_SRCS)
-
 clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
 		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES)
 
 static: $(STATIC_LIB_OUT)
-
 dynamic: $(DYN_LIB_OUT)
 
 cleantest: clean test 

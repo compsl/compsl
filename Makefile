@@ -57,7 +57,7 @@ else
 	# TODO: make sure none of these breaks the library for linking....
 endif
 
-MYCFLAGS := -std=gnu99 -fbuiltin
+MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE
 ALL_CFLAGS = ${CFLAGS} ${MYCFLAGS}
 
 CMPLRPATH=src/compiler

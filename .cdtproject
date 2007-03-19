@@ -63,10 +63,10 @@
 <buildTargets>
 <target name="test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
-<buildArguments></buildArguments>
+<buildArguments>-k -j3</buildArguments>
 <buildTarget>test</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>true</useDefaultCommand>
+<useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="clean" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
@@ -77,17 +77,17 @@
 </target>
 <target name="all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
-<buildArguments></buildArguments>
+<buildArguments>-j3 -k</buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>true</useDefaultCommand>
+<useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="debug all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -D DEBUG</buildArguments>
-<buildTarget>all</buildTarget>
+<buildTarget>all -DDEBUG</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="debug test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>

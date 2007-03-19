@@ -150,5 +150,5 @@ $(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.tab.h
 # Testers - aussume each test is one sourcefile
 ####################################################
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
-	$(CC) ${MYCFLAGS} -MD -static $< $(OBJECTS) $(PLATLIBS) -o $@
+	$(CC) ${MYCFLAGS} -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 

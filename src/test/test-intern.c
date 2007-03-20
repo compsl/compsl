@@ -29,6 +29,7 @@ int main()
 			for(int j=0; j<5;j++)
 				if(j != i) assert(vs[i] != vs[j]);
 		
+		varTableDestroy(&vt);
 	}
 	{
 	}

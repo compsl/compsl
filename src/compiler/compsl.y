@@ -182,8 +182,9 @@ void compileError(const char *str) {
 %token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE; 
 %type <expr> expression math retable;
 %type <ival> cast post_modifier intfloat_keyword;
-%type <nval> file header_stuff do_declare cubbys cubby control else decl modifiers;
+%type <nval> file header_stuff do_declare cubbys cubby control else decl;
 %type <sval> cubby_id;
+%type <bval> modifiers;
 %type <bc> stmt block;
 %type <xlist> paramlist stmts moreparamlist decls ident_list more_ident_list;
 

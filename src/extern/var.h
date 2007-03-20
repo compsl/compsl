@@ -29,6 +29,7 @@ struct SYMTABLE_T // don't bother with typedef, only here so I can sizeof it lat
 
 typedef struct VAR_TABLE_T
 {
+	uint16_t capacity; // max variables for this table
 	uint16_t cnt; // number of variables
     var *vars; // the variables themselves
     struct SYMTABLE_T *symbols; // the symbol table for the vars

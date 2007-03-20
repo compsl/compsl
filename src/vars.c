@@ -8,6 +8,7 @@
 void varTableCreate(varTable *vt, uint16_t size)//FIXME uh what did I put this here for
 {
 	vt->cnt = 0;
+	vt->capacity = size;
 	vt->symbols = malloc(sizeof(struct SYMTABLE_T) * size);
 	vt->vars = malloc(sizeof(var) * size);
 }
@@ -42,6 +43,8 @@ __attribute__ ((pure)) int16_t findVar(const varTable *vt, const char *name)
 
 var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 {	
+	if(ct->cnt >= vt->capacity) return NULL;
+	
 	int16_t tmp = findVar(vt, name);
 	
 	if(tmp == -1)

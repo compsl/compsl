@@ -897,6 +897,7 @@ int main()
 		}
 		free(com->vm->natives[0].params);
 		free(com->vm->natives[0].paramFlags);
+		free(com->vt.vars[2].p);
 	}
 	
 	{//APUSH 

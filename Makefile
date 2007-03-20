@@ -104,6 +104,13 @@ test: $(TEST_EXES)
 		echo DONE; \
 	done
 
+test-valgrind: $(TEST_EXES)
+	@for test in $^; do \
+		echo Running $$test; \
+		valgrind $$test ; \
+		echo DONE; \
+	done
+
 ################################
 # INTERNAL TARGETS             #
 ################################

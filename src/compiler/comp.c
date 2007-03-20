@@ -96,7 +96,7 @@ void autocast(bool toFloat,expression *e) {
 bytecode* expr_toBc(expression *exp) {
 	if(exp->isLiteral) {
 		bytecode* bc = malloc(sizeof(bytecode)*2);
-		if(bc==0) internalCompileError("Out of memory");
+		if(bc==NULL) internalCompileError("Out of memory");
 		bc[0].code=BC_CPUSH;
 		
 		intfloat tmp;

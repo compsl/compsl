@@ -32,14 +32,23 @@ extern compart *ccompart;
 char *sprt;
 
 int goparse(const char* fn, compart *com) {
-	DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
-	ccompart = com;
-	yyin = fopen( fn, "r" );
-	yyrestart(yyin);
-	sprt=malloc(1024 * sizeof(char));
-	int ret = yyparse(fn);
-	DPRINTF(">> DONE PARSE\n\n");
-	return ret;
+  FILE* input;
+
+  input = fopen(fn, "r");
+  if(NULL == input) {
+    DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",fn);
+    return -1;
+  }
+  yyin = input;
+
+  DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
+  ccompart = com;
+
+  yyrestart(yyin);
+  sprt=malloc(1024 * sizeof(char));
+  int ret = yyparse(fn);
+  DPRINTF(">> DONE PARSE\n\n");
+  return ret;
 }
 
 void yyerror(const char *fn, const char *msg) {

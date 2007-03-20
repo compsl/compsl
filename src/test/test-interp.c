@@ -895,6 +895,8 @@ int main()
 			ret = 1;
 			printf("CALL: FAIL!\n");
 		}
+		free(com->vm->natives[0].params);
+		free(com->vm->natives[0].paramFlags);
 	}
 	
 	{//APUSH 

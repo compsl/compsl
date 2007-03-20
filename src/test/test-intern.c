@@ -16,7 +16,7 @@ int main()
 	{	//varTable tests 
 		varTable vt;
 		var *vs[6];
-		varTableCreate(&vt, 3);
+		varTableCreate(&vt, 6);
 		vs[0] = addVar(&vt,INT_VAR, "foo");
 		vs[1] = addVar(&vt,IS_GLBL | FLOAT_VAR, "bar");
 		vs[2] = addVar(&vt, FLOAT_VAR | IS_ARRAY, "foobar");

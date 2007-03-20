@@ -144,7 +144,7 @@ int com_addCubby(compart *com, void *code, const char *name)
 		return false;
 	}
 	com->cubbys[com->numCubbys].code = code;
-	com->cubbys[com->numCubbys].name = malloc(strlen(name)*sizeof(char));
+	com->cubbys[com->numCubbys].name = malloc((strlen(name)+1)*sizeof(char));
 	strcpy(com->cubbys[com->numCubbys].name, name);
 	com->numCubbys++;
 	return true;

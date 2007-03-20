@@ -1,0 +1,4 @@
+-v
+--memcheck:leak-check=full
+--memcheck:undef-value-errors=yes
+--db-attach=yes

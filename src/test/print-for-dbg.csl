@@ -9,5 +9,8 @@ cubbyhole testing
 	yes(123);
 	yes();
 	no(23423,nothing, test);
+
+	// TODO: enable printi
+	//printi(3);
 } 
 

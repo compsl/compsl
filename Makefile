@@ -28,9 +28,13 @@ ifeq ($(_ARCH),Linux)
 	PLATLIBS := -lm 
 endif
 
+ifdef DEBUG_COMP
+	CFLAGS += -DDEBUG_COMP
+endif
+
 #TODO: fix here
-DBG_MODS = DEBUG_COMP DEBUG_FOO
-DBG_ENVS = $(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
+#DBG_MODS = DEBUG_COMP DEBUG_FOO
+#DBG_ENVS = $(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
 
 CFLAGS  += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 #CFLAGS += -Wunreachable-code

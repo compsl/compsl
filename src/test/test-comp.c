@@ -30,27 +30,30 @@ int main()
 	  
 	VM *veem = createVM();
 	compart *com[NUM_FILES];
-
+	//addPrint(veem);
 	for(int i=0;i<NUM_FILES;i++) {
-		printf("Compiling: %s  ",files[i]);
+	  int ret;
+	  printf("Compiling: %s\n",files[i]);
 		
-		com[i] = createComp(veem);
-		fflush(stdout);
-		goparse(files[i], com[i]);
-
+	  com[i] = createComp(veem);
+	  fflush(stdout);
+	  ret = goparse(files[i], com[i]);
+	  printf("\tExit code: %i", ret);
+	  if(ret==0){
 		printf("\t:-)");
-		
 		printf("\t< "); 
 		com_prStats(com[i]);
 		printf(">\n");
-		
-
+	  } else {
+		printf( "\t:-(\n" );
+	  }
 	}
 	
-	puts("\nRunning some cubbys..");
-	
+        puts("\nRunning a cubby - should print yes, yes, no");
 	runCubbyhole(com[1], 0); 
-	
+	puts("\nRunning another cubby..");
+	runCubbyhole(com[2], 0); 	
+
 	//TODO free com's
 	
 	destroyVM(veem);

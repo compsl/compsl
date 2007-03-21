@@ -12,6 +12,7 @@ compart *ccompart;
 void internalCompileError(const char* str) {
 	sprintf(sprt,"Internal error: %s",str);
 	compileError(sprt);	
+	exit(1);
 }
 
 list* list_new(void) {

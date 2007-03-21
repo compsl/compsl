@@ -48,6 +48,7 @@ int goparse(const char* fn, compart *com) {
   sprt=malloc(1024 * sizeof(char));
   int ret = yyparse(fn);
   DPRINTF(">> DONE PARSE\n\n");
+  free(sprt);
   return ret;
 }
 
@@ -153,9 +154,8 @@ expression* readVar(char* name) {
 }
 
 void compileError(const char *str) {
-	fprintf(stderr,"Compile error: %s\n",str);
-	//	exit(1);
-	//YYABORT; 
+	fprintf(stderr,"Compile error: %s, ---ABORTING---\n",str);
+	//exit(1);
 	//TODO: make friendly
 }
 
@@ -199,7 +199,7 @@ header_stuff:
 		;
 		
 do_declare: {
-			DPRINTF("Doing declare\n");
+		DPRINTF("Doing declare\n");
 		}
 		DECLARE OPENB decls CLOSEB {
 
@@ -279,7 +279,7 @@ stmts:
 			$$=list_new();
 		};
 stmt:
-  		expression {
+		expression {
 			bytecode *code = expr_toBc($1);
 			int l = bc_len(code);
 			DPRINTF("Statement of %i bytecodes\n",l);
@@ -290,12 +290,12 @@ stmt:
 		}
         | 
         BREAK {
-        	DPRINTF("Break statement\n");
-			bytecode *code = malloc(sizeof(bytecode)*2);
-			code[0].code = BC_JMP; //JMP 0 = break, tobe parsed in block
-			code[0].a = 0; 
-			code[1].code = BC_NONO;
-			$$=code;
+		  DPRINTF("Break statement\n");
+		  bytecode *code = malloc(sizeof(bytecode)*2);
+		  code[0].code = BC_JMP; //JMP 0 = break, tobe parsed in block
+		  code[0].a = 0; 
+		  code[1].code = BC_NONO;
+		  $$=code;
         }
         |
         CONTINUE {
@@ -325,7 +325,7 @@ expression:
 				mcode[1].code=BC_NONO;
 				ex->val.bcode=mcode;
 			}
-			else if($1[0]=='n'&& $1[1]=='o' && $1[3]==0) {
+			else if($1[0]=='n'&& $1[1]=='o' && $1[2]==0) {
 				bytecode *mcode = malloc(2*sizeof(bytecode));
 				mcode[0].code = BC_PYES;
 				mcode[0].a1 =0;
@@ -354,16 +354,9 @@ expression:
 				else {
 					DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
 					
-					bytecode *mcode = malloc(2*sizeof(bytecode));
-					mcode[0].code = BC_PYES;
-					mcode[0].a1 =0;
-					mcode[1].code=BC_NONO;
-					ex->val.bcode=mcode;			
-					
-					//TODO: remove comments below and remove code above
-					
-					//sprintf("Function %s does not exist",$1);
-					//compileError(sprt);
+					sprintf(sprt, "Function %s does not exist",$1);
+					compileError(sprt);
+					YYABORT;
 				}
 			}
 			list_free($3);

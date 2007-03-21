@@ -349,7 +349,7 @@ expression:
 				else if(foo.isvar) {
 					sprintf(sprt,"Variable %s used as a function call",$1);
 					compileError(sprt);
-					YYERROR;
+					YYABORT;
 				}
 				else {
 					DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);

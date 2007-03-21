@@ -30,7 +30,8 @@ int main()
 	  
 	VM *veem = createVM();
 	compart *com[NUM_FILES];
-	//addPrint(veem);
+	addPrint(veem);
+	
 	for(int i=0;i<NUM_FILES;i++) {
 	  int ret;
 	  printf("Compiling: %s\n",files[i]);

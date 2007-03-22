@@ -338,7 +338,16 @@ expression:
 				symbolinfo foo = searchSym($1,ccompart);
 				
 				//TODO: what does searchSym return for not found?
-				if(foo.id!=0 && foo.id!=-1 && !foo.isvar) {
+				if(foo.id == -1)
+				{
+					DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
+					
+					sprintf(sprt, "Function %s does not exist",$1);
+					compileError(sprt);
+					YYABORT;
+				}
+				
+				if(!foo.isvar) {
 					DPRINTF("Functions \"%s\" found with id %i\n",$1,foo.id);
 					ex->isLiteral=false;
 					nativeFN funk = ccompart->vm->natives[foo.id];
@@ -348,13 +357,6 @@ expression:
 				}
 				else if(foo.isvar) {
 					sprintf(sprt,"Variable %s used as a function call",$1);
-					compileError(sprt);
-					YYABORT;
-				}
-				else {
-					DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
-					
-					sprintf(sprt, "Function %s does not exist",$1);
 					compileError(sprt);
 					YYABORT;
 				}

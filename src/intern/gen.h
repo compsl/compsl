@@ -19,7 +19,7 @@ typedef struct
 /**
  * search all symbol tables and return info on a symbol
  * 
- * Post: if symbol doesn't exist returns a symbolinfo with id=0
+ * Post: if symbol doesn't exist returns a symbolinfo with id=-1
  * 		 else returns info on symbol
  */
 symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure));

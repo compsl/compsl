@@ -40,7 +40,7 @@ __attribute__ ((pure)) symbolinfo searchSym(const char *name, compart *com)
 	
 	for(int i = 0; i < com->vm->ncnt; i++)
 	{
-		if(!strcmp(name, com->vm->natives[i].name))
+		if(strcmp(name, com->vm->natives[i].name) == 0)
 		{
 			res.id=i;
 			res.isvar = false;

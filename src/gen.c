@@ -47,9 +47,9 @@ __attribute__ ((pure)) symbolinfo searchSym(const char *name, compart *com)
 			res.local = false;
 			res.array = false;
 			res.isfloat = com->vm->natives[i].retFloat;
+			break;
 		}
 	}
-	
 	
 	return res;
 }

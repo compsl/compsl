@@ -195,7 +195,6 @@ static void *jmptbl[] =
  		*(sp - 2) = tmp;
  		goto TOP;
  	CALL: 
- 	//TODO: testme
  		for(int i=0; i<natives[pc->a1].numParam; i++)
  		{
  			if(natives[pc->a1].paramFlags[i] & IS_ARRAY)
@@ -206,12 +205,13 @@ static void *jmptbl[] =
  			else
  				natives[pc->a1].params[i].v = *(--sp);
  		}
- 		if(!natives[pc->a1].isVoid)
- 		{
-	 		*sp = (natives[pc->a1].func)(natives[pc->a1].params);
- 			sp++;
- 		}
  		
+		if(!natives[pc->a1].isVoid) {
+		  *sp = (natives[pc->a1].func)(natives[pc->a1].params);
+		  sp++;
+ 		} else {
+		  (natives[pc->a1].func)(natives[pc->a1].params);
+		}
  		goto TOP;
  	ADD:
  		sp--;

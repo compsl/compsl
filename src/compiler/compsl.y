@@ -155,8 +155,6 @@ expression* readVar(char* name) {
 
 void compileError(const char *str) {
 	fprintf(stderr,"Compile error: %s, ---ABORTING---\n",str);
-	//exit(1);
-	//TODO: make friendly
 }
 
 
@@ -340,31 +338,49 @@ expression:
 	    symbolinfo foo = searchSym($1,ccompart);
 	    
 	    if(foo.id == -1) {
-	      DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
-		
 	      sprintf(sprt, "Function %s does not exist",$1);
 	      compileError(sprt);
 	      YYABORT;
 	    }
-				
-	    if(!foo.isvar) {
-	      DPRINTF("Functions \"%s\" found with id %i\n",$1,foo.id);
-	      nativeFN *funk = &ccompart->vm->natives[foo.id];
-	      ex->isFloat = funk->retFloat;
-	      bytecode *mcode = malloc(2*sizeof(bytecode));
-	      mcode[0].code = BC_CALL;
-	      mcode[0].a1 = foo.id;
-	      mcode[1].code = BC_NONO;
-	      ex->val.bcode = mcode;
-
-	      //TODO: do var list
-	      
-	    }
-	    else if(foo.isvar) {
+		
+	    if(foo.isvar) {
 	      sprintf(sprt,"Variable %s used as a function call",$1);
 	      compileError(sprt);
 	      YYABORT;
 	    }
+		
+	    // Built in function
+	    int lenBc, curBc = 0;
+	    nativeFN *funk = &ccompart->vm->natives[foo.id];
+
+	    DPRINTF("Function \"%s\" found with id %i, function=%p\n",$1,foo.id, funk->func);
+	    ASSERT(strcmp($1,funk->name)==0, "Wrong function found");
+	    ASSERT(funk->func!=0, "Unitialized function called");
+	    
+	    // Arguments
+	    if($3->length < funk->numParam) {
+	      sprintf(sprt, "Function %s has %i parameters",$1, funk->numParam);
+	      compileError(sprt);
+	      YYABORT;
+	    }	      
+
+	    lenBc = 2 ;//TODO: +length of variable setup
+	    bytecode *mcode = malloc(sizeof(bytecode)+lenBc);
+	    
+	    for(int i=0;i<funk->numParam;i++) {
+	      //TODO: do push var list
+	      // curBc+=1;
+	    }
+
+	    mcode[curBc].code = BC_CALL;
+	    mcode[curBc].a1 = foo.id;
+	    curBc++;
+	    mcode[curBc].code = BC_NONO;
+	    
+	    ex->isFloat = funk->retFloat;
+	    ex->val.bcode = mcode;
+	    
+	    ASSERT(curBc==(lenBc-1), "Logic error adding parameters to function call");
 	  }
 	  list_free($3);
 	  $$ = ex;

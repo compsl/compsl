@@ -5,6 +5,10 @@
 #include "../extern/compsl.h"
 #include "../intern/vars.h"
 
+// For DPRINTF
+#include "../intern/debug.h"
+#include "../compiler/node.h"
+
 int goparse(const char* fn, compart *);
 
 void addPrint(VM *vm); // add a printi(int) and printf(float) functions to the vm 
@@ -34,23 +38,20 @@ int main()
 	
 	for(int i=0;i<NUM_FILES;i++) {
 	  int ret;
-	  printf("Compiling: %s\n",files[i]);
+	  printf("Compiling: %s: ",files[i]);
 		
 	  com[i] = createComp(veem);
 	  fflush(stdout);
 	  ret = goparse(files[i], com[i]);
-	  printf("\tExit code: %i", ret);
 	  if(ret==0){
-		printf("\t:-)");
-		printf("\t< "); 
-		com_prStats(com[i]);
-		printf(">\n");
+	    //	    DPRINTF("\t<%s>\n",com_prStats(com[i]));
+	    printf("PASS\n");
 	  } else {
-		printf( "\t:-(\n" );
+	    printf("FAIL with exit code %i\n", ret);
 	  }
 	}
 	
-        puts("\nRunning a cubby - should print yes, yes, no");
+        puts("\nRunning a cubby - should print yes, yes, no, Hello world");
 	runCubbyhole(com[1], 0); 
 	puts("\nRunning another cubby..");
 	runCubbyhole(com[2], 0); 	
@@ -64,7 +65,7 @@ int main()
 
 intfloat compsl_printFloat(var *args) { printf("Value: %f", args[0].v.f); return (intfloat)0;}
 intfloat compsl_printInt(var *args) { printf("Value: %i", args[0].v.i); return (intfloat)0;}	
-intfloat compsl_printHello(var *args) { printf("Hello world"); return (intfloat)0;}	
+intfloat compsl_printHello(var *args) { printf("Hello world\n"); return (intfloat)0;}	
 
 void addPrint(VM *vm)
 {
@@ -73,7 +74,7 @@ void addPrint(VM *vm)
   if(!addFunc(vm, &compsl_printInt, "printi", "int",false,true))
     puts("FAILED TO ADD printi");
   if(!addFunc(vm, &compsl_printHello, "helloWorld", "",false,true))
-    puts("FAILED TO ADD printi");
+    puts("FAILED TO ADD helloWorld");
 
   /*
     vm->natives[0].func= &compsl_printFloat;

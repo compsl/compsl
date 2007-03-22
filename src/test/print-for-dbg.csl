@@ -11,6 +11,6 @@ cubbyhole testing
 	no(23423,nothing, test);
 
 	// TODO: enable printi
-	printi(3);
+	helloWorld();
 } 
 

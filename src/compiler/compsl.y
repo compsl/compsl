@@ -308,78 +308,83 @@ stmt:
 		;
 		
 expression:
-		OPENP expression CLOSEP {
-			$$ = $2;
-		}
-		|
-		math
-		|
-		IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
-			expression *ex = malloc(sizeof(expression));
+	OPENP expression CLOSEP {
+	  $$ = $2;
+	}
+|
+	math {
+	}
+|
+	IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
+	  expression *ex = malloc(sizeof(expression));
+	  ex->isFloat = false;
+	  ex->isLiteral = false;
 			
-			//Special cases for debugging
-			if($1[0]=='y'&& $1[1]=='e' && $1[2]=='s' && $1[3]==0) {
-				bytecode *mcode = malloc(2*sizeof(bytecode));
-				mcode[0].code = BC_PYES;
-				mcode[0].a1 =1;
-				mcode[1].code=BC_NONO;
-				ex->val.bcode=mcode;
-			}
-			else if($1[0]=='n'&& $1[1]=='o' && $1[2]==0) {
-				bytecode *mcode = malloc(2*sizeof(bytecode));
-				mcode[0].code = BC_PYES;
-				mcode[0].a1 =0;
-				mcode[1].code=BC_NONO;
-				ex->val.bcode=mcode;			
-			}
+	  if($1[0]=='y'&& $1[1]=='e' && $1[2]=='s' && $1[3]==0) {
+	    bytecode *mcode = malloc(2*sizeof(bytecode));
+	    mcode[0].code = BC_PYES;
+	    mcode[0].a1 =1;
+	    mcode[1].code=BC_NONO;
+	    ex->val.bcode=mcode;
+	  }
+	  else if($1[0]=='n'&& $1[1]=='o' && $1[2]==0) {
+	    bytecode *mcode = malloc(2*sizeof(bytecode));
+	    mcode[0].code = BC_PYES;
+	    mcode[0].a1 =0;
+	    mcode[1].code=BC_NONO;
+	    ex->val.bcode=mcode;	
+	  }
 			
-			// Its a built in function call
-			else {
-				symbolinfo foo = searchSym($1,ccompart);
+	  // Its a native function call
+	  else {
+	    symbolinfo foo = searchSym($1,ccompart);
+	    
+	    if(foo.id == -1) {
+	      DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
+		
+	      sprintf(sprt, "Function %s does not exist",$1);
+	      compileError(sprt);
+	      YYABORT;
+	    }
 				
-				//TODO: what does searchSym return for not found?
-				if(foo.id == -1)
-				{
-					DPRINTF("Functions \"%s\" not found with id %i\n",$1,foo.id);
-					
-					sprintf(sprt, "Function %s does not exist",$1);
-					compileError(sprt);
-					YYABORT;
-				}
-				
-				if(!foo.isvar) {
-					DPRINTF("Functions \"%s\" found with id %i\n",$1,foo.id);
-					ex->isLiteral=false;
-					nativeFN funk = ccompart->vm->natives[foo.id];
-					//TODO: get type from func
-					//TODO: check var list
-					
-				}
-				else if(foo.isvar) {
-					sprintf(sprt,"Variable %s used as a function call",$1);
-					compileError(sprt);
-					YYABORT;
-				}
-			}
-			list_free($3);
-			$$ = ex;
-		}
-		|
-		retable {
-			$$ = $1;
-		}
-		|
-		IDENTIFIER ASSIGN expression {
-			//expression *lhs = resolveVar($1);
-			//autocast(lhs->isFloat,$3);
-			
-			//TODO: here			
-		}
-		|
-		cast expression { 
-			autocast($1==FLOAT,$2);
-			$$=$2;
-		}
+	    if(!foo.isvar) {
+	      DPRINTF("Functions \"%s\" found with id %i\n",$1,foo.id);
+	      nativeFN *funk = &ccompart->vm->natives[foo.id];
+	      ex->isFloat = funk->retFloat;
+	      bytecode *mcode = malloc(2*sizeof(bytecode));
+	      mcode[0].code = BC_CALL;
+	      mcode[0].a1 = foo.id;
+	      mcode[1].code = BC_NONO;
+	      ex->val.bcode = mcode;
+
+	      //TODO: do var list
+	      
+	    }
+	    else if(foo.isvar) {
+	      sprintf(sprt,"Variable %s used as a function call",$1);
+	      compileError(sprt);
+	      YYABORT;
+	    }
+	  }
+	  list_free($3);
+	  $$ = ex;
+	}
+|
+	retable {
+	  $$ = $1;
+	}
+|
+	IDENTIFIER ASSIGN expression {
+	  //expression *lhs = resolveVar($1);
+	  //autocast(lhs->isFloat,$3);
+	  
+	  //TODO: here			
+	}
+|
+	cast expression { 
+	  autocast($1==FLOAT,$2);
+	  $$=$2;
+	}
 		
 		
 /*TODO: direction*/

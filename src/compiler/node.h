@@ -51,6 +51,7 @@ void expr_free(expression* exp);
 list* list_new(void);
 void* list_get(list *, int);
 void list_free(list *);
+void llist_free(llist *);
 void list_addToFront(list *, void *);
 void* list_popFromFront(list *);
 

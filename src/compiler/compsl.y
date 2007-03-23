@@ -108,7 +108,24 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
     else
       mcode[endi].code = BC_ADD;
     break;
-    
+  case MINUS:
+    if(isFloat) 
+      mcode[endi].code = BC_FSUB;
+    else
+      mcode[endi].code = BC_SUB;
+    break;
+  case MULT:
+    if(isFloat)
+      mcode[endi].code = BC_FMUL;
+    else 
+      mcode[endi].code = BC_MUL;
+    break;
+  case DIV:
+    if(isFloat) 
+      mcode[endi].code = BC_FDIV;
+    else
+      mcode[endi].code = BC_DIV;
+    break;
   default:
     sprintf(sprt,"Operation \"%i\" not implemented\n",op);
     compileError(sprt);
@@ -301,7 +318,6 @@ block:
 				memcpy(bck, cur->obj, curlen*sizeof(bytecode));
 				bck+=curlen;
 				cur=cur->next;
-
 			}
 
 
@@ -337,6 +353,10 @@ stmts:
 		};
 stmt:
 		expression {
+		  if($1 == (expression*)0) {
+		    compileError("Invalid expression");
+		    YYABORT;
+		  }
 			bytecode *code = expr_toBc($1);
 			bytecode *ncode;
 
@@ -530,10 +550,18 @@ expression:
 	}
 |
 	IDENTIFIER ASSIGN expression {
+	  expression *ex = malloc(sizeof(expression));
+	  ex->isLiteral = false;
+	  ex->isFloat = false;
+	  ex->val.bcode = malloc(sizeof(bytecode)*2);
+	  ex->val.bcode[0].code = BC_NOOP;
+	  ex->val.bcode[1].code = BC_NONO;
+
 	  //expression *lhs = resolveVar($1);
 	  //autocast(lhs->isFloat,$3);
 	  
 	  //TODO: here			
+	  $$=ex;
 	}
 |
 	cast expression { 
@@ -681,23 +709,29 @@ else:
 		
 
 decls:
-		decl SEMI decls | ;
-			
+		decl SEMI decls {
+		  DPRINTF("1 decls completed\n");
+		  $$ = (node*)0;
+		}
+|
+		{
+		  $$ = (node*)0;
+		};
+
 decl:	
 		modifiers intfloat_keyword ident_list post_modifier {
+		  DPRINTF("Doing decl");
 			if($1) {
 				if($2) {
 					char* iden;
 					while((iden = (char*)list_popFromFront($3))) {
 						vm_addFloat(ccompart->vm,iden);
-						free(iden);
 					}
 				}
 				else {
 					char* iden;
 					while((iden = (char*)list_popFromFront($3))) {
 						vm_addInt(ccompart->vm,iden);
-						free(iden);
 					}
 				}
 			}
@@ -706,40 +740,45 @@ decl:
 					char* iden;
 					while((iden = (char*)list_popFromFront($3))) {
 						com_addFloat(ccompart,iden);
-						free(iden);
 					}
 				}
 				else {
 					char* iden;
 					while((iden = (char*)list_popFromFront($3))) {
 						com_addInt(ccompart,iden);
-						free(iden);
 					}
 				}
 			}
-			free($3);
+			DPRINTF(" - Done declare\n");
+			list_free($3);
+
 		};
 		
 		
 intfloat_keyword:
 		INT  { 
+		  DPRINTF("  Declaration is an int\n");
 			$$=0; 
 		}
 		| 
 		FLOAT { 
+		  DPRINTF("  Declaration is a float\n");
 			$$=1; 
 		};
 		
 modifiers:
 		GLOBAL { 
+		  DPRINTF("  Declaration is a global\n");
 			$$=1; 
 		}
 		|  {
+		  DPRINTF("  Declaration isn't a global\n");
 			$$=0;
 		};
 
 post_modifier:
 		OPENS expression CLOSES {
+		  DPRINTF("  Declaration is array\n");
 			if(!$2->isLiteral) {
 				compileError("Array declaration with non-literal length\n");
 				YYERROR;
@@ -755,16 +794,19 @@ post_modifier:
 		}
 		| 
 		{
-			$$=-1;
+		  DPRINTF("  Declaration isn't array\n");
+		  $$=-1;
 		}
 
 		
 ident_list:
 		more_ident_list {
-			$$=$1
+		  DPRINTF("  Declaration of %i variables\n",$1->length);
+		  $$=$1;
 		}
 		|
 		{
+		  DPRINTF("  Declaration of 0 variables\n");
 			$$= list_new();
 		}
 		;

@@ -34,10 +34,19 @@ void* list_get(list * lst, int ind) {
 	}
 	return 0;
 }
-	
+
+// Note: contents aren't freed
+void llist_free(llist *lst) {
+  if(lst==(llist*)0) return;
+  llist *next = lst->next;
+  free(lst);
+  llist_free(next);
+}	
+
+// Note, contents aren't freed
 void list_free(list *lst){
-	//TODO: memory leak here
-	free(lst);
+  llist_free(lst->head);
+  free(lst);
 }
 
 void list_addToFront(list *lst, void *newOb) {
@@ -74,6 +83,12 @@ int bc_len(bytecode* bc) {
 	return len;
 }
 
+void expr_ensureLit(expression* exp) {
+  if(exp->isLiteral) {
+    exp->val.bcode = expr_toBc(exp);
+    exp->isLiteral = false;
+  }
+}
 
 void autocast(bool toFloat,expression *e) {
   if(e->isLiteral) {
@@ -88,6 +103,8 @@ void autocast(bool toFloat,expression *e) {
   }
   else {
     if( toFloat && !e->isFloat) {
+      //expr_ensureLit(e);
+      
       internalCompileError("Casting not fully implemented yet");
     }
     else if(!toFloat && e->isFloat) {
@@ -126,7 +143,10 @@ bytecode* expr_toBc(expression *exp) {
 
 // TODO: use expr_free
 void expr_free(expression* expr) {
-  if(expr->isLiteral)
+  if(!expr->isLiteral) {
+    ASSERT(expr->val.bcode != (bytecode*)0, "Invalid bytecode");
+      
     free(expr->val.bcode);
+  }
   free(expr);
 }

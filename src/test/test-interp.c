@@ -67,7 +67,8 @@ int main()
 		
 		runCubbyhole(com, 0);
 		
-		if(com->vt.vars[1].v.i == com->vt.vars[0].v.i && com->vt.vars[1].v.i == com->vt.vars[2].v.i)
+		if(com->vt.vars[1].v.i == com->vt.vars[0].v.i
+		    	&& com->vt.vars[1].v.i == com->vt.vars[2].v.i)
 			printf("DUP: PASS!\n");
 		else {
 			printf("DUP: FAIL!\n");

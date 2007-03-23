@@ -38,7 +38,7 @@ static void *jmptbl[] =
  	&&POP, 
  	&&APOP,
  	&&DPOP,
- 	&&SWAP,
+ 	&&DUP,
  // native function call
  	&&CALL, 
  // integer operations
@@ -189,10 +189,14 @@ static void *jmptbl[] =
  	DPOP:
  		sp--;
  		goto TOP;
- 	SWAP://TODO: should this be an addressed thing? (ie: can swap an arbitrary pair of stack elements)
- 		tmp = *(sp - 1);
- 		*(sp - 1) = *(sp - 2);
- 		*(sp - 2) = tmp;
+ 	//SWAP://TODO: should this be an addressed thing? (ie: can swap an arbitrary pair of stack elements)
+ 	//	tmp = *(sp - 1);
+ 	///	*(sp - 1) = *(sp - 2);
+ 	//	*(sp - 2) = tmp;
+ 	//	goto TOP;
+ 	DUP:
+ 		*sp = *(sp - 1);
+ 		sp++;
  		goto TOP;
  	CALL: 
  		for(int i=0; i<natives[pc->a1].numParam; i++)
@@ -206,12 +210,11 @@ static void *jmptbl[] =
  				natives[pc->a1].params[i].v = *(--sp);
  		}
  		
-		if(!natives[pc->a1].isVoid) {
+		if(!natives[pc->a1].isVoid)
 		  *sp = (natives[pc->a1].func)(natives[pc->a1].params);
-		  sp++;
- 		} else {
+ 		else 
 		  (natives[pc->a1].func)(natives[pc->a1].params);
-		}
+		sp++;
  		goto TOP;
  	ADD:
  		sp--;

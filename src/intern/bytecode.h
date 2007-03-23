@@ -29,7 +29,7 @@ typedef enum  {
 	BC_POP, 	//pop to local var
 	BC_APOP,	//pop into local array (value on top of stack, index is next)
 	BC_DPOP, 	//pop and discard value
-	BC_SWAP, 	//swap top two stack elements
+	BC_DUP, 	//duplicate top of stack
 	BC_CALL, 	//call native (native ID in a1, args on stack, ltr w/rightmost @ top)
 	BC_ADD, 	//add top 2 stack elements (integer)
 	BC_SUB, 	//subtract top 2 stack elements b = pop; a = pop; push a - b;

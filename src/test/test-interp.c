@@ -47,6 +47,34 @@ int main()
 		}
 	}
 	
+	{ // DUP
+		bytecode code[] = 
+		{ 
+			{.code = BC_PUSH, { {.a1 =0} } }, //push local at address 0
+			{.code = BC_DUP},
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 1
+			{.code = BC_POP, { {.a1 =2} }}, // pop into address 1
+			{.code = BC_END}  // end
+		};
+		com->cubbys[0].code = code;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 2;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		com->vt.vars[2].size =-1;
+		com->vt.vars[2].v.i = 5;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[1].v.i == com->vt.vars[0].v.i && com->vt.vars[1].v.i == com->vt.vars[2].v.i)
+			printf("DUP: PASS!\n");
+		else {
+			printf("DUP: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
 	{ // CPUSH
 		bytecode code[] = 
 		{ 

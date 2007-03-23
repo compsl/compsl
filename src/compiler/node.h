@@ -46,6 +46,7 @@ typedef struct _list_t {
 
 int bc_len(bytecode *);
 bytecode* expr_toBc(expression *exp);
+void expr_free(expression* exp);
 
 list* list_new(void);
 void* list_get(list *, int);

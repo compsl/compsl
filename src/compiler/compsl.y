@@ -20,6 +20,7 @@
 #include "../extern/compart.h"
 #include "../intern/compartment.h"
 #include "../intern/bytecode.h"
+#include "../intern/builtins.h"
 //#include "../intern/debug.h"
 
 #define YYERROR_VERBOSE 1
@@ -71,8 +72,57 @@ int yywrap(void) {
 
 // Binary operator helpers for bin_op()
 
-expression* bin_bc_op(int bc,expression* a, expression* b) {
-	return a;
+expression* bin_bc_op(int op,expression* a, expression* b) {
+  ASSERT((a!=(expression*)0) && (b!=(expression*)0),"Bad args for bin_bc_op");
+  bool isFloat;
+  int alen,blen, endi;
+  bytecode* mcode;
+
+  // Change both sides to non-literals
+  a->val.bcode = expr_toBc(a);
+  a->isLiteral = false;
+  b->val.bcode = expr_toBc(b);
+  b->isLiteral = false;
+  if(!a->isFloat && !b->isFloat) {
+    isFloat = false;
+  } else {
+    autocast(true, a);
+    autocast(true, b);
+    isFloat = true;
+  } 
+
+  alen = bc_len(a->val.bcode);
+  blen = bc_len(b->val.bcode);
+  endi = alen+blen;
+
+  mcode = malloc(sizeof(bytecode)*(alen+blen+2));
+
+  memcpy(mcode, a->val.bcode,sizeof(bytecode)*alen);
+  memcpy(&mcode[alen], b->val.bcode,sizeof(bytecode)*blen);
+  
+
+  switch(op) {
+  case PLUS:
+    if(isFloat) 
+      mcode[endi].code = BC_FADD;
+    else
+      mcode[endi].code = BC_ADD;
+    break;
+    
+  default:
+    sprintf(sprt,"Operation \"%i\" not implemented\n",op);
+    compileError(sprt);
+    return (expression*)0;
+  }
+  mcode[endi].a1 = 0;
+  mcode[endi+1].code = BC_NONO;
+  mcode[endi+1].a1=0;
+  
+  free(a->val.bcode);
+  
+  expr_free(b);
+  a->val.bcode = mcode;
+  return a;
 	//TODO: this
 }
 
@@ -80,9 +130,13 @@ expression* bin_bc_op(int bc,expression* a, expression* b) {
 expression* bin_lit_op(int op, expression* a, expression* b) {
 	if(!a->isFloat && !b->isFloat) {
 		if(op==PLUS)
-			a->val.in+=b->val.in;
+		  a->val.in+=b->val.in;
 		else if(op==MINUS)
-			a->val.in-=b->val.in;
+		  a->val.in-=b->val.in;
+		else if(op==MULT)
+		  a->val.in*=b->val.in;
+		else if(DIV)
+		  a->val.in/=b->val.in;
 		else {
 			internalCompileError("Unknown operator in bin_lit_op()");
 			return 0;
@@ -94,9 +148,13 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 		float n1 = (a->isFloat)?a->val.fl:((float)a->val.in);
 		float n2 = (b->isFloat)?b->val.fl:((float)b->val.in);
 		if(op==PLUS)
-			n1+=n2;
+		  n1+=n2;
 		else if(op==MINUS)
-			n1-=n2;
+		  n1-=n2;
+		else if(op==MULT)
+		  n1*=n2;
+		else if(op==DIV)
+		  n1/=n2;
 		else {
 			puts("Unknown op");
 			exit(1); //TODO: this
@@ -112,6 +170,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 // Post: dont use a or b, they're freed if need be
 
 expression* bin_op(int op,expression* a, expression* b) {
+  ASSERT((a!=(expression*)0) && (b!=(expression*)0),"Bad args for bin_op");
 	if(a->isLiteral && b->isLiteral) {
 		return bin_lit_op(op,a,b);
 	}
@@ -200,7 +259,7 @@ do_declare: {
 		DPRINTF("Doing declare\n");
 		}
 		DECLARE OPENB decls CLOSEB {
-
+		  DPRINTF("Done declare\n");
 		}
 
 cubbys:
@@ -279,12 +338,28 @@ stmts:
 stmt:
 		expression {
 			bytecode *code = expr_toBc($1);
+			bytecode *ncode;
+
+			if(code==(bytecode*)0) {
+			  compileError("Bad bytecode");
+			  YYABORT;
+			}
 			int l = bc_len(code);
 			DPRINTF("Statement of %i bytecodes\n",l);
-			code = realloc(code, sizeof(bytecode)*(l+2));
-			code[l].code = BC_DPOP;
-			code[l+1].code = BC_NONO;
-			$$=code;
+			
+			ncode = malloc(sizeof(bytecode) * (l+2));
+
+			ASSERT(ncode!=(void*)0,"Out of memory");
+
+			memcpy(ncode, code, sizeof(bytecode)*l);
+			
+			// TODO: realloc borks !!
+			//code = realloc(code, sizeof(bytecode)*(l+2));
+			expr_free($1);
+
+			ncode[l].code = BC_DPOP;
+			ncode[l+1].code = BC_NONO;
+			$$=ncode;
 		}
         | 
         BREAK {
@@ -315,74 +390,138 @@ expression:
 |
 	IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
 	  expression *ex = malloc(sizeof(expression));
+	  bytecode *mcode;
 	  ex->isFloat = false;
-	  ex->isLiteral = false;
-			
-	  if($1[0]=='y'&& $1[1]=='e' && $1[2]=='s' && $1[3]==0) {
-	    bytecode *mcode = malloc(2*sizeof(bytecode));
-	    mcode[0].code = BC_PYES;
-	    mcode[0].a1 =1;
-	    mcode[1].code=BC_NONO;
-	    ex->val.bcode=mcode;
+	  int lenBc, curBc = 0;
+
+	  bytecode callcode;
+	  int numParams=0;
+	  uint8_t *paramFlags = 0;
+	  bool freeParamFlags = false;
+	  bool found=false;
+
+	  llist *curParam;	  
+
+	  // PYES bytecode
+	  if(strcmp($1,"yes")==0) {
+	    callcode.code = BC_PYES;
+	    callcode.a1 =1;
+	    found = true;
+	  } else if(strcmp($1,"no")==0) {
+	    callcode.code = BC_PYES;
+	    callcode.a1 =0;
+	    found = true;
 	  }
-	  else if($1[0]=='n'&& $1[1]=='o' && $1[2]==0) {
-	    bytecode *mcode = malloc(2*sizeof(bytecode));
-	    mcode[0].code = BC_PYES;
-	    mcode[0].a1 =0;
-	    mcode[1].code=BC_NONO;
-	    ex->val.bcode=mcode;	
+	  
+	  // Built in funcs
+	  if(!found) {
+	    for(int i=0;i<builtins_len;i++) {
+	      if(strcmp($1,builtins[i].name)==0) {
+		DPRINTF("Function \"%s\" found is a built in function\n",$1);
+		bool isFloat = builtins[i].isFloat;
+		callcode.code = builtins[i].code;
+		callcode.a1 =0;
+		numParams = builtins[i].ac; 
+		ex->isFloat = builtins[i].isFloat;
+		paramFlags = malloc(sizeof(uint8_t)*numParams);
+		freeParamFlags = true;
+		for(int q=0;q<numParams;q++)
+		  paramFlags[q] = ((isFloat)?FLOAT_VAR:0);
+		found = true;
+		break;
+	      }
+	    }
 	  }
-			
-	  // Its a native function call
-	  else {
-	    symbolinfo foo = searchSym($1,ccompart);
-	    
-	    if(foo.id == -1) {
+	  
+	  // Native function
+	  if(!found) {
+	    symbolinfo symbol = searchSym($1,ccompart);
+	    nativeFN *funk;
+	    if(symbol.id<0) {
 	      sprintf(sprt, "Function %s does not exist",$1);
 	      compileError(sprt);
 	      YYABORT;
-	    }
-		
-	    if(foo.isvar) {
+	    } else if(symbol.isvar) {
 	      sprintf(sprt,"Variable %s used as a function call",$1);
 	      compileError(sprt);
 	      YYABORT;
 	    }
-		
-	    // Built in function
-	    int lenBc, curBc = 0;
-	    nativeFN *funk = &ccompart->vm->natives[foo.id];
-
-	    DPRINTF("Function \"%s\" found with id %i, function=%p\n",$1,foo.id, funk->func);
+	    funk = &ccompart->vm->natives[symbol.id];
+	    paramFlags = funk->paramFlags;
+	    ex->isFloat = funk->retFloat;
+	    numParams = funk->numParam;
+	    callcode.code = BC_CALL;
+	    callcode.a1 = symbol.id;
+	    found = true;
+	    
+	    DPRINTF("Function \"%s\" found with id %i, function=%p\n",$1,symbol.id, funk->func);
 	    ASSERT(strcmp($1,funk->name)==0, "Wrong function found");
 	    ASSERT(funk->func!=0, "Unitialized function called");
+	  }	    
+	  
+	  ASSERT(found, "Function not found but not aborted");
+	  ASSERT(paramFlags!=0 || numParams==0, "No paramater specs");
+	  
+	  
+	  // Check no. arguments
+	  if($3->length < numParams) {
+	    sprintf(sprt, "Function %s has %i parameters, %i found",$1, numParams, $3->length);
+	    compileError(sprt);
+	    YYABORT;
+	  }
+	  if($3->length!=numParams)
+	    DPRINTF("Warning: function called with too many parameters\n");
+
+	  // 1 for callcode, 1 for BC_NONO
+	  lenBc = 2;
+	  
+	  // Ready the parameters and count the size of the bytecodes
+	  curParam = $3->head;
+	  for(int i=0; i< numParams;i++) {
+	    expression* ce = (expression*)curParam->obj;
+	    autocast(paramFlags[i] & FLOAT_VAR, ce);
 	    
-	    // Arguments
-	    if($3->length < funk->numParam) {
-	      sprintf(sprt, "Function %s has %i parameters",$1, funk->numParam);
+	    if(paramFlags[i] & IS_ARRAY) {
+	      sprintf(sprt, "Function %s has parameters %i as an array, however array wasn't found",$1, i);
 	      compileError(sprt);
 	      YYABORT;
-	    }	      
-
-	    lenBc = 2 ;//TODO: +length of variable setup
-	    bytecode *mcode = malloc(sizeof(bytecode)+lenBc);
-	    
-	    for(int i=0;i<funk->numParam;i++) {
-	      //TODO: do push var list
-	      // curBc+=1;
 	    }
-
-	    mcode[curBc].code = BC_CALL;
-	    mcode[curBc].a1 = foo.id;
-	    curBc++;
-	    mcode[curBc].code = BC_NONO;
 	    
-	    ex->isFloat = funk->retFloat;
-	    ex->val.bcode = mcode;
-	    
-	    ASSERT(curBc==(lenBc-1), "Logic error adding parameters to function call");
+	    if(ce->isLiteral) {
+	      ce->val.bcode = expr_toBc(ce);
+	      ce->isLiteral = false;
+	    }
+	    lenBc+=bc_len(ce->val.bcode);
+	    curParam = curParam->next;
+	    DPRINTF("  Parameter %i has bytecode length %i, new total is %i\n",i, bc_len(ce->val.bcode), lenBc);
 	  }
+
+	  mcode = malloc(sizeof(bytecode)+lenBc);
+
+	  // Copy the parameters into mcode
+	  curParam = $3->head;
+	  for(int i=0;i < numParams;i++) {
+	    expression* ce = (expression*)curParam->obj;
+	    int clen = bc_len(ce->val.bcode);
+	    memcpy(&mcode[curBc],ce->val.bcode,sizeof(bytecode)*clen);
+	    curBc+=clen;
+	    curParam = curParam->next;
+	  }
+
+	  mcode[curBc] = callcode;
+	  curBc++;
+	  mcode[curBc].code = BC_NONO;
+	  curBc++;
+	  ASSERT(curBc==lenBc, "Logic error adding parameters to function call");	    
+
+	  ex->isLiteral = false;
+	  ex->val.bcode = mcode;
+
+	  if(freeParamFlags) free(paramFlags);
 	  list_free($3);
+
+	  DPRINTF("Function call completed with length %i with isFloat=%i\n", bc_len(ex->val.bcode), ex->isFloat);
+
 	  $$ = ex;
 	}
 |

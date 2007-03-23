@@ -23,7 +23,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H 
 
-#define ASSERT(a,b) if(!(a)) fprintf(stderr,"ASSERTION FAILED: %s",b)
+#define ASSERT(a,b) if(!(a)) fprintf(stderr,"<ASSERTION FAILED: %s>",b)
 
 
 #ifdef DEBUG_COMP

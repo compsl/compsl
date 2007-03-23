@@ -6,11 +6,11 @@ declare
 
 cubbyhole testing
 {
-	yes(123);
 	yes();
-	no(23423,nothing, test);
+	no();
 
-	// TODO: enable printi
+	//printf(3.1415926538);
+	//printi(42);
 	helloWorld();
 } 
 

@@ -76,19 +76,24 @@ int bc_len(bytecode* bc) {
 
 
 void autocast(bool toFloat,expression *e) {
-	if(e->isLiteral) {
-		if( toFloat && !e->isFloat) {
-			e->val.fl = (float)e->val.in;
-			e->isFloat=true;
-		}
-		else if(!toFloat && e->isFloat) {
-			e->val.in = (int)e->val.fl;
-			e->isFloat=false;
-		} 
-	}
-	else {
-		internalCompileError("Casting not fully implemented yet");
-	}
+  if(e->isLiteral) {
+    if( toFloat && !e->isFloat) {
+      e->val.fl = (float)e->val.in;
+      e->isFloat=true;
+    }
+    else if(!toFloat && e->isFloat) {
+      e->val.in = (int)e->val.fl;
+      e->isFloat=false;
+    } 
+  }
+  else {
+    if( toFloat && !e->isFloat) {
+      internalCompileError("Casting not fully implemented yet");
+    }
+    else if(!toFloat && e->isFloat) {
+      internalCompileError("Casting not fully implemented yet");
+    } 		
+  }
 }
 
 /*
@@ -117,4 +122,11 @@ bytecode* expr_toBc(expression *exp) {
 		if(exp->val.bcode==0) internalCompileError("Error in expr_toBc");
 		return exp->val.bcode;
 	}
+}
+
+// TODO: use expr_free
+void expr_free(expression* expr) {
+  if(expr->isLiteral)
+    free(expr->val.bcode);
+  free(expr);
 }

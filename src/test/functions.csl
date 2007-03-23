@@ -1,0 +1,11 @@
+
+declare
+{
+	int a;
+} 
+
+cubbyhole testing
+{
+	printi( abs( -2) );
+
+} 

@@ -6,6 +6,9 @@ declare
 
 cubbyhole testing
 {
-	printi( abs( -2) );
+	printi(abs( -2) );
+	printf(cos(1));
+	printf(sin(1));
+	printf(rand());
 
 } 

@@ -91,25 +91,28 @@ void expr_ensureLit(expression* exp) {
 }
 
 void autocast(bool toFloat,expression *e) {
-  if(e->isLiteral) {
+  if(toFloat == e->isFloat) {
+    // no cast needed
+  }
+  else if(e->isLiteral) {
     if( toFloat && !e->isFloat) {
       e->val.fl = (float)e->val.in;
       e->isFloat=true;
     }
-    else if(!toFloat && e->isFloat) {
+    else {
       e->val.in = (int)e->val.fl;
       e->isFloat=false;
     } 
   }
-  else {
-    if( toFloat && !e->isFloat) {
-      //expr_ensureLit(e);
-      
-      internalCompileError("Casting not fully implemented yet");
-    }
-    else if(!toFloat && e->isFloat) {
-      internalCompileError("Casting not fully implemented yet");
-    } 		
+  else{
+    int len;
+    len = bc_len(e->val.bcode);
+    bytecode *mcode = malloc(sizeof(bytecode)*(len+2));
+    memcpy(mcode, e->val.bcode, sizeof(bytecode)*len);
+    mcode[len].code = (toFloat && !e->isFloat)?BC_INFL:BC_FLIN;
+    mcode[len+1].code = BC_NONO;
+    free(e->val.bcode);
+    e->val.bcode = mcode;
   }
 }
 

@@ -1,0 +1,40 @@
+
+declare
+{
+	int a;
+} 
+
+cubbyhole testing
+{
+	test_reset();
+
+	testeqf(2,2);
+	testeqi(2,2);	
+	testeqi(2,2.2);	
+	testeqf(3.1, 2+1.1);
+	testeqi(3, 2+1.1);
+	testeqi(3.0, 2+1.1);
+
+	testeqf(2, 1+1.0);
+	testeqf(2, 1.0+1);
+	testeqi(2, 1.0+1);
+	testeqf(1, 1*1.0);
+	testeqf(1, 1.0*1);
+	testeqi(1, 1.0*1);
+
+	testeqi(-1, 0 - 1);
+	testeqi(-1, 0-(1));
+	testeqi(-1, 0-1);
+	testeqf(-1.5,- 1.5);
+	testeqf(.1 , 1.1 - 1.0);
+	testeqf(0.00001, 0.000010000);
+	testeqf(0.00001, 3.1 - 3.09999);
+	testeqi(3, 3.1+.111);
+	testeqf( -.5, - 1 + 0.5);
+	testeqf(4.8, 2*2.4);
+	testeqf(5.2, 2*2.6);
+	testeqi(5, 2*2.6);
+
+	test_summary();
+} 
+

@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "node.h"
 #include "compsl.tab.h"
 #include "../intern/gen.h"
@@ -25,33 +26,43 @@
 
 #define YYERROR_VERBOSE 1
 
-// NOTE: ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably
+  // NOTE: ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably
 
 
-extern FILE *yyin;
-extern compart *ccompart;
-char *sprt;
+  extern FILE *yyin;
+  extern compart *ccompart;
+  char *sprt;
 
-int goparse(const char* fn, compart *com) {
-  FILE* input;
-
-  input = fopen(fn, "r");
-  if(NULL == input) {
-    DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",fn);
+  int fileCompile(char *filename , VM* vm, compart** out) {
+    compart* com = createComp(vm);
+    *out = com;
+    return goparse(filename, com);
+  }
+  int stringCompile(char *code, size_t len, VM* vm, compart** out) {
+    *out = (compart*)0;
     return -1;
   }
-  yyin = input;
+  
+  int goparse(const char* fn, compart *com) {
+    FILE* input;
 
-  DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
-  ccompart = com;
-
-  yyrestart(yyin);
-  sprt=malloc(1024 * sizeof(char));
-  int ret = yyparse(fn);
-  DPRINTF(">> DONE PARSE\n\n");
-  free(sprt);
-  return ret;
-}
+    input = fopen(fn, "r");
+    if(NULL == input) {
+      DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",fn);
+      return -1;
+    }
+    yyin = input;
+    
+    DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
+    ccompart = com;
+    
+    yyrestart(yyin);
+    sprt=malloc(1024 * sizeof(char));
+    int ret = yyparse(fn);
+    DPRINTF(">> DONE PARSE\n\n");
+    free(sprt);
+    return ret;
+  }
 
 void yyerror(const char *fn, const char *msg) {
     fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",fn,msg,-1);//yylloc.first_line);
@@ -73,7 +84,7 @@ int yywrap(void) {
 // Binary operator helpers for bin_op()
 
 expression* bin_bc_op(int op,expression* a, expression* b) {
-  ASSERT((a!=(expression*)0) && (b!=(expression*)0),"Bad args for bin_bc_op");
+  assert((a!=(expression*)0) && (b!=(expression*)0));
   bool isFloat;
   int alen,blen, endi;
   bytecode* mcode;
@@ -98,8 +109,7 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
   mcode = malloc(sizeof(bytecode)*(alen+blen+2));
 
   memcpy(mcode, a->val.bcode,sizeof(bytecode)*alen);
-  memcpy(&mcode[alen], b->val.bcode,sizeof(bytecode)*blen);
-  
+  memcpy(&mcode[alen], b->val.bcode,sizeof(bytecode)*blen);  
 
   switch(op) {
   case PLUS:
@@ -187,7 +197,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 // Post: dont use a or b, they're freed if need be
 
 expression* bin_op(int op,expression* a, expression* b) {
-  ASSERT((a!=(expression*)0) && (b!=(expression*)0),"Bad args for bin_op");
+  assert((a!=(expression*)0) && (b!=(expression*)0));
 	if(a->isLiteral && b->isLiteral) {
 		return bin_lit_op(op,a,b);
 	}
@@ -230,7 +240,9 @@ expression* readVar(char* name) {
 }
 
 void compileError(const char *str) {
-	fprintf(stderr,"Compile error: %s, ---ABORTING---\n",str);
+  fflush(stderr);
+  fflush(stdout);
+  fprintf(stderr,"Compile error: %s, ---ABORTING---\n",str);
 }
 
 
@@ -258,7 +270,7 @@ void compileError(const char *str) {
 %type <ival> cast post_modifier intfloat_keyword;
 %type <nval> file header_stuff do_declare cubbys cubby control else decl;
 %type <sval> cubby_id;
-%type <bval> modifiers;
+%type <bval> modifiers, neg;
 %type <bc> stmt block;
 %type <xlist> paramlist stmts moreparamlist decls ident_list more_ident_list;
 
@@ -358,7 +370,6 @@ stmt:
 		    YYABORT;
 		  }
 			bytecode *code = expr_toBc($1);
-			bytecode *ncode;
 
 			if(code==(bytecode*)0) {
 			  compileError("Bad bytecode");
@@ -367,19 +378,13 @@ stmt:
 			int l = bc_len(code);
 			DPRINTF("Statement of %i bytecodes\n",l);
 			
-			ncode = malloc(sizeof(bytecode) * (l+2));
-
-			ASSERT(ncode!=(void*)0,"Out of memory");
-
-			memcpy(ncode, code, sizeof(bytecode)*l);
-			
-			// TODO: realloc borks !!
-			//code = realloc(code, sizeof(bytecode)*(l+2));
+			code = realloc(code, sizeof(bytecode)*(l+2));
+			$1->isLiteral = true; // Don't free bytecode
 			expr_free($1);
 
-			ncode[l].code = BC_DPOP;
-			ncode[l+1].code = BC_NONO;
-			$$=ncode;
+			code[l].code = BC_DPOP;
+			code[l+1].code = BC_NONO;
+			$$=code;
 		}
         | 
         BREAK {
@@ -412,7 +417,7 @@ expression:
 	  expression *ex = malloc(sizeof(expression));
 	  bytecode *mcode;
 	  ex->isFloat = false;
-	  int lenBc, curBc = 0;
+	  int lenBc, curBc;
 
 	  bytecode callcode;
 	  int numParams=0;
@@ -475,20 +480,22 @@ expression:
 	    found = true;
 	    
 	    DPRINTF("Function \"%s\" found with id %i, function=%p\n",$1,symbol.id, funk->func);
-	    ASSERT(strcmp($1,funk->name)==0, "Wrong function found");
-	    ASSERT(funk->func!=0, "Unitialized function called");
+	    assert(strcmp($1,funk->name)==0); 
+	    assert(funk->func!=0);
 	  }	    
 	  
-	  ASSERT(found, "Function not found but not aborted");
-	  ASSERT(paramFlags!=0 || numParams==0, "No paramater specs");
+	  assert(found);
+	  assert(paramFlags!=0 || numParams==0);
 	  
 	  
 	  // Check no. arguments
 	  if($3->length < numParams) {
-	    sprintf(sprt, "Function %s has %i parameters, %i found",$1, numParams, $3->length);
+	    sprintf(sprt, "Function %s has %i parameters, only %i found",$1, numParams, $3->length);
 	    compileError(sprt);
 	    YYABORT;
 	  }
+
+	  // TODO: make this the default check
 	  if($3->length!=numParams)
 	    DPRINTF("Warning: function called with too many parameters\n");
 
@@ -516,29 +523,30 @@ expression:
 	    DPRINTF("  Parameter %i has bytecode length %i, new total is %i\n",i, bc_len(ce->val.bcode), lenBc);
 	  }
 
-	  mcode = malloc(sizeof(bytecode)+lenBc);
+	  mcode = calloc(lenBc, sizeof(bytecode));
+	  curBc = 0;
 
-	  // Copy the parameters into mcode
-	  curParam = $3->head;
-	  for(int i=0;i < numParams;i++) {
-	    expression* ce = (expression*)curParam->obj;
+	  // Copy the parameters into mcode, last parameter first
+	  for(int i=numParams-1;i>=0;i--) {
+	    expression* ce = (expression*)list_get($3,i); // inneficient
 	    int clen = bc_len(ce->val.bcode);
 	    memcpy(&mcode[curBc],ce->val.bcode,sizeof(bytecode)*clen);
+	    expr_free(ce);
 	    curBc+=clen;
-	    curParam = curParam->next;
 	  }
 
 	  mcode[curBc] = callcode;
 	  curBc++;
 	  mcode[curBc].code = BC_NONO;
 	  curBc++;
-	  ASSERT(curBc==lenBc, "Logic error adding parameters to function call");	    
+	  assert(curBc==lenBc);
 
 	  ex->isLiteral = false;
 	  ex->val.bcode = mcode;
 
 	  if(freeParamFlags) free(paramFlags);
 	  list_free($3);
+	  // $3 contents already free'd in copy loop
 
 	  DPRINTF("Function call completed with length %i with isFloat=%i\n", bc_len(ex->val.bcode), ex->isFloat);
 
@@ -550,7 +558,7 @@ expression:
 	}
 |
 	IDENTIFIER ASSIGN expression {
-	  expression *ex = malloc(sizeof(expression));
+	  expression *ex = calloc(1, sizeof(expression));
 	  ex->isLiteral = false;
 	  ex->isFloat = false;
 	  ex->val.bcode = malloc(sizeof(bytecode)*2);
@@ -560,7 +568,7 @@ expression:
 	  //expression *lhs = resolveVar($1);
 	  //autocast(lhs->isFloat,$3);
 	  
-	  //TODO: here			
+	  //TODO: assignment
 	  $$=ex;
 	}
 |
@@ -570,7 +578,6 @@ expression:
 	}
 		
 		
-/*TODO: direction*/
 paramlist:
 		moreparamlist {
 			$$=$1
@@ -591,6 +598,7 @@ moreparamlist:
 			list_addToFront(lst,$1);
 			$$=lst;
 		}
+
 		;
 
 cast: 
@@ -676,22 +684,33 @@ retable:
 			$$=readVar($1);
 		}
 		| 
-		FLOAT_LIT { 
+		neg FLOAT_LIT { 
 			expression *a = malloc(sizeof(expression));
 			a->isFloat=true;
 			a->isLiteral=true;
-			a->val.fl=$1;
+			a->val.fl=$2;
+			if($1)
+			  a->val.fl = -a->val.fl;
 			$$ = a;
 		} 
 		| 
-		INT_LIT { 
+		neg INT_LIT { 
 			expression *a = malloc(sizeof(expression));
 			a->isFloat=false;
 			a->isLiteral=true;
-			a->val.in=$1;
+			a->val.in=$2;
+			if($1)
+			  a->val.in = -a->val.in;
 			$$ = a;
 		}
 		;
+
+neg:
+		MINUS {
+		  $$=true;
+		} | {
+		  $$=false;
+		}
 
 
 control: 

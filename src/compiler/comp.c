@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "node.h"
 #include "../extern/compart.h"
@@ -91,10 +92,11 @@ void expr_ensureLit(expression* exp) {
 }
 
 void autocast(bool toFloat,expression *e) {
+
   if(toFloat == e->isFloat) {
     // no cast needed
-  }
-  else if(e->isLiteral) {
+
+  } else if(e->isLiteral) {
     if( toFloat && !e->isFloat) {
       e->val.fl = (float)e->val.in;
       e->isFloat=true;
@@ -103,16 +105,13 @@ void autocast(bool toFloat,expression *e) {
       e->val.in = (int)e->val.fl;
       e->isFloat=false;
     } 
-  }
-  else{
+  } else {
     int len;
     len = bc_len(e->val.bcode);
-    bytecode *mcode = malloc(sizeof(bytecode)*(len+2));
-    memcpy(mcode, e->val.bcode, sizeof(bytecode)*len);
-    mcode[len].code = (toFloat && !e->isFloat)?BC_INFL:BC_FLIN;
-    mcode[len+1].code = BC_NONO;
-    free(e->val.bcode);
-    e->val.bcode = mcode;
+    e->val.bcode = realloc(e->val.bcode, sizeof(bytecode)*(len+2));
+    e->val.bcode[len].code = (toFloat && !e->isFloat)?BC_INFL:BC_FLIN;
+    e->val.bcode[len+1].code = BC_NONO;
+    e->isFloat = toFloat;
   }
 }
 
@@ -147,7 +146,7 @@ bytecode* expr_toBc(expression *exp) {
 // TODO: use expr_free
 void expr_free(expression* expr) {
   if(!expr->isLiteral) {
-    ASSERT(expr->val.bcode != (bytecode*)0, "Invalid bytecode");
+    assert(expr->val.bcode != (bytecode*)0);
       
     free(expr->val.bcode);
   }

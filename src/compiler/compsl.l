@@ -60,16 +60,12 @@ continue	return CONTINUE;
 \ 			;
 \t			;
 \n			;
--?[0-9]+  	{	yylval.ival = atoi( yytext ); 
+[0-9]+  	{	yylval.ival = atoi( yytext ); 
 				return INT_LIT; 	
 			}
--?[0-9]+\.[0-9]*  {	
+[0-9]*\.[0-9]*  {	
 	yylval.fval = atof(yytext);
 	return FLOAT_LIT; 	
-}
--?\.[0-9]+  {
-	yylval.fval = atof(yytext);
-	return FLOAT_LIT; 			
 }
 [_a-zA-Z0-9]+   {
 	yylval.sval = malloc(sizeof(char)*(strlen(yytext)+1));

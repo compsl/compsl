@@ -6,11 +6,15 @@ declare
 
 cubbyhole testing
 {
-	yes();
-	no();
+	test_reset();
+	testeqi(1,1);
+	test_summary();
+
+	//yes();
+	//no();
 
 	//printf(3.1415926538);
 	//printi(42);
-	helloWorld();
+	//helloWorld();
 } 
 

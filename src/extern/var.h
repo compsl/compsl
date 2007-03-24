@@ -1,6 +1,9 @@
 #ifndef VAR_H_
 #define VAR_H_
+
+#include <stdbool.h>
 #include "port.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,6 +23,9 @@ typedef struct _var_t
 } var;
 
 
+bool var_testEqi(var* a, var* b);
+bool var_testEqf(var* a, var* b);
+
 struct SYMTABLE_T // don't bother with typedef, only here so I can sizeof it later
 {
 	uint16_t id;
@@ -34,6 +40,7 @@ typedef struct VAR_TABLE_T
     var *vars; // the variables themselves
     struct SYMTABLE_T *symbols; // the symbol table for the vars
 } varTable;
+
 
 #ifdef __cplusplus
 }

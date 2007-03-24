@@ -4,6 +4,8 @@
 #include <inttypes.h>
 #include <malloc.h>
 #include <string.h>
+#include <float.h>
+#include <math.h>
 
 void varTableCreate(varTable *vt, uint16_t size)//FIXME uh what did I put this here for
 {
@@ -66,4 +68,17 @@ var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 	}
 
 	return NULL;
+}
+
+bool var_testEqi(var* a, var* b) {
+  if(a->size!=b->size) return false;
+
+  // TODO: test array equality
+  return (0==bcmp(a,b,sizeof(var)));
+}
+bool var_testEqf(var* a, var* b) {
+  if(a->size!=b->size) return false;
+
+  // TODO: test array equality
+  return (fabs(a->v.f-b->v.f) < FLT_EPSILON);
 }

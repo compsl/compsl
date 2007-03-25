@@ -14,7 +14,7 @@ int failCnt=0;
 intfloat compsl_testEqf(var *args) { 
 
   if(!var_testEqf(&args[0],&args[1])) {
-    printf("TEST %i FAILED (%f,%f)\n",testCnt, args[0].v.f, args[1].v.f); 
+    printf("TEST #%i FAILED (%f,%f)\n",testCnt, args[0].v.f, args[1].v.f); 
     failCnt++;
   }
   testCnt++;
@@ -24,7 +24,7 @@ intfloat compsl_testEqf(var *args) {
 intfloat compsl_testEqi(var *args) { 
 
   if(!var_testEqi(&args[0],&args[1])) {
-    printf("TEST %i FAILED (%i,%i)\n",testCnt, args[0].v.i,args[1].v.i); 
+    printf("TEST #%i FAILED (%i,%i)\n",testCnt, args[0].v.i,args[1].v.i); 
     failCnt++;
   }
   testCnt++;
@@ -41,7 +41,7 @@ intfloat compsl_testSummary(var *args) {
   if(failCnt==0)
     printf("PASS (%i tests)\n",testCnt-1, failCnt);
   else 
-    printf("FAIL -%i tests completed, %i failed\n",testCnt, failCnt);
+    printf(">> FAIL << (%i tests completed, %i failed)\n",testCnt-1, failCnt);
 }
 
 

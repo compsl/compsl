@@ -1,0 +1,33 @@
+
+
+// testing DECLS
+
+
+declare
+{
+	int a;
+	float b;
+	global int c,d;
+	global int a;
+}
+
+cubbyhole init
+{
+	test_reset();
+
+	// Initialized to 0?
+	testeqi(0,a);
+	testeqi(0,b);
+	testeqi(-3,c);	
+
+
+	
+	a = 1;
+	b=2;
+	c = -3;
+	testeqi(2, max(a,max(b,c)));
+	testeqi(-3, min(a,min(b,c)));
+
+	test_summary();
+}
+

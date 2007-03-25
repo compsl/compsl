@@ -7,6 +7,7 @@ declare
 {
 	int a;
 	float b;
+	global int c;
 	int sa3df;
 	float sa4df, s_s5dafsf;
 	global int sad6fs,sf7asdf,s8adfsfd,sa9df;
@@ -15,6 +16,66 @@ declare
 
 cubbyhole init
 {
-	a = b; // should generate syntax error	
+	test_reset();
+
+	// Initialized to 0?
+	testeqi(0,a);
+	testeqi(0,b);
+	testeqf(0,b);
+	testeqi(0,c);	
+
+	// Assignment
+	a = 1;
+	testeqi(1,a);
+	testeqi(a,1);
+	testeqf(a,1);
+
+	a = 1.1;
+	testeqi(1,a);
+	testeqf(1,a);
+	
+	b = a;
+	testeqf(1,b);
+	testeqi(a,b);
+
+	b = 3.1415;
+	testeqi(3,b);	
+	testeqf(3.1415,b);
+	testeqf(b,b);
+
+	c = 27;
+	testeqi(27,c);	
+	a=b=c;
+	testeqi(27,c);	
+	testeqi(27,b);	
+	testeqi(27,a);	
+
+	a=b=c=42;
+	testeqi(42,c);	
+	testeqi(42,b);	
+	testeqi(42,a);	
+
+	a=(b=12);
+	testeqi(12,b);	
+	testeqi(12,a);	
+	testeqi(42,c);	
+
+	a=(1+(b=12));
+	testeqi(12,b);	
+	testeqi(13,a);	
+
+	a=(1+(b=12)+1);
+	testeqi(12,b);	
+	testeqi(14,a);	
+
+	testeqi(42,c);	
+	
+	a = 1;
+	b=2;
+	c = -3;
+	testeqi(2, max(a,max(b,c)));
+	testeqi(-3, min(a,min(b,c)));
+
+	test_summary();
 }
 

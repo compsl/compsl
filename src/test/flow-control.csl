@@ -5,40 +5,104 @@
 
 declare
 {
-	
+	int stat;	
 }
 
 cubbyhole init
 {	
-	while ( asdf ) {
-		asdf;
+	test_reset();
+
+	// if, true
+	stat = 1;
+	if(1) {
+		stat = 2;
 	}
-	while ( 1) { 
-		fork(); 
+	testeqi(2,stat);
+
+	// if, false
+	stat = 3;
+	if(0) {
+		stat = 4;
 	}
-	while(1) 
-		er = er+1 ; 
-		
-	if(asdf) {}
-	
-	if(42) {
-		correct();
+	testeqi(3,stat);
+
+	// if,else , if true
+	stat = 5;
+	if(1) {
+		stat = 6;
 	}
+	else  {
+		stat = 7;
+	}
+	testeqi(6,stat);
 	
-	if(1) sdf;
+	// if,else , else true
+	stat = 8;
+	if(0) {
+		stat = 9;
+	}
+	else  {
+		stat = 10;
+	}
+	testeqi(10,stat);
+
+
+	stat = 11;
+	if(0) stat = 12;
+	else  stat = 13;
+	testeqi(13,stat);
+
+	stat = 11;
+	if(0) {}
+	else  stat = 13;
+	testeqi(13,stat);
+
+
+	stat = 14;
+	if(1) { stat = 15;}
+	else  {}
+	testeqi(15,stat);
+
+	stat = 1;
+	if(stat) { stat = 16;}
+	testeqi(16,stat);
+
 	
-	if(1) asdfas;
-	else asdf;
+	stat = 2;
+	if(stat+1) { stat = 18;}
+	else  { stat = 5;}
+	testeqi(18,stat);
+
+
+	//while ( asdf ) {
+	//	asdf = asdf+1;
+	//}
+	//while ( 1) { 
+	//	break;
+	//}
+	//while(1) 
+	//	er = er+1 ; 
+	//if(42) {
+	//	er = 42;
+	//}
+	
+	//if(1) er = 1;
+	
+	//if(0) er = 2;
+	//else er = 3;
 	
 	
-	if(123) {sdfsa;}
-	elseif(dfgs) sfas;
+	//if(0) {er = 4;}
+	//else if(1) er = 5;
 	
-	if(sadf+.32) { sdaf;}
-	elseif(0) { sdaf;}
-	elseif(2){sadf;}
-	else 
-		jump();
+	//if(er+.32) { er;}
+	//else if(0) { er;}
+	//else if(2){er;}
+	//else 
+	//	er;
+	
+
+	test_summary();
 }
 
 cubbyhole frame

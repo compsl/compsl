@@ -32,16 +32,6 @@
   extern FILE *yyin;
   extern compart *ccompart;
   char *sprt;
-
-  int fileCompile(char *filename , VM* vm, compart** out) {
-    compart* com = createComp(vm);
-    *out = com;
-    return goparse(filename, com);
-  }
-  int stringCompile(char *code, size_t len, VM* vm, compart** out) {
-    *out = (compart*)0;
-    return -1;
-  }
   
   int goparse(const char* fn, compart *com) {
     FILE* input;
@@ -62,6 +52,15 @@
     DPRINTF(">> DONE PARSE\n\n");
     free(sprt);
     return ret;
+  }
+  int fileCompile(char *filename , VM* vm, compart** out) {
+    compart* com = createComp(vm);
+    *out = com;
+    return goparse(filename, com);
+  }
+  int stringCompile(char *code, size_t len, VM* vm, compart** out) {
+    *out = (compart*)0;
+    return -1;
   }
 
 void yyerror(const char *fn, const char *msg) {
@@ -137,7 +136,7 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
       mcode[endi].code = BC_DIV;
     break;
   default:
-    sprintf(sprt,"Operation \"%i\" not implemented\n",op);
+    sprintf(sprt,"Operation \"%i\" not implemented",op);
     compileError(sprt);
     return (expression*)0;
   }
@@ -165,8 +164,8 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 		else if(DIV)
 		  a->val.in/=b->val.in;
 		else {
-			internalCompileError("Unknown operator in bin_lit_op()");
-			return 0;
+		  internalCompileError("Unknown operator in bin_lit_op()");
+		  return 0;
 		}
 		free(b);
 		return a;
@@ -207,43 +206,17 @@ expression* bin_op(int op,expression* a, expression* b) {
 }
 
 
-// More helpers
-
-expression* readVar(char* name) {
-	symbolinfo foo = searchSym(name,ccompart);
-
-	if(foo.id==-1) {
-		sprintf(sprt,"Symbol \"%s\" not resolved\nexiting.\n",name);
-		compileError(sprt);
-		return 0;
-	}
-	
-	if(foo.isvar) {
-		expression *ex = malloc(sizeof(expression));
-		bytecode *bc = malloc(2*sizeof(bytecode));
-		if(!foo.local) {
-			bc->code = BC_GPSH;
-			// TODO: args
-		}
-		else {
-			bc->code = BC_PUSH;
-			// TODO: args
-		}
-		bc[1].code = BC_NONO;
-		ex->val.bcode=bc;
-		ex->isLiteral=false;
-		ex->isFloat=foo.isfloat;
-		
-		return ex;
-	}
-	return 0;
-}
-
 void compileError(const char *str) {
   fflush(stderr);
   fflush(stdout);
-  fprintf(stderr,"Compile error: %s, ---ABORTING---\n",str);
+  fprintf(stderr,"Compile error: %s\n",str);
 }
+
+ void compileWarning(const char *str) {
+  fflush(stderr);
+  fflush(stdout);
+  fprintf(stderr,"Compile warning: %s\n",str);
+ }
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -267,11 +240,11 @@ void compileError(const char *str) {
 %token <sval> IDENTIFIER;
 %token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE; 
 %type <expr> expression math retable;
-%type <ival> cast post_modifier intfloat_keyword;
-%type <nval> file header_stuff do_declare cubbys cubby control else decl;
+%type <ival> cast post_modifier;
+%type <nval> file header_stuff do_declare cubbys cubby decl;
 %type <sval> cubby_id;
-%type <bval> modifiers, neg;
-%type <bc> stmt block;
+%type <bval> global_modifier intfloat_keyword;
+%type <bc> stmt block if else control;
 %type <xlist> paramlist stmts moreparamlist decls ident_list more_ident_list;
 
 %locations
@@ -309,13 +282,13 @@ block:
 			DPRINTF("Appending %i statements\n",$2->length);
 			int len=0;
 			llist *cur=$2->head;
-			while(cur) {
-				len+=bc_len(cur->obj);
-				cur=cur->next;
+			while($2->length>0 && cur) {
+			  assert(cur->obj!=(expression*)0); 
+			  len+=bc_len(cur->obj);
+			  cur=cur->next;
 			}
-
 			
-			bytecode *bck = malloc((len+1)*sizeof(bytecode));
+			bytecode *bck = calloc(len+1,sizeof(bytecode));
 			bytecode *bcko = bck; 
 
 			if(0==bck) {
@@ -348,16 +321,16 @@ block:
 		};
 
 
-/*TODO: WHICH WAY IS PARSING GOING? =+++++++!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!+++++++++++++++++*/
+// Parse direction currently goes backwards, 
 stmts:
-		stmt SEMI stmts {
-			list_addToFront($3,$1);
-			$$=$3;
+		stmts stmt SEMI {
+			list_addToBack($1,$2);
+			$$=$1;
 		}
 		|
-		control stmts {
-			list_addToFront($2,$1);
-			$$=$2;
+		stmts control {
+			list_addToBack($1,$2);
+			$$=$1;
 		}
 		| 
 		{
@@ -389,21 +362,21 @@ stmt:
         | 
         BREAK {
 		  DPRINTF("Break statement\n");
-		  bytecode *code = malloc(sizeof(bytecode)*2);
-		  code[0].code = BC_JMP; //JMP 0 = break, tobe parsed in block
-		  code[0].a = 0; 
+		  bytecode *code = calloc(2, sizeof(bytecode));
+		  code[0].code = BC_NOOP; //JMP 0 = break, tobe parsed in block
+		  code[0].a = 1; 
 		  code[1].code = BC_NONO;
 		  $$=code;
         }
         |
         CONTINUE {
         	DPRINTF("Continue statement\n");
-			bytecode *code = malloc(sizeof(bytecode)*2);
+			bytecode *code = calloc(2, sizeof(bytecode));
 			code[0].code = BC_NOOP; //NOOP 0 = continue, tobe parsed in block
+			code[0].a = 2; 
 			code[1].code = BC_NONO;        	
 			$$=code;
-        }
-		;
+        };
 		
 expression:
 	OPENP expression CLOSEP {
@@ -558,17 +531,43 @@ expression:
 	}
 |
 	IDENTIFIER ASSIGN expression {
-	  expression *ex = calloc(1, sizeof(expression));
-	  ex->isLiteral = false;
-	  ex->isFloat = false;
-	  ex->val.bcode = malloc(sizeof(bytecode)*2);
-	  ex->val.bcode[0].code = BC_NOOP;
-	  ex->val.bcode[1].code = BC_NONO;
-
-	  //expression *lhs = resolveVar($1);
-	  //autocast(lhs->isFloat,$3);
+	  int len;
 	  
-	  //TODO: assignment
+	  expression *ex = $3;
+
+	  symbolinfo var = searchSym($1,ccompart);
+	  
+	  if(var.id<0) {
+	    sprintf(sprt,"Symbol \"%s\" not resolved",$1);
+	    compileError(sprt);
+	    YYABORT;
+	  }
+	
+	  if(!var.isvar) {
+	    sprintf(sprt,"Symbol \"%s\" resolved to function, variable required", $1);
+	    compileError(sprt);
+	    YYABORT;
+	  }
+
+	  if(var.array) {
+	    sprintf(sprt,"Symbol \"%s\" resolved to array, not yet implemented", $1);
+	    compileError(sprt);
+	    YYABORT;
+	  }
+	  DPRINTF("Assignent to variable \"%s\" with id=%i, local=%i, isfloat=%i\n", $1,var.id, var.local, var.isfloat);
+	  autocast(var.isfloat,ex);
+	  expr_ensureLit(ex);
+	  len = bc_len(ex->val.bcode);
+	  ex->val.bcode = realloc(ex->val.bcode, sizeof(bytecode)*(len+3));
+
+	  ex->val.bcode[len].code = BC_DUP;
+	  if(var.local)
+	    ex->val.bcode[len+1].code = BC_POP;
+	  else
+	    ex->val.bcode[len+1].code = BC_GPOP;
+	  ex->val.bcode[len+1].a1 = var.id;
+	  ex->val.bcode[len+2].code = BC_NONO;
+
 	  $$=ex;
 	}
 |
@@ -675,61 +674,153 @@ math:
 			//TODO: Not
 			
 		}
+		|
+		MINUS expression {
+		  expression *e = calloc(1, sizeof(expression));
+		  e->isLiteral = true;
+		  e->isFloat = false;
+		  e->val.in = 0;
+		  $$=bin_op(MINUS,e,$2);
+		}
 		;
 		
 		
 		
 retable:
 		IDENTIFIER {
-			$$=readVar($1);
+		  symbolinfo var = searchSym($1,ccompart);
+		  
+		  if(var.id<0) {
+		    sprintf(sprt,"Symbol \"%s\" not resolved",$1);
+		    compileError(sprt);
+		    YYABORT;
+		  }
+		  
+		  if(!var.isvar) {
+		    sprintf(sprt,"Symbol \"%s\" is a function but is used in an assignment",$1);
+		    compileError(sprt);
+		    YYABORT;
+		  }
+		  expression *ex = malloc(sizeof(expression));
+		  bytecode *bc = malloc(2*sizeof(bytecode));
+		  if(!var.local) {
+		    bc->code = BC_GPSH;
+		    bc->a1 = var.id;
+		    }
+		  else {
+		    bc->code = BC_PUSH;
+		    bc->a1 = var.id;
+		  }
+		  bc[1].code = BC_NONO;
+		  ex->val.bcode=bc;
+		  ex->isLiteral=false;
+		  ex->isFloat=var.isfloat;
+		  
+		  $$ = ex;
 		}
-		| 
-		neg FLOAT_LIT { 
+| 
+		FLOAT_LIT { 
 			expression *a = malloc(sizeof(expression));
 			a->isFloat=true;
 			a->isLiteral=true;
-			a->val.fl=$2;
-			if($1)
-			  a->val.fl = -a->val.fl;
+			a->val.fl=$1;
 			$$ = a;
 		} 
 		| 
-		neg INT_LIT { 
+		INT_LIT { 
 			expression *a = malloc(sizeof(expression));
 			a->isFloat=false;
 			a->isLiteral=true;
-			a->val.in=$2;
-			if($1)
-			  a->val.in = -a->val.in;
+			a->val.in=$1;
 			$$ = a;
 		}
 		;
 
-neg:
-		MINUS {
-		  $$=true;
-		} | {
-		  $$=false;
-		}
 
 
 control: 
-		IF OPENP expression CLOSEP block else
+		if
 		|
-		WHILE OPENP expression CLOSEP block
-		;
+		WHILE OPENP expression CLOSEP block {
+  
+		};
+
+if: 
+		IF OPENP expression CLOSEP block else {
+		  // Plan: condition, cjmp on 0, block, jmp to end, else
+		  int len, cpos;
+		  bytecode *cond = expr_toBc($3);
+
+		  int blockLen = bc_len($5);
+		  int elseLen = (($6 !=(bytecode*)0)?bc_len($6):0);
+
+		  assert(cond!=NULL);
+		  if($3->isFloat)
+		    compileWarning("Using float as boolean");
+		  
+		  len = bc_len(cond)+3+blockLen+1;
+		  if(elseLen>0) {
+		    len+=elseLen+1; // +1 for jmp instruction
+		  }
+		  cpos = 0;
+
+		  cond = realloc(cond, sizeof(bytecode)*len);
+		  cpos += bc_len(cond);
+		  
+		  cond[cpos].code = BC_CPUSH;
+		  cond[cpos].a1 = 0;
+		  cpos++;
+
+		  cond[cpos].code = BC_CMP;
+		  cpos++;
+
+		  cond[cpos].code = BC_JMNE;
+		  cond[cpos].sa = blockLen + ((elseLen>0)?2:0); // TODO: +1 since jump past jmp, why +2??
+		  cpos++;
+
+		  memcpy(&cond[cpos], $5, sizeof(bytecode)*blockLen);
+		  cpos+=blockLen;
+		  
+		  if(elseLen>0) {
+		    cond[cpos].code = BC_JMP;
+		    cond[cpos].sa = elseLen;
+		    cpos++;
+
+		    memcpy(&cond[cpos], $6, sizeof(bytecode)*elseLen);
+		    cpos+=elseLen;
+		  }
+
+		  cond[cpos].code = BC_NONO;
+		  cpos++;
+
+		  $3->isLiteral = true;
+
+		  assert(cpos == len);
+
+		  expr_free($3);
+		  free($5);
+		  if($6!=NULL) free($6);		  
+		  $$ = cond;
+		} 
 
 else:
-		ELSEIF OPENP expression CLOSEP block else
+		ELSE if {
+		  $$ = $2;
+		}
 		|
-		ELSE block
-		|
+		ELSE block {
+		  $$ = $2;
+		}
+		| 
+		{
+		  $$ = (bytecode*)0;
+		}
 		;
 		
 
 decls:
 		decl SEMI decls {
-		  DPRINTF("1 decls completed\n");
+		  DPRINTF("1 decl completed\n");
 		  $$ = (node*)0;
 		}
 |
@@ -738,54 +829,69 @@ decls:
 		};
 
 decl:	
-		modifiers intfloat_keyword ident_list post_modifier {
+		global_modifier intfloat_keyword ident_list post_modifier {
+		  bool isGlobal = $1;
+		  bool isFloat = $2;
 		  DPRINTF("Doing decl");
-			if($1) {
-				if($2) {
-					char* iden;
-					while((iden = (char*)list_popFromFront($3))) {
-						vm_addFloat(ccompart->vm,iden);
-					}
-				}
-				else {
-					char* iden;
-					while((iden = (char*)list_popFromFront($3))) {
-						vm_addInt(ccompart->vm,iden);
-					}
-				}
+		  if(isGlobal) {
+		    if(isFloat) {
+		      char* iden;
+		      while((iden = (char*)list_popFromFront($3))) {
+			if(!vm_addFloat(ccompart->vm,iden)) {
+			  sprintf(sprt, "Declaration of global float var %s failed",iden);
+			  compileWarning(sprt);
 			}
-			else {
-				if($2) {
-					char* iden;
-					while((iden = (char*)list_popFromFront($3))) {
-						com_addFloat(ccompart,iden);
-					}
-				}
-				else {
-					char* iden;
-					while((iden = (char*)list_popFromFront($3))) {
-						com_addInt(ccompart,iden);
-					}
-				}
+			
+		      }
+		    }
+		    else {
+		      char* iden;
+		      while((iden = (char*)list_popFromFront($3))) {
+			if(!vm_addInt(ccompart->vm,iden)) {
+			  sprintf(sprt, "Declaration of global int var %s failed",iden);
+			  compileWarning(sprt);
 			}
-			DPRINTF(" - Done declare\n");
-			list_free($3);
-
+		      }
+		    }
+		  }
+		  else {
+		    if(isFloat) {
+		      char* iden;
+		      while((iden = (char*)list_popFromFront($3))) {
+			if(!com_addFloat(ccompart,iden)) {
+			  sprintf(sprt, "Declaration of local float var %s failed",iden);
+			  compileWarning(sprt);
+			}
+		      }
+		    }
+		    else {
+		      char* iden;
+		      while((iden = (char*)list_popFromFront($3))) {
+			if(!com_addInt(ccompart,iden)) {
+			  sprintf(sprt, "Declaration of local int var %s failed",iden);
+			  compileWarning(sprt);
+			}
+		      }
+		    }
+		  }
+		  DPRINTF(" - Done declare\n");
+		  list_free($3);
+			
 		};
 		
 		
 intfloat_keyword:
 		INT  { 
 		  DPRINTF("  Declaration is an int\n");
-			$$=0; 
+			$$=false; 
 		}
 		| 
 		FLOAT { 
 		  DPRINTF("  Declaration is a float\n");
-			$$=1; 
+			$$=true; 
 		};
 		
-modifiers:
+global_modifier:
 		GLOBAL { 
 		  DPRINTF("  Declaration is a global\n");
 			$$=1; 
@@ -799,13 +905,13 @@ post_modifier:
 		OPENS expression CLOSES {
 		  DPRINTF("  Declaration is array\n");
 			if(!$2->isLiteral) {
-				compileError("Array declaration with non-literal length\n");
+				compileError("Array declaration with non-literal length");
 				YYERROR;
 			}
 			autocast(false,$2);
 			$$ = $2->val.in;
 			if($$<0) {
-				sprintf(sprt, "Array declared with length %i\n",$$);
+				sprintf(sprt, "Array declared with length %i",$$);
 				compileError(sprt);
 				YYERROR;
 			}

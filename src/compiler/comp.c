@@ -24,16 +24,23 @@ list* list_new(void) {
 }
 
 // gets the ind'th element in lst
+llist* list_getNode(list * lst, int ind) {
+  if(ind>=lst->length || ind<0) { 
+    internalCompileError("Internal error in list_get"); 
+    return 0;
+  }
+  llist *root = lst->head;
+  while(root!=0 && ind > 0) {
+    root=root->next;
+    ind--;
+  }
+  if(root!=0) 
+    return root;
+  assert(false);
+}
+
 void* list_get(list * lst, int ind) {
-	llist *root = lst->head;
-	while(root!=0 && ind-- > 0) {
-		root=root->next;
-	}
-	if(root!=0) { 
-		if(ind>=lst->length) { internalCompileError("Internal error in list_get"); }
-		return root->obj;
-	}
-	return 0;
+  return list_getNode(lst,ind)->obj;
 }
 
 // Note: contents aren't freed
@@ -57,6 +64,20 @@ void list_addToFront(list *lst, void *newOb) {
 	lst->head=newL;
 	lst->length++;
 }
+void list_addToBack(list *lst, void *newOb) {
+  assert(lst!=NULL);
+  assert(newOb!=NULL);
+  llist *newL = malloc(sizeof(llist));
+  newL->obj = newOb;
+  newL->next = 0;
+  assert(lst->length>=0);
+  if(lst->length==0) 
+    lst->head = newL;
+  else
+    list_getNode(lst, lst->length-1)->next = newL;
+  
+  lst->length++;
+}
 
 
 void* list_popFromFront(list *lst) {
@@ -70,18 +91,18 @@ void* list_popFromFront(list *lst) {
 }
 
 
-
 int bc_len(bytecode* bc) {
-	int len=0;
-	while(bc->code!=BC_NONO&&bc->code!=BC_END) {
-		bc++;
-		len++;
-		if(len>10000) {
-			internalCompileError("Non null terminated bytecode string");
-			exit(4);
-		}
-	} 
-	return len;
+  assert(bc!=(bytecode*)0);
+  int len=0;
+  while(bc->code!=BC_NONO&&bc->code!=BC_END) {
+    bc++;
+    len++;
+    if(len>10000) {
+      internalCompileError("Non null terminated bytecode string");
+      exit(4);
+    }
+  } 
+  return len;
 }
 
 void expr_ensureLit(expression* exp) {
@@ -143,7 +164,6 @@ bytecode* expr_toBc(expression *exp) {
 	}
 }
 
-// TODO: use expr_free
 void expr_free(expression* expr) {
   if(!expr->isLiteral) {
     assert(expr->val.bcode != (bytecode*)0);

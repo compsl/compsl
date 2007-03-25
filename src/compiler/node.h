@@ -45,20 +45,22 @@ typedef struct _list_t {
 
 
 int bc_len(bytecode *);
+
 bytecode* expr_toBc(expression *exp);
 void expr_free(expression* exp);
+void expr_ensureLit(expression* exp);
+void autocast(bool toFloat,expression *e);
 
 list* list_new(void);
 void* list_get(list *, int);
 void list_free(list *);
 void llist_free(llist *);
 void list_addToFront(list *, void *);
+void list_addToBack(list *, void *);
 void* list_popFromFront(list *);
 
 void internalCompileError(const char* str);
 void compileError(const char *str);
-void autocast(bool toFloat,expression *e);
-
 
 extern char *sprt;
 

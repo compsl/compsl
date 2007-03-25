@@ -35,6 +35,37 @@ cubbyhole testing
 	testeqf(5.2, 2*2.6);
 	testeqi(5, 2*2.6);
 
+	// Unary minus
+	testeqi(0-10, -(5+5));
+	testeqi(-10, -(5+5));
+	testeqf(-10, -(5+5));
+
+	// Division	
+	testeqi(2, 4/2);
+	testeqi(2, 5/2);
+	testeqf(2.5, 5.0/2);
+
+	// Brackets
+	testeqi(10, 2*(2+3));
+	testeqf(10, 2*(2+3));
+	testeqf(10, 2*(2.0+3));
+	testeqf(11, 1+2*(2+3));
+
+	// Max, min
+	testeqi(5, max(1,5));
+	testeqi(5, max(5,1));
+	testeqi(5, max(1,5.1));
+	testeqi(1, min(5,1));
+	testeqi(1, max(-5,1));
+	testeqi(0, max(-5,0));
+	testeqi(-4, max(-5,-4));
+	testeqf(-4, maxf(-5,-4));
+	testeqi(-4, max(-4,-5));	
+	testeqf(-4, max(-4,-5));	
+	testeqi(-5, min(-5,-4));
+	testeqf(-5, minf(-5,-4));
+
+
 	test_summary();
 } 
 

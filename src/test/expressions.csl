@@ -5,7 +5,7 @@
 
 declare
 {
-	int fsdafasdf, dfasd, asdf, sdf,sdfg,gsdfg,dfgd,dsf,dghdfghdfgh,sdfasdf,asfsdf,asd;
+	int a,b,c,d,e,f,g,h,i;
 	
 }
 
@@ -16,16 +16,14 @@ cubbyhole init
 	0.3452;
 	342.;
 	67;
-	fsdafasdf =3434.0;
-	dfasd = (asdf);
-	sdf = (sdfg+(gsdfg-dfgd));
-	((((dsf=(dghdfghdfgh+345)))));
-	sdfasdf =(asda = dfasd);
-	addasd = ( asfsdf + 23.45);
-//	fork();
-	//exit(2);
-	//asd = exit(2) + asdf;
-	dfs= -343;
+	a =3434.0;
+	b = (a)+1;
+	c = (a+(a-b));
+	((((a=(c+345)))));
+	b =(a = c);
+	b = ( b + 23.45);
+
+	a= -343;
 	//break;
 }
 

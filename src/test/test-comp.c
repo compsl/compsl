@@ -13,7 +13,7 @@
 int main()
 {
 	printf("\nCompiler tests\n");
-	const int NUM_FILES=6;
+	const int NUM_FILES=9;
 	
 	const char * files[] = 
 	{
@@ -22,6 +22,7 @@ int main()
 		"src/test/math.csl",
 		"src/test/functions.csl",
 		"src/test/decls.csl",
+		"src/test/decls2.csl",
 		"src/test/expressions.csl",
 		"src/test/casting.csl",
 		"src/test/flow-control.csl"
@@ -41,24 +42,12 @@ int main()
 	  if(ret==0){
 	    printf("\tCompile: OK, Run: ");
 	    runCubbyhole(com[i], 0); 
-	    if(i==0||i==4 || i==5)
+	    if(i==0 || i==6 || i==7)
 	      printf("OK\n");
 	  } else {
 	    printf("\tCompile: FAIL with exit code %i\n", ret);
 	  }
 	}
-	
-	/*        printf("\nRunning %s - ", files[1]);
-	runCubbyhole(com[1], 0); 
-
-        printf("Running: %s - ", files[2]);
-	runCubbyhole(com[2], 0); 	
-
-        printf("Running: %s - ", files[3]);
-	runCubbyhole(com[3], 0); 	
-	*/
-
-	//TODO? free com's
 	
 	destroyVM(veem);
 	

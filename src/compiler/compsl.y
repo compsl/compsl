@@ -53,7 +53,7 @@
     free(sprt);
     return ret;
   }
-  int fileCompile(char *filename , VM* vm, compart** out) {
+  int fileCompile(const char *filename , VM* vm, compart** out) {
     compart* com = createComp(vm);
     *out = com;
     return goparse(filename, com);

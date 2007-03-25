@@ -85,14 +85,14 @@
 <target name="debug all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG=1</buildArguments>
-<buildTarget>all DEBUG=1</buildTarget>
+<buildTarget>all DEBUG=1 TRACE_INTERP=1</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="debug test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG='1' -j2</buildArguments>
-<buildTarget>test DEBUG=1</buildTarget>
+<buildTarget>test DEBUG=1 TRACE_INTERP=1</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>

@@ -133,6 +133,10 @@ static void *jmptbl[] =
 	
 	TOP: 
 		pc++;
+		#ifdef _COMPSL_TRACE
+			int tractmp = (int)((int)pc - (int)(com->cubbys[id].code))/sizeof(bytecode); 
+			printf("%4d: %s\t%d\t%d\n",tractmp,tractbl[pc->code],pc->sa,pc->a1);
+		#endif
 		goto *jmptbl[pc->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
 	NOOP:
 		goto TOP;

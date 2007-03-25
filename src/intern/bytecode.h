@@ -77,4 +77,91 @@ typedef enum  {
 		BC_PYES,	BC_NONO,	BC_END, 	BC_HLT, 	BC_DBG
 	} BC_DEF;
 
+
+static const char *tractbl[] = 
+{
+	"NOOP",
+//stack operations with local vars
+	"PUSH",
+ 	"APUSH",
+ 	"CPUSH",
+ 	"POP", 
+ 	"APOP",
+ 	"DPOP",
+ 	"DUP",
+ // native function call
+ 	"CALL", 
+ // integer operations
+ 	"ADD", 
+ 	"SUB", 
+ 	"MUL", 
+ 	"DIV", 
+ 	"CMP",
+ // float operations 
+ 	"FADD", 
+ 	"FSUB", 
+ 	"FMUL",
+ 	"FDIV", 	
+ 	"FCMP",
+ // jumps 
+ 	"JMP", 	
+ 	"JMPL", 	
+ 	"JMPE", 	
+ 	"JMPG", 	
+ 	"JMLE", 	
+ 	"JMNE",
+ 	"JMGE",
+ //type conversion
+ 	"FLIN", 
+ 	"INFL",
+ //mod
+ 	"MOD", 
+ 	"FMOD",
+ //global vars
+ 	"GPSH",
+ 	"GAPS",
+ 	"GPOP",
+ 	"GAPP",
+ //boolean 
+ 	"AND",
+ 	"OR",
+ 	"NOT",
+ //bitwise
+ 	"BAND",
+ 	"BOR",
+ 	"BXOR",
+ 	"BNOT",
+ //bit shifting
+ 	"SFTL",
+ 	"SFTR",
+//builtins
+	"ABS",
+	"ABSF",
+	"SIN",
+	"COS",
+	"TAN",
+	"ASIN",
+	"ACOS",
+	"ATAN",
+	"SQRT",
+	"LN",
+	"FLOOR",
+	"CEIL",
+	"RAND",
+	"ATAN2",
+	"POW",
+	"MIN",
+	"MAX",
+	"MINF",
+	"MAXF",
+	"HYPOT",
+//misc
+ 	"PYES",
+ 	"NONO",
+ 	"END",
+ 	"HLT",
+ 	"DBG"
+
+ };
+
 #endif /*BYTECODE_H_*/

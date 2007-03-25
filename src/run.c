@@ -388,12 +388,7 @@ static void *jmptbl[] =
  		goto TOP;
  	FMOD:
  		sp--;	
- 		//(sp - 1)->f = (sp - 1)->f - sp->f * truncf((sp - 1)->f / sp->f); // a ? ((int)(a / b)) * b
-//#ifndef DEBUG
  		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
-//#endif
- 		//(sp - 1)->f = 42;
- 		//TODO: uncomment above
  		goto TOP;
  	GPSH:
  		*sp = gvs[pc->a1].v;

@@ -39,7 +39,7 @@ intfloat compsl_testReset(var *args) {
 
 intfloat compsl_testSummary(var *args) { 
   if(failCnt==0)
-    printf("PASS (%i tests)\n",testCnt-1, failCnt);
+    printf("PASS (%i tests)\n",testCnt-1);
   else 
     printf(">> FAIL << (%i tests completed, %i failed)\n",testCnt-1, failCnt);
 }

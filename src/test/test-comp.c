@@ -47,6 +47,7 @@ int main()
 	  } else {
 	    fprintf(stderr,"\tCompile: FAIL with exit code %i\n", ret);
 	  }
+	  destroyComp(com[i]);
 	}
 	
 	destroyVM(veem);

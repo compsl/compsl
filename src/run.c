@@ -26,6 +26,92 @@
 void init_genrand(unsigned long s);
 double genrand_real1(void);
 
+static const char *tractbl[] = 
+{
+	"NOOP",
+//stack operations with local vars
+	"PUSH",
+ 	"APUSH",
+ 	"CPUSH",
+ 	"POP", 
+ 	"APOP",
+ 	"DPOP",
+ 	"DUP",
+ // native function call
+ 	"CALL", 
+ // integer operations
+ 	"ADD", 
+ 	"SUB", 
+ 	"MUL", 
+ 	"DIV", 
+ 	"CMP",
+ // float operations 
+ 	"FADD", 
+ 	"FSUB", 
+ 	"FMUL",
+ 	"FDIV", 	
+ 	"FCMP",
+ // jumps 
+ 	"JMP", 	
+ 	"JMPL", 	
+ 	"JMPE", 	
+ 	"JMPG", 	
+ 	"JMLE", 	
+ 	"JMNE",
+ 	"JMGE",
+ //type conversion
+ 	"FLIN", 
+ 	"INFL",
+ //mod
+ 	"MOD", 
+ 	"FMOD",
+ //global vars
+ 	"GPSH",
+ 	"GAPS",
+ 	"GPOP",
+ 	"GAPP",
+ //boolean 
+ 	"AND",
+ 	"OR",
+ 	"NOT",
+ //bitwise
+ 	"BAND",
+ 	"BOR",
+ 	"BXOR",
+ 	"BNOT",
+ //bit shifting
+ 	"SFTL",
+ 	"SFTR",
+//builtins
+	"ABS",
+	"ABSF",
+	"SIN",
+	"COS",
+	"TAN",
+	"ASIN",
+	"ACOS",
+	"ATAN",
+	"SQRT",
+	"LN",
+	"FLOOR",
+	"CEIL",
+	"RAND",
+	"ATAN2",
+	"POW",
+	"MIN",
+	"MAX",
+	"MINF",
+	"MAXF",
+	"HYPOT",
+//misc
+ 	"PYES",
+ 	"NONO",
+ 	"END",
+ 	"HLT",
+ 	"DBG"
+
+ };
+
 void runCubbyhole(compart *com, int id)
 {
 static void *jmptbl[] = 

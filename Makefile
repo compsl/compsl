@@ -45,6 +45,10 @@ CFLAGS += -mmmx -mno-ieee-fp
 #if sse instructions not available need to disable this line
 #CFLAGS += -msse -mfpmath=sse
 
+ifdef TRACE_INTERP
+	CFLAGS += -D_COMPSL_TRACE
+endif
+
 ifdef DEBUG
 	CFLAGS += -O0 -ggdb -DDEBUG
 	#CFLAGS += -D DEBUG $(DBG_ENVS)

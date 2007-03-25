@@ -9,8 +9,8 @@
 extern "C" {
 #endif
 
-int *fileCompile(const char *filename , VM*, compart**);
-int *stringCompile(char *code, size_t , compart**);
+int fileCompile(const char *filename , VM*, compart**);
+int stringCompile(const char *code, size_t len, VM* vm, compart** out);
 
 void runCubbyhole(compart *com, int id); // runs 
 

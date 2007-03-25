@@ -22,6 +22,7 @@
 #include "../intern/compartment.h"
 #include "../intern/bytecode.h"
 #include "../intern/builtins.h"
+#include "../extern/compsl.h"
 //#include "../intern/debug.h"
 
 #define YYERROR_VERBOSE 1
@@ -58,7 +59,7 @@
     *out = com;
     return goparse(filename, com);
   }
-  int stringCompile(char *code, size_t len, VM* vm, compart** out) {
+  int stringCompile(const char *code, size_t len, VM* vm, compart** out) {
     *out = (compart*)0;
     return -1;
   }

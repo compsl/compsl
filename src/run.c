@@ -220,9 +220,9 @@ static void *jmptbl[] =
 	TOP: 
 		pc++;
 		#ifdef _COMPSL_TRACE
-			int tractmp = ((int)pc - (int)(com->cubbys[id].code))/sizeof(bytecode);
-			int sppos =  ((int)sp - (int)stack)/sizeof(intfloat);
-			fprintf(stderr,"%4d: %s\tsa=%d\ta1=%d\tsp=%d\n",
+			long int tractmp = ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode);
+			long int sppos =  ((long int)sp - (long int)stack)/sizeof(intfloat);
+			fprintf(stderr,"%4ld: %s\tsa=%d\ta1=%d\tsp=%ld\n",
 				tractmp,tractbl[pc->code],pc->sa,pc->a1,sppos);
 		#endif
 		goto *jmptbl[pc->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
@@ -566,13 +566,13 @@ static void *jmptbl[] =
  		var *t;
  		intfloat *st;
  		
- 		fprintf(stderr, "Program Counter: %X", (unsigned int)((bytecode *)(com->cubbys[id].code) - pc));
+ 		fprintf(stderr, "Program Counter: %lX", ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode));
  		
  		fprintf(stderr, "Compare Flags (e,l,g): %s %s %s\n",
  			(equal?"true":"false"),
  			(less?"true":"false"),
  			(greater?"true":"false"));
- 		fprintf(stderr, "Stack Pointer: %X\n", (unsigned int)(sp - stack)); // what does this do? index of sp?
+ 		fprintf(stderr, "Stack Pointer: %lX\n", ((long int)sp - (long int)stack)/sizeof(intfloat)); // what does this do? index of sp?
  		fprintf(stderr, "Stack: \n");
  		st = stack;
  		for(unsigned int i = 0; i < VM_STACK_SIZE; i++, st++)

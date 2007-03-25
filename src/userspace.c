@@ -42,6 +42,7 @@ intfloat compsl_testSummary(var *args) {
     printf("PASS (%i tests)\n",testCnt-1);
   else 
     printf(">> FAIL << (%i tests completed, %i failed)\n",testCnt-1, failCnt);
+  return (intfloat)0;
 }
 
 

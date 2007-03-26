@@ -36,16 +36,16 @@ int main()
 	
 	for(int i=0;i<NUM_FILES;i++) {
 	  int ret;
-	  fprintf(stderr,"File %s: ",files[i]);
+	  printf("File %s: ",files[i]);
 
 	  ret = fileCompile(files[i], veem, &com[i]);
 	  if(ret==0){
-	    fprintf(stderr,"\tCompile: OK, Run: ");
+	    printf("\tCompile: OK, Run: ");
 	    runCubbyhole(com[i], 0); 
 	    if(i==0 || i==6 || i==7)
-	      fprintf(stderr,"OK\n");
+	      printf("OK\n");
 	  } else {
-	    fprintf(stderr,"\tCompile: FAIL with exit code %i\n", ret);
+	    printf("\tCompile: FAIL with exit code %i\n", ret);
 	  }
 	  destroyComp(com[i]);
 	}

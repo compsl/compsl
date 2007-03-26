@@ -218,14 +218,13 @@ static void *jmptbl[] =
 	init_genrand(time(0));
 	
 	TOP: 
-		pc++;
 		#ifdef _COMPSL_TRACE
-			long int tractmp = ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode);
+			long int tractmp = ((long int)(pc+1) - (long int)(com->cubbys[id].code))/sizeof(bytecode);
 			long int sppos =  ((long int)sp - (long int)stack)/sizeof(intfloat);
-			fprintf(stderr,"%4ld: %s\tsa=%d\ta1=%d\tsp=%ld\n",
-				tractmp,tractbl[pc->code],pc->sa,pc->a1,sppos);
+			printf("%4ld: %s\tsa=%d\ta1=%d\tsp=%ld\n",
+				tractmp,tractbl[(pc+1)->code],(pc+1)->sa,(pc+1)->a1,sppos);
 		#endif
-		goto *jmptbl[pc->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
+		goto *jmptbl[(++pc)->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
 	NOOP:
 		goto TOP;
 	PUSH:

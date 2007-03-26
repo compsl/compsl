@@ -4,6 +4,7 @@
 static const char *emessgs[] =
 {//TODO: fill in errors
 	"No Error",
+	"Out of Memory",
 	"VARIABLE TABLE FULL: Cannot add variable",
 	"CONSTANT TABLE FULL: Cannot add constant",
 	"Cubbyhole Table full: Too many cubbyholes",

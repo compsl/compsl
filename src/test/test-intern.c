@@ -72,6 +72,10 @@ int main()
         
         //int16_t com_addConst(compart *com, intfloat val);
         com_addConst(com,(intfloat)0);
+        
+        
+        destroyComp(com);
+        destroyVM(vm);
     }
     
     

@@ -8,14 +8,15 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   int len, cpos; 
   
   bytecode *cond = expr_toBc(condExpr);
-
+  bytecode *tmp = NULL;
+  assert(cond != NULL);
+  
   int testLen = 1;
   int jmpLen = 1;
   int condLen = bc_len(cond);
   int blockLen = bc_len(block);
   int elseLen = ((elseBlock !=(bytecode*)0)?bc_len(elseBlock):0);
   
-  assert(cond!=NULL);
   assert(condLen>0);
   
   if(condExpr->isFloat)
@@ -28,18 +29,21 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   cpos = 0;
   
   // Calculate the condition value
-  cond = realloc(cond, sizeof(bytecode)*len);
+  tmp = realloc(cond, sizeof(bytecode)*len);
+  if(tmp == NULL)
+  { 
+  	free(cond);
+  	expr_free(condExpr);
+ 	free(block);
+ 	if(elseBlock!=NULL) free(elseBlock);
+  	internalCompileError("Out of Memory");
+  }
+  cond = tmp;
   cpos += condLen;
   
   // Jump if false
   cond[cpos].code = BC_JMZ;
-//  cond[cpos].code = BC_CPUSH;
-//  cond[cpos].a1 = ZERO_CONSTANT;
-//  
-//  cond[cpos+1].code = BC_EQ;
-//  
-//  cond[cpos+2].code = BC_JMN;
-	cond[cpos].sa = blockLen +1;
+  cond[cpos].sa = blockLen +1;
   
   // We need to jump past the second jump as well
   if(elseLen>0)

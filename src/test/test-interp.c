@@ -843,7 +843,472 @@ int main()
 			ret = 1;
 		}
 	}
+
+	{ // EQ/JMZ 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FEQ }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.f = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.f = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FEQ 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.f == 1.0f)
+				printf("FEQ 1: FAIL! Didn't go far enough\n");
+			else
+				printf("FEQ 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
 	
+	{ // EQ/JMZ 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_FEQ }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FEQ 2: PASS!\n");
+		else 
+		{
+			printf("FEQ 2: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	{ // LS/JMZ 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_FL }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FL 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.f == 1.0f)
+				printf("FL 1: FAIL! Didn't go far enough\n");
+			else
+				printf("FL 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMPL/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FL }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FL 2: PASS!\n");
+		else 
+		{
+			printf("FL 2: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMLE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_FLE }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FLE 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.f == 1.0f)
+				printf("FLE 1: FAIL! Didn't go far enough\n");
+			else
+				printf("FLE 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMPE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FLE }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FLE 2: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.f == 1.0f)
+				printf("FLE 2: FAIL! Didn't go far enough\n");
+			else
+				printf("FLE 2: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMLE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FLE }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FLE 3: PASS!\n");
+		else 
+		{
+			printf("FLE 3: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMPG/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FGR }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FGR 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.f == 1.0f)
+				printf("FGR 1: FAIL! Didn't go far enough\n");
+			else
+				printf("FGR 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+
+{ // JMPG/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FGR }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FGR 2: PASS!\n");
+		else 
+		{
+			printf("FGR 2: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	
+	{ // JMGE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FGE }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FGE 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.f == 1.0f)
+				printf("FGE 1: FAIL! Didn't go far enough\n");
+			else
+				printf("FGE 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMGE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_FGE }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 1.0f)
+			printf("FGE 2: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.f == 1.0f)
+				printf("FGE 2: FAIL! Didn't go far enough\n");
+			else
+				printf("FGE 2: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+
+	{ // JMGE/CMP 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_FGE }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f = 2.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FGE 3: PASS!\n");
+		else 
+		{
+			printf("FGE 3: FAIL!\n");
+			ret = 1;
+		}
+	}
 	
 	{ //FLIN/INFL
 		bytecode code[] = 

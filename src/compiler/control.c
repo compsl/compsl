@@ -9,7 +9,7 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   
   bytecode *cond = expr_toBc(condExpr);
 
-  int testLen = 3;
+  int testLen = 1;
   int jmpLen = 1;
   int condLen = bc_len(cond);
   int blockLen = bc_len(block);
@@ -32,17 +32,18 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   cpos += condLen;
   
   // Jump if false
-  cond[cpos].code = BC_CPUSH;
-  cond[cpos].a1 = ZERO_CONSTANT;
-  
-  cond[cpos+1].code = BC_EQ;
-  
-  cond[cpos+2].code = BC_JMN;
-  cond[cpos+2].sa = blockLen +1;
+  cond[cpos].code = BC_JMZ;
+//  cond[cpos].code = BC_CPUSH;
+//  cond[cpos].a1 = ZERO_CONSTANT;
+//  
+//  cond[cpos+1].code = BC_EQ;
+//  
+//  cond[cpos+2].code = BC_JMN;
+	cond[cpos].sa = blockLen +1;
   
   // We need to jump past the second jump as well
   if(elseLen>0)
-    cond[cpos+2].sa++;
+    cond[cpos].sa++;
   
   cpos+=testLen;
   
@@ -90,7 +91,7 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   bytecode *cond = expr_toBc(condExpr);
   
   int condLen = bc_len(cond);
-  int testLen = 3;
+  int testLen = 1;
   int blockLen = bc_len(block);
   int jmpLen = 1;
   
@@ -109,13 +110,14 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   cpos += condLen;
 		  
   // test: Jump if false
-  cond[cpos].code = BC_CPUSH;
-  cond[cpos].a1 = ZERO_CONSTANT;
+  cond[cpos].code = BC_JMZ;
+  //cond[cpos].code = BC_CPUSH;
+  //cond[cpos].a1 = ZERO_CONSTANT;
   
-  cond[cpos+1].code = BC_EQ;
+  //cond[cpos+1].code = BC_EQ;
   
-  cond[cpos+2].code = BC_JMN;
-  cond[cpos+2].sa = blockLen+jmpLen+1;
+  //cond[cpos+2].code = BC_JMN;
+  cond[cpos].sa = blockLen+jmpLen+1;
   cpos+=testLen;
   
   fixBreaksContinues(block, blockLen, condLen+testLen, jmpLen);

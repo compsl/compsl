@@ -45,14 +45,27 @@ static const char *tractbl[] =
  	"MUL", 
  	"DIV", 
  	"CMP",
+ 	"LE",
+ 	"LS",
+	"EQ",
+	"NE",
+ 	"GR",
+ 	"GE",
  // float operations 
  	"FADD", 
  	"FSUB", 
  	"FMUL",
  	"FDIV", 	
  	"FCMP",
+ 	"FLE",
+ 	"FLS",
+	"FEQ",
+	"FNE",
+ 	"FGR",
+ 	"FGE",
  // jumps 
- 	"JMP", 	
+ 	"JMP",
+ 	"JMZ",
  	"JMPL", 	
  	"JMPE", 	
  	"JMPG", 	
@@ -133,14 +146,29 @@ static void *jmptbl[] =
  	&&MUL, 
  	&&DIV, 
  	&&CMP,
+ //compares
+ 	&&LE,
+ 	&&LS,
+	&&EQ,
+	&&NE,
+ 	&&GR,
+ 	&&GE,
  // float operations 
  	&&FADD, 
  	&&FSUB, 
  	&&FMUL,
  	&&FDIV, 	
  	&&FCMP,
+ //float compares
+ 	&&FLE,
+ 	&&FLS,
+	&&FEQ,
+	&&FNE,
+ 	&&FGR,
+ 	&&FGE,
  // jumps 
- 	&&JMP, 	
+ 	&&JMP,
+ 	&&JMZ,
  	&&JMPL, 	
  	&&JMPE, 	
  	&&JMPG, 	
@@ -332,6 +360,31 @@ static void *jmptbl[] =
  		greater = tmp.i > 0;
  		equal = !tmp.i;
  		goto TOP;
+	LE:
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i <= sp->i;
+ 		goto TOP;
+ 	LS:
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i < sp->i;
+ 		goto TOP;
+	EQ:
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i == sp->i;
+ 		goto TOP;
+	NE:
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i != sp->i;
+ 		goto TOP;
+ 	GR:
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i != sp->i;
+ 		goto TOP;
+ 	GE:
+ 		sp--;	
+ 		(sp - 1)->i = (sp - 1)->i != sp->i;
+ 		goto TOP;
+ 		
  	FADD:
 	 	sp--;
  		(sp - 1)->f = (sp - 1)->f + sp->f;
@@ -355,8 +408,35 @@ static void *jmptbl[] =
 		greater = tmp.f > 0;
  		equal = fdimf(sp->f, (sp + 1)->f) < VM_FLOAT_EPSILON;
  		goto TOP;
+ 	FLE:
+ 		sp--;
+ 		(sp - 1)->f = (sp - 1)->f <= sp->f;
+ 		goto TOP; 
+ 	FLS:
+ 		sp--;
+ 		(sp - 1)->f = (sp - 1)->f < sp->f;
+ 		goto TOP;
+	FEQ:
+ 		sp--;
+ 		(sp - 1)->f = fdimf(sp->f, (sp - 1)->f) < VM_FLOAT_EPSILON;
+ 		goto TOP;
+	FNE:
+ 		sp--;
+ 		(sp - 1)->f = (sp - 1)->f != sp->f;
+ 		goto TOP;
+ 	FGR:
+ 		sp--;
+ 		(sp - 1)->f = (sp - 1)->f > sp->f;
+ 		goto TOP;
+ 	FGE:
+ 		sp--;
+ 		(sp - 1)->f = (sp - 1)->f >= sp->f;
+ 		goto TOP;
  	JMP:
  		pc += pc->sa - 1; // compensate for pc++ at top
+ 		goto TOP;
+ 	JMZ:
+ 		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
  		goto TOP;
  	JMPL:
  		if(less) pc += pc->sa - 1;// compensate for pc++ at top

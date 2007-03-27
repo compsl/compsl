@@ -63,6 +63,9 @@ else
 	#CFLAGS += -fbranch-target-load-optimize -fsched2-use-superblocks
 	#-fmove-all-movables
 
+	#for asserts
+overide CFLAGS += -DNDEBUG
+
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
 endif

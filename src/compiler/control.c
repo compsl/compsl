@@ -184,7 +184,7 @@ void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen) {
 	bc[i].sa= len+jmpLen-i;
 
       } else {
-	compileWarning("Produced code with a NOOP");
+	    compileWarning("Produced code with a NOOP");
       }
     }
   }

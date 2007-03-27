@@ -7,6 +7,7 @@
 
 expression *function_call(const char* name, list *params) {
   expression *ex = malloc(sizeof(expression));
+  if(ex == NULL) internalCompileError("Out of Memory");
   bytecode *mcode;
   ex->isFloat = false;
   int lenBc, curBc;
@@ -112,6 +113,7 @@ expression *function_call(const char* name, list *params) {
   }
   
   mcode = calloc(lenBc, sizeof(bytecode));
+  if(mcode == NULL) internalCompileError("Out of Memory");
   curBc = 0;
   
   // Copy the parameters into mcode, last parameter first

@@ -26,6 +26,7 @@
 void init_genrand(unsigned long s);
 double genrand_real1(void);
 
+#ifdef _COMPSL_TRACE
 static const char *tractbl[] = 
 {
 	"NOOP",
@@ -117,6 +118,7 @@ static const char *tractbl[] =
  	"DBG"
 
  };
+#endif
 
 void runCubbyhole(compart *com, int id)
 {
@@ -215,7 +217,6 @@ static void *jmptbl[] =
  };
 	intfloat stack[VM_STACK_SIZE];
 	intfloat *sp = stack; // stack pointer
-	intfloat tmp;
 	
 	var *lvs = com->vt.vars;
 	var *lcs = com->cons;

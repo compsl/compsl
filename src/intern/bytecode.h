@@ -37,12 +37,25 @@ typedef enum  {
 	BC_MUL, 	//multiply top 2 stack elements 
 	BC_DIV ,	//divide top 2 stack elements b = pop; a = pop; push a / b;
 	BC_CMP,		//compare top 2 stack elements b = pop; a = pop; push a <>= b;
+	BC_LE,		// <=
+	BC_LS,		// <
+	BC_EQ,		// ==
+	BC_NE,		// !=
+	BC_GR,		// >
+	BC_GE,		// >=
 	BC_FADD,	//same as ADD but for float
 	BC_FSUB, 	//same as SUB but for float
 	BC_FMUL, 	//same as MUL but for float
 	BC_FDIV,	//same as DIV but for float
 	BC_FCMP,	//same as CMP but for float
+	BC_FLE,		// <=
+	BC_FL,		// <
+	BC_FEQ,		// ==
+	BC_FNE,		// !=
+	BC_FGR,		// >
+	BC_FGE,		// >=
 	BC_JMP, 	//jump to offeset in sa from current positon
+	BC_JMZ,	//if top of stack is zero, jump
 	BC_JMPL,	//jump if last compare was less
 	BC_JMPE,	//jump if last compare was equal
 	BC_JMPG,	//jump if last compare was greater

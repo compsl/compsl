@@ -450,6 +450,79 @@ int main()
 		}
 	}
 	
+	{ // JMZ 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_PUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.i == 1)
+			printf("JMZ 1: PASS!\n");
+		else 
+		{
+			if(com->vt.vars[1].v.i == 1)
+				printf("JMZ 1: FAIL! Didn't go far enough\n");
+			else
+				printf("JMZ 1: FAIL! When't too far\n");
+			ret = 1;
+		}
+	}
+	
+	{ // JMZ 2 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_PUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.i = 1;
+		com->cons[1].size = -1;
+		com->cons[1].v.i = 2;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.i = 10;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.i = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[1].v.i == 1 && com->vt.vars[0].v.i == 2)
+			printf("JMZ 2: PASS!\n");
+		else 
+		{
+			printf("JMZ 2: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
 	{ // EQ/JMN 
 		bytecode code[] = 
 		{ 

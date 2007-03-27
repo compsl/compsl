@@ -378,11 +378,11 @@ static void *jmptbl[] =
  		goto TOP;
  	GR:
  		sp--;	
- 		(sp - 1)->i = (sp - 1)->i != sp->i;
+ 		(sp - 1)->i = (sp - 1)->i > sp->i;
  		goto TOP;
  	GE:
  		sp--;	
- 		(sp - 1)->i = (sp - 1)->i != sp->i;
+ 		(sp - 1)->i = (sp - 1)->i >= sp->i;
  		goto TOP;
  		
  	FADD:

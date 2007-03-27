@@ -93,13 +93,14 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   int len, cpos; 
   
   bytecode *cond = expr_toBc(condExpr);
+  bytecode *tmp = NULL;
+  assert(cond!=NULL);
   
   int condLen = bc_len(cond);
   int testLen = 1;
   int blockLen = bc_len(block);
   int jmpLen = 1;
-  
-  assert(cond!=NULL);
+
   assert(condLen>0);
 
   if(condExpr->isFloat)
@@ -110,17 +111,19 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   cpos = 0;
   
   // Calculate the condition value
-  cond = realloc(cond, sizeof(bytecode)*len);
+  tmp = realloc(cond, sizeof(bytecode)*len);
+  if(tmp == NULL)
+  {
+  	free(cond);
+    condExpr->isLiteral = true;
+    expr_free(condExpr);
+    free(block);
+    internalCompileError("Out of Memory");
+  }
+  cond = tmp;
   cpos += condLen;
 		  
-  // test: Jump if false
   cond[cpos].code = BC_JMZ;
-  //cond[cpos].code = BC_CPUSH;
-  //cond[cpos].a1 = ZERO_CONSTANT;
-  
-  //cond[cpos+1].code = BC_EQ;
-  
-  //cond[cpos+2].code = BC_JMN;
   cond[cpos].sa = blockLen+jmpLen+1;
   cpos+=testLen;
   

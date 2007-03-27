@@ -5,6 +5,7 @@
 
 #include "../intern/gen.h"
 #include "../intern/vars.h"
+#include "../intern/compartment.h"
 
 #include "../extern/port.h"
 

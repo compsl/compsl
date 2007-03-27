@@ -66,6 +66,7 @@ static const char *tractbl[] =
  // jumps 
  	"JMP",
  	"JMZ",
+ 	"JMN",
  	"JMPL", 	
  	"JMPE", 	
  	"JMPG", 	
@@ -169,6 +170,7 @@ static void *jmptbl[] =
  // jumps 
  	&&JMP,
  	&&JMZ,
+ 	&&JMN,
  	&&JMPL, 	
  	&&JMPE, 	
  	&&JMPG, 	
@@ -437,6 +439,9 @@ static void *jmptbl[] =
  		goto TOP;
  	JMZ:
  		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
+ 		goto TOP;
+ 	JMN:
+ 		if(!((--sp)->i)) pc += pc->sa - 1; // compensate for pc++ at top
  		goto TOP;
  	JMPL:
  		if(less) pc += pc->sa - 1;// compensate for pc++ at top

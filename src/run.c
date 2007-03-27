@@ -438,10 +438,10 @@ static void *jmptbl[] =
  		pc += pc->sa - 1; // compensate for pc++ at top
  		goto TOP;
  	JMZ:
- 		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
+ 		if(!((--sp)->i)) pc += pc->sa - 1; // compensate for pc++ at top
  		goto TOP;
  	JMN:
- 		if(!((--sp)->i)) pc += pc->sa - 1; // compensate for pc++ at top
+ 		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
  		goto TOP;
  	JMPL:
  		if(less) pc += pc->sa - 1;// compensate for pc++ at top

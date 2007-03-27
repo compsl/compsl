@@ -377,13 +377,13 @@ int main()
 		}
 	}
 	
-	{ // JMZ 
+	{ // JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_PUSH, { {.a1 =0} } }, //push const at address 0
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -404,24 +404,24 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.i == 1)
-			printf("JMZ 1: PASS!\n");
+			printf("JMN 1: PASS!\n");
 		else 
 		{
 			if(com->vt.vars[1].v.i == 1)
-				printf("JMZ 1: FAIL! Didn't go far enough\n");
+				printf("JMN 1: FAIL! Didn't go far enough\n");
 			else
-				printf("JMZ 1: FAIL! When't too far\n");
+				printf("JMN 1: FAIL! When't too far\n");
 			ret = 1;
 		}
 	}
 	
-	{ // JMZ 
+	{ // JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_PUSH, { {.a1 =0} } }, //push const at address 0
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -442,15 +442,15 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[1].v.i == 1 && com->vt.vars[0].v.i == 2)
-			printf("JMZ 2: PASS!\n");
+			printf("JMN 2: PASS!\n");
 		else 
 		{
-			printf("JMZ 2: FAIL!\n");
+			printf("JMN 2: FAIL!\n");
 			ret = 1;
 		}
 	}
 	
-	{ // EQ/JMZ 
+	{ // EQ/JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
@@ -458,7 +458,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_EQ }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -490,7 +490,7 @@ int main()
 		}
 	}
 	
-	{ // EQ/JMZ 
+	{ // EQ/JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
@@ -498,7 +498,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_EQ }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -527,7 +527,7 @@ int main()
 		}
 	}
 	
-	{ // LS/JMZ 
+	{ // LS/JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
@@ -535,7 +535,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_LS }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -575,7 +575,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_LS }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -612,7 +612,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_LE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -652,7 +652,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_LE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -692,7 +692,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_LE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -730,7 +730,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_GR }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -770,7 +770,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_GR }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -808,7 +808,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_GE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -848,7 +848,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_GE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -888,7 +888,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_GE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -917,7 +917,7 @@ int main()
 		}
 	}
 
-	{ // EQ/JMZ 
+	{ // EQ/JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
@@ -925,7 +925,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FEQ }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -957,7 +957,7 @@ int main()
 		}
 	}
 	
-	{ // EQ/JMZ 
+	{ // EQ/JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
@@ -965,7 +965,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_FEQ }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -994,7 +994,7 @@ int main()
 		}
 	}
 	
-	{ // LS/JMZ 
+	{ // LS/JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
@@ -1002,7 +1002,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_FL }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1042,7 +1042,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FL }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1079,7 +1079,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_FLE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1119,7 +1119,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FLE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1159,7 +1159,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FLE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1196,7 +1196,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FGR }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1236,7 +1236,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FGR }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1274,7 +1274,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FGE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1314,7 +1314,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_FGE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}
@@ -1354,7 +1354,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
 			{.code = BC_FGE }, // compare
-			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
 			{.code = BC_END}

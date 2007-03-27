@@ -44,7 +44,6 @@ static const char *tractbl[] =
  	"SUB", 
  	"MUL", 
  	"DIV", 
- 	"CMP",
  	"LE",
  	"LS",
 	"EQ",
@@ -55,8 +54,7 @@ static const char *tractbl[] =
  	"FADD", 
  	"FSUB", 
  	"FMUL",
- 	"FDIV", 	
- 	"FCMP",
+ 	"FDIV", 
  	"FLE",
  	"FLS",
 	"FEQ",
@@ -67,12 +65,6 @@ static const char *tractbl[] =
  	"JMP",
  	"JMZ",
  	"JMN",
- 	"JMPL", 	
- 	"JMPE", 	
- 	"JMPG", 	
- 	"JMLE", 	
- 	"JMNE",
- 	"JMGE",
  //type conversion
  	"FLIN", 
  	"INFL",
@@ -146,7 +138,6 @@ static void *jmptbl[] =
  	&&SUB, 
  	&&MUL, 
  	&&DIV, 
- 	&&CMP,
  //compares
  	&&LE,
  	&&LS,
@@ -158,8 +149,7 @@ static void *jmptbl[] =
  	&&FADD, 
  	&&FSUB, 
  	&&FMUL,
- 	&&FDIV, 	
- 	&&FCMP,
+ 	&&FDIV, 
  //float compares
  	&&FLE,
  	&&FLS,
@@ -171,12 +161,6 @@ static void *jmptbl[] =
  	&&JMP,
  	&&JMZ,
  	&&JMN,
- 	&&JMPL, 	
- 	&&JMPE, 	
- 	&&JMPG, 	
- 	&&JMLE, 	
- 	&&JMNE,
- 	&&JMGE,
  //type conversion
  	&&FLIN, 
  	&&INFL,
@@ -354,14 +338,6 @@ static void *jmptbl[] =
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i / sp->i;
  		goto TOP;
- 	CMP:
- 	// TODO: see if this can be done faster
- 		sp-=2;
- 		tmp.i = sp->i - (sp+1)->i;
- 		less = tmp.i < 0;
- 		greater = tmp.i > 0;
- 		equal = !tmp.i;
- 		goto TOP;
 	LE:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i <= sp->i;
@@ -403,13 +379,6 @@ static void *jmptbl[] =
  		sp--;
  		(sp - 1)->f = (sp - 1)->f / sp->f;
  		goto TOP; 
- 	FCMP:
-	 	sp-=2;
- 		tmp.f = sp->f - (sp + 1)->f;
- 		less = tmp.f < 0;
-		greater = tmp.f > 0;
- 		equal = fdimf(sp->f, (sp + 1)->f) < VM_FLOAT_EPSILON;
- 		goto TOP;
  	FLE:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f <= sp->f;
@@ -442,24 +411,6 @@ static void *jmptbl[] =
  		goto TOP;
  	JMN:
  		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
- 		goto TOP;
- 	JMPL:
- 		if(less) pc += pc->sa - 1;// compensate for pc++ at top
- 		goto TOP;	
- 	JMPE:
-	 	if(equal) pc += pc->sa - 1;// compensate for pc++ at top
- 		goto TOP; 	
- 	JMPG:
- 		if(greater) pc += pc->sa - 1;// compensate for pc++ at top
- 		goto TOP;
- 	JMLE:
- 		if(less || equal) pc += pc->sa - 1;// compensate for pc++ at top
- 		goto TOP;
- 	JMNE:
- 		if(!equal) pc += pc->sa - 1;// compensate for pc++ at top
- 		goto TOP; 	
- 	JMGE:
- 		if(greater || equal) pc += pc->sa - 1;// compensate for pc++ at top
  		goto TOP;
  	FLIN: 
  		(sp-1)->i = (int)((sp-1)->f);

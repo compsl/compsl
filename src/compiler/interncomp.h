@@ -21,9 +21,9 @@
 //   - Find out how to store dynamic vars
 //   - Store the three vars below in those vars
 
-uint8_t ZERO_CONSTANT;
-compart *ccompart;
-char *sprt;
+extern uint8_t ZERO_CONSTANT;
+extern compart *ccompart;
+extern char *sprt;
 
 
 typedef struct _expression_t {

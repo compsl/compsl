@@ -36,7 +36,6 @@ typedef enum  {
 	BC_SUB, 	//subtract top 2 stack elements b = pop; a = pop; push a - b;
 	BC_MUL, 	//multiply top 2 stack elements 
 	BC_DIV ,	//divide top 2 stack elements b = pop; a = pop; push a / b;
-	BC_CMP,		//compare top 2 stack elements b = pop; a = pop; push a <>= b;
 	BC_LE,		// <=
 	BC_LS,		// <
 	BC_EQ,		// ==
@@ -47,7 +46,6 @@ typedef enum  {
 	BC_FSUB, 	//same as SUB but for float
 	BC_FMUL, 	//same as MUL but for float
 	BC_FDIV,	//same as DIV but for float
-	BC_FCMP,	//same as CMP but for float
 	BC_FLE,		// <=
 	BC_FL,		// <
 	BC_FEQ,		// ==
@@ -57,12 +55,6 @@ typedef enum  {
 	BC_JMP, 	//jump to offeset in sa from current positon
 	BC_JMZ,		//if top of stack is zero, jump
 	BC_JMN,		//if top of stack is non-zero, jump
-	BC_JMPL,	//jump if last compare was less
-	BC_JMPE,	//jump if last compare was equal
-	BC_JMPG,	//jump if last compare was greater
-	BC_JMLE, 	//jump if last compare was less or equal
-	BC_JMNE, 	//jump if last compare was not equal
-	BC_JMGE,	//jump if last compare was greater or equal
 	BC_FLIN,	//cast float to int (top of stack)
 	BC_INFL, 	//cast int to float (top of stack)
 	BC_MOD,		//modulus of top 2 stack b = pop; a = pop; push a % b;

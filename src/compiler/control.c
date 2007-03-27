@@ -35,9 +35,9 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   cond[cpos].code = BC_CPUSH;
   cond[cpos].a1 = ZERO_CONSTANT;
   
-  cond[cpos+1].code = BC_CMP;
+  cond[cpos+1].code = BC_EQ;
   
-  cond[cpos+2].code = BC_JMPE;
+  cond[cpos+2].code = BC_JMN;
   cond[cpos+2].sa = blockLen +1;
   
   // We need to jump past the second jump as well
@@ -112,9 +112,9 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   cond[cpos].code = BC_CPUSH;
   cond[cpos].a1 = ZERO_CONSTANT;
   
-  cond[cpos+1].code = BC_CMP;
+  cond[cpos+1].code = BC_EQ;
   
-  cond[cpos+2].code = BC_JMPE;
+  cond[cpos+2].code = BC_JMN;
   cond[cpos+2].sa = blockLen+jmpLen+1;
   cpos+=testLen;
   

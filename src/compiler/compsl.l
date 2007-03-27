@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
+#include "interncomp.h"
 #include "node.h"
 #include "../extern/vm.h"
 #include "../extern/compart.h"
@@ -16,14 +17,10 @@ extern compart *ccompart;
 
 %}
 %%
-   
+
 \/\/.*\n		{}; /*comment*/
-declare		{
-	return DECLARE;
-}
-cubbyhole	{
-	return CUBBY;
-}
+declare	     return DECLARE;
+cubbyhole    return CUBBY;
 global		return GLOBAL;
 int			return INT;
 float		return FLOAT;
@@ -57,6 +54,7 @@ continue	return CONTINUE;
 !			return NOT;
 &&			return AND;
 \|\|		return OR;
+\|		return BOR;
 \ 			;
 \t			;
 \n			;

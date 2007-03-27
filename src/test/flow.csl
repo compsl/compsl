@@ -1,0 +1,248 @@
+
+
+// testing flow CONTROL structures
+
+
+declare
+{
+	int stat;	
+	int a;
+}
+
+cubbyhole init
+{	
+	test_reset();
+
+	// if, true
+	stat = 1;
+	if(1) {
+		stat = 2;
+	}
+	testeqi(2,stat); //1
+
+
+	// if, false
+	stat = 3;
+	if(0) {
+		stat = 4;
+	}
+	testeqi(3,stat); //2
+
+	// if,else , if true
+	stat = 5;
+	if(1) {
+		stat = 6;
+	}
+	else  {
+		stat = 7;
+	}
+	testeqi(6,stat); //3
+	
+	// if,else , else true
+	stat = 8;
+	if(0) {
+		stat = 9;
+	}
+	else  {
+		stat = 10;
+	}
+	testeqi(10,stat); //4
+
+
+	stat = 11;
+	if(0) stat = 12;
+	else  stat = 13;
+	testeqi(13,stat); //5
+
+	stat = 11;
+	if(0) {}
+	else  stat = 13;
+	testeqi(13,stat); //6
+
+	stat = 14;
+	if(1) { stat = 15;}
+	else  {}
+	testeqi(15,stat); //7
+
+	stat = 1;
+	if(stat) { stat = 16;}
+	testeqi(16,stat); //8
+
+	stat = 2;
+	stat = 2;
+	if(stat+1) { stat = 18;}
+	else  { stat = 5;}
+	testeqi(18,stat); //9
+	
+	a+1; 1; stat=0;
+
+	stat = 1;
+	if(2) {
+		stat = 2;
+	}
+	testeqi(2,stat); //10
+
+
+	// Else if
+	stat = 1;
+	if(0) {
+		stat = 2;
+	} else if(1) {
+		stat = 3;
+	} else {
+		stat = 4;
+	}
+	testeqi(3,stat); //11
+
+
+	stat = 1;
+	if(1) {
+		stat = 2;
+	} else if(1) {
+		stat = 3;
+	} else {
+		stat = 4;
+	}
+	testeqi(2,stat); //12
+
+
+	stat = 1;
+	if(0) {
+		stat = 2;
+	} else if(0) {
+		stat = 3;
+	} else {
+		stat = 4;
+	}
+	testeqi(4,stat); //13
+
+
+
+	stat = 1;
+	if(0) {
+		stat = 2;
+	} else if(0) {
+		stat = 3;
+	} else if (1){
+		stat = 4;
+	}
+	testeqi(4,stat); //14
+
+
+	stat = 1;
+	if(1) {
+		stat = 2;
+	} else if(0) {
+		stat = 3;
+	} else if (1){
+		stat = 4;
+	}
+	testeqi(2,stat); //15
+
+
+
+	a = 0;
+	while ( a ) {
+		a=1;
+	}
+	testeqi(0,a); //16
+
+
+	a = 1;
+	while ( a ) {
+		a=0;
+	}
+	testeqi(0,a); //17
+
+
+	stat = 1;
+	a = 0;
+	while ( stat ) {
+		a = a+1;
+		if(a-10) {
+		}
+		else {
+			stat=0;
+		}
+	}
+	testeqi(0,stat); //18
+	testeqi(10,a); //19
+
+	
+	
+	while(0) ;	
+	testeqi(0,0); //20	
+
+
+	stat = 1;
+	a = 0;
+	while ( stat ) {
+		a = a+1;
+		if(a-10) ;
+		else {
+			stat=0;
+		}
+	}
+	testeqi(0,stat); //21
+	testeqi(10,a); //22
+
+
+	while ( 1) { 
+		break;
+	}
+	testeqi(1,1); //23
+
+        a=0;
+	while ( 1) {
+                if(a-11) ;
+                else  
+        		break;
+                a = a+1;
+	}
+	testeqi(a,11); //23	
+
+
+        a=8;
+	while ( 1) {
+                a = a+1;
+                if(a-17) continue;
+
+       		break;
+	}
+	testeqi(a,17); //24
+
+
+        a=8;
+	while ( 1+a) {
+                a = a+1;
+                if(a-16) continue;
+
+       		break;
+	}
+	testeqi(a,16); //25
+
+
+        stat = 1;
+        while(200-stat) {
+                stat = stat+1;
+                a=-1;
+	        while ( 1) {
+                        a = a+1;
+                        if(a-stat) continue;
+       	        	break;
+                }
+        	testeqi(a,stat); 
+	}
+	testeqi(stat,200); // 226
+
+
+
+	test_summary();
+}
+
+cubbyhole frame
+{ 
+}
+cubbyhole point
+{
+}

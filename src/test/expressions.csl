@@ -11,20 +11,32 @@ declare
 
 cubbyhole init
 {	
+	test_reset();
 	4.5;
 	.2345234;
 	0.3452;
 	342.;
 	67;
 	a =3434.0;
+	testeqi(3434,a);
 	b = (a)+1;
+	testeqi(3434,a);
+	testeqi(3435,b);
 	c = (a+(a-b));
+	testeqi(3433,c);
 	((((a=(c+345)))));
+	testeqi(3778,a);
 	b =(a = c);
+	testeqi(3433,c);
+	testeqi(3433,b);
+	testeqi(3433,a);
 	b = ( b + 23.45);
-
+	testeqi(3456,b);
 	a= -343;
+	testeqi(-343,a);
 	//break;
+
+	test_summary();
 }
 
 cubbyhole frame

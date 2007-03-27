@@ -12,8 +12,7 @@
 
 int main()
 {
-	printf("\nCompiler tests\n");
-	const int NUM_FILES=9;
+	const int NUM_FILES=10;
 	
 	const char * files[] = 
 	{
@@ -25,7 +24,8 @@ int main()
 		"src/test/decls2.csl",
 		"src/test/expressions.csl",
 		"src/test/casting.csl",
-		"src/test/flow-control.csl"
+		"src/test/flow.csl",
+		"src/test/comparison.csl"
 	};
 	  
 	  
@@ -42,7 +42,7 @@ int main()
 	  if(ret==0){
 	    printf("\tCompile: OK, Run: ");
 	    runCubbyhole(com[i], 0); 
-	    if(i==0 || i==6 || i==7)
+	    if(i==0 || i==7)
 	      printf("OK\n");
 	  } else {
 	    printf("\tCompile: FAIL with exit code %i\n", ret);

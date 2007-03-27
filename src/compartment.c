@@ -155,6 +155,8 @@ int com_addCubby(compart *com, void *code, const char *name)
 	return true;
 }
 
+int bc_len(bytecode *);
+
 void com_prStats(compart *com){
 	for(int i=0;i<com->numCubbys;i++) {
 		printf("(%s, %i) ",com->cubbys[i].name, bc_len(com->cubbys[i].code));

@@ -254,7 +254,8 @@ static void *jmptbl[] =
  		*sp = lcs[pc->a1].v;
  		sp++;
 		goto TOP;
- 	POP:
+
+       	POP:
  		sp--;
  		lvs[pc->a1].v = *sp;
 		goto TOP;

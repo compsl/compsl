@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 typedef union {int32_t i; float f;} intfloat; 
+  // TODO: it would be nice if we could guarantee sizeof(intfloat) == 32 bits
 
 typedef struct _var_t
 {

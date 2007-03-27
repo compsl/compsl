@@ -10,14 +10,17 @@
 # http://www.cs.berkeley.edu/~smcpeak/autodepend/autodepend.html
 # http://www.gnu.org/software/make/manual/make.html
 
+
 #TODO: figure out how to make the test link against version of the lib with debug
 # symbols but also have optimizations in the release worthy stuff ie: end up with two
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
+
 BISON = bison
 FLEX  = flex
 CC    = gcc
+
 
 ifndef _ARCH
 	_ARCH := $(strip $(shell uname -s))
@@ -28,13 +31,10 @@ ifeq ($(_ARCH),Linux)
 	PLATLIBS := -lm 
 endif
 
-ifdef DEBUG_COMP
-	CFLAGS += -DDEBUG_COMP
-endif
 
-#TODO: fix here
-#DBG_MODS = DEBUG_COMP DEBUG_FOO
-#DBG_ENVS = $(foreach cur,$(DBG_MODS), $(if $(ifeq $($(cur)) ''), -D $(cur)) )
+################################
+# FLAGS                        #
+################################
 
 CFLAGS  += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 #CFLAGS += -Wunreachable-code
@@ -44,6 +44,10 @@ CFLAGS += -fsingle-precision-constant -ffast-math
 CFLAGS += -mmmx -mno-ieee-fp
 #if sse instructions not available need to disable this line
 #CFLAGS += -msse -mfpmath=sse
+
+ifdef DEBUG_COMP
+	CFLAGS += -DDEBUG_COMP
+endif
 
 ifdef TRACE_INTERP
 	CFLAGS += -D_COMPSL_TRACE
@@ -57,7 +61,7 @@ else
 	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
 	CFLAGS += -fsched-spec-load
 	#CFLAGS += -fbranch-target-load-optimize -fsched2-use-superblocks
-#-fmove-all-movables
+	#-fmove-all-movables
 
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
@@ -66,14 +70,21 @@ endif
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE
 ALL_CFLAGS = ${CFLAGS} ${MYCFLAGS}
 
-CMPLRPATH=src/compiler
+
+################################
+# FILES                        #
+################################
+
+CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c src/compiler/comp.c src/mt.c src/userspace.c
+REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c \
+	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
+	$(CMPATH)/var.c $(CMPATH)/comp.c $(CMPATH)/control.c src/mt.c src/userspace.c
 
-DERIVED_SRCS=$(CMPLRPATH)/lex.yy.c $(CMPLRPATH)/compsl.tab.c
-DERIVED_FILES=$(DERIVED_SRCS) src/compiler/compsl.tab.h 
+DERIVED_SRCS=$(CMPATH)/lex.yy.c $(CMPATH)/compsl.tab.c
+DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h 
 SOURCES := $(REG_SRCS) $(DERIVED_SRCS)
 OBJECTS := $(SOURCES:.c=.o)
 
@@ -99,6 +110,11 @@ all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
 		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES)
+
+help: 
+	@echo "Makefile for CompSL"
+	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic"
+	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP"
 
 static: $(STATIC_LIB_OUT)
 dynamic: $(DYN_LIB_OUT)
@@ -132,8 +148,9 @@ src/run.o: src/run.c
 	$(CC) -MM $(ALL_CFLAGS) src/run.c > src/run.dep
 
 %.o: %.c
-	$(CC) -c $(ALL_CFLAGS) $< -o $@
 	$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
+	$(CC) -c $(ALL_CFLAGS) $< -o $@
+
 
 $(STATIC_LIB_OUT): $(OBJECTS)
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
@@ -144,19 +161,21 @@ $(DYN_LIB_OUT): $(OBJECTS)
 ################################
 # FLEX/BISON TARGETS           #
 ################################
-$(CMPLRPATH)/compsl.tab.h: $(CMPLRPATH)/compsl.tab.c
 
-$(CMPLRPATH)/compsl.tab.c: $(CMPLRPATH)/compsl.y
-	rm -f $(CMPLRPATH)/compsl.tab.c $(CMPLRPATH)/compsl.tab.h
-	$(BISON) -d  $(CMPLRPATH)/compsl.y -o $(CMPLRPATH)/compsl.tab.c
+$(CMPATH)/binops.c: $(CMPATH)/compsl.tab.h
+$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.tab.c
 
-$(CMPLRPATH)/lex.yy.c: $(CMPLRPATH)/compsl.l $(CMPLRPATH)/compsl.tab.h
-	rm -f $(CMPLRPATH)/lex.yy.c
+$(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.y
+	rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
+	$(BISON) -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
+
+$(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h
+	rm -f $(CMPATH)/lex.yy.c
 	$(FLEX) -o$@ $<
 
 
 ####################################################
-# Testers - aussume each test is one sourcefile
+# Testers - assume each test is one sourcefile
 ####################################################
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	$(CC) ${MYCFLAGS} -MD $< $(OBJECTS) $(PLATLIBS) -o $@

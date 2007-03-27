@@ -1,0 +1,33 @@
+
+
+
+
+declare
+{
+        int a,b;
+        int r;
+
+} 
+
+cubbyhole test
+{
+        test_reset();
+        r = 0;
+        a = 1;
+        b = 0;
+        if(a && b) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(a || b) r=1;
+        testeqi(r,1);
+
+        // TODO: <,>,>=,<=
+        // TODO: |,&
+        
+
+        test_summary();
+}
+
+
+

@@ -74,7 +74,8 @@ bool var_testEqi(var* a, var* b) {
   if(a->size!=b->size) return false;
 
   // TODO: test array equality
-  return (0==memcmp(a,b,sizeof(var)));
+  
+  return (a->v.i==b->v.i);
 }
 bool var_testEqf(var* a, var* b) {
   if(a->size!=b->size) return false;

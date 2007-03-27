@@ -37,6 +37,7 @@ __attribute__ ((pure)) symbolinfo searchSym(const char *name, compart *com)
 	
 	res.array = res.isvar = res.local = false;
 	res.id = -1;
+	res.isfloat = false;
 	
 	for(int i = 0; i < com->vm->ncnt; i++)
 	{
@@ -62,3 +63,4 @@ void panic(const char *s)
 	//TODO: what to do, we want this to be a fatal contidion for the lib
 	// but we don't want to make the caller die...
 }
+

@@ -140,7 +140,7 @@ block:
 			
 			// Get the length
 			while($2->length>0 && cur) {
-			  assert(cur->obj!=(expression*)0); 
+			  assert(cur->obj!=NULL); 
 			  len+=bc_len(cur->obj);
 			  cur=cur->next;
 			}

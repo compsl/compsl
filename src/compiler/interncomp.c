@@ -79,7 +79,7 @@ bytecode* expr_toBc(expression *exp) {
 
 void expr_free(expression* expr) {
   if(!expr->isLiteral) {
-    assert(expr->val.bcode != (bytecode*)0);      
+    assert(expr->val.bcode != NULL);      
     free(expr->val.bcode);
   }
   free(expr);

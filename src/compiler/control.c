@@ -105,7 +105,7 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   cpos = 0;
   
   // Calculate the condition value
-  tmp = realloc(cond, sizeof(bytecode)*len);
+  tmp = realloc(cond, sizeof(bytecode)*len); // why does it die here on windows?
   if(tmp == NULL)
   {
   	free(cond);

@@ -15,13 +15,11 @@
 extern VM *cvm;
 extern compart *ccompart;
 
-int line_num = 1;
-
 %}
+
 %%
 
-\/\/.*		{}; /*comment*/
-\n			{DPRINTF("%4d\n",line_num); line_num++; };
+\/\/.*\n		{}; /*comment*/
 declare	     return DECLARE;
 cubbyhole    return CUBBY;
 global		return GLOBAL;
@@ -64,7 +62,7 @@ continue	return CONTINUE;
 \|		return BOR;
 \ 			;
 \t			;
-\n		{ lineNo++; };
+\n		{ DPRINTF("%4d\n",lineNo); lineNo++; };
 [0-9]+  	{	yylval.ival = atoi( yytext ); 
 				return INT_LIT; 	
 			}

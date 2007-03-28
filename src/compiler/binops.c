@@ -33,6 +33,7 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
   endi = alen+blen;
 
   mcode = calloc(alen+blen+2,sizeof(bytecode));
+  if(mcode == NULL) internalCompileError("Out of Memory");
 
   memcpy(mcode, a->val.bcode,sizeof(bytecode)*alen);
   memcpy(&mcode[alen], b->val.bcode,sizeof(bytecode)*blen);  
@@ -150,7 +151,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 // Post: dont use a or b, they're freed if need be
 
 expression* bin_op(int op,expression* a, expression* b) {
-  assert((a!=(expression*)0) && (b!=(expression*)0));
+  assert((a!=NULL) && (b!=NULL));
   expression *ret;
   if(a->isLiteral && b->isLiteral) {
     ret = bin_lit_op(op,a,b);

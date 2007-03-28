@@ -8,13 +8,13 @@
 expression *function_call(const char* name, list *params) {
   expression *ex = malloc(sizeof(expression));
   if(ex == NULL) internalCompileError("Out of Memory");
-  bytecode *mcode;
+  bytecode *mcode=NULL;
   ex->isFloat = false;
   int lenBc, curBc;
   
   bytecode callcode;
   int numParams=0;
-  uint8_t *paramFlags = 0;
+  uint8_t *paramFlags = NULL;
   bool freeParamFlags = false;
   bool found=false;
   
@@ -42,6 +42,7 @@ expression *function_call(const char* name, list *params) {
 	numParams = builtins[i].ac; 
 	ex->isFloat = builtins[i].isFloat;
 	paramFlags = malloc(sizeof(uint8_t)*numParams);
+	if(paramFlags == NULL) internalCompileError("Out of Memory");
 	freeParamFlags = true;
 	for(int q=0;q<numParams;q++)
 	  paramFlags[q] = ((isFloat)?FLOAT_VAR:0);
@@ -54,7 +55,7 @@ expression *function_call(const char* name, list *params) {
   // Native function
   if(!found) {
     symbolinfo symbol = searchSym(name,ccompart);
-    nativeFN *funk;
+    nativeFN *funk = NULL;
     if(symbol.id<0) {
       sprintf(sprt, "Function %s does not exist",name);
       compileError(sprt);

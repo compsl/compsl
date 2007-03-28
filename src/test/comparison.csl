@@ -129,7 +129,7 @@ cubbyhole test
         while(r<10) {
                 r=r+1;
         }
-        testeqi(10,r);
+        testeqi(r,10);
 
         r=0;
         while(r == 10) {

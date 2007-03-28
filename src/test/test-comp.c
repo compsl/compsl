@@ -12,10 +12,12 @@
 
 int main()
 {
-	const int NUM_FILES=10;
+	const int NUM_FILES=11;
 	
 	const char * files[] = 
 	{
+		"src/test/mincrash.csl",
+		"src/test/comparison.csl",
 		"src/test/base.csl",
 		"src/test/debug.csl",
 		"src/test/math.csl",
@@ -24,8 +26,7 @@ int main()
 		"src/test/decls2.csl",
 		"src/test/expressions.csl",
 		"src/test/casting.csl",
-		"src/test/flow.csl",
-		"src/test/comparison.csl"
+		"src/test/flow.csl"
 	};
 	  
 	  

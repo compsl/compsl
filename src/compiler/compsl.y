@@ -211,6 +211,7 @@ stmt:
 			DPRINTF("Statement of %i bytecodes\n",l);
 			
 			code = realloc(code, sizeof(bytecode)*(l+2));
+			if(code == NULL) internalCompileError("Out of Memory");
 			$1->isLiteral = true; // Don't free bytecode
 			expr_free($1);
 

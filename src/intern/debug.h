@@ -24,7 +24,7 @@
 #define DEBUG_H 
 
 #ifdef DEBUG_COMP
-#define COMP_DPRINTF(...) fprintf(stderr, __VA_ARGS__)
+#define COMP_DPRINTF(...) fprintf(stderr,"%24s,%4d:\t",__FILE__,__LINE__); fprintf(stderr, __VA_ARGS__)
 #else 
 #define COMP_DPRINTF(...) 	
 #endif

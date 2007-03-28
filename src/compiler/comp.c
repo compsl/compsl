@@ -8,8 +8,9 @@
 
 list* list_new(void) {
 	list *lst = malloc(sizeof(list));
+	if(lst == NULL) internalCompileError("Out of Memory");
 	lst->length=0;
-	lst->head=0;
+	lst->head=NULL;
 	return lst;
 }
 
@@ -19,11 +20,11 @@ llist* list_getNode(list * lst, int ind) {
     return 0;
 
   llist *root = lst->head;
-  while(root!=0 && ind > 0) {
+  while(root!=NULL && ind > 0) {
     root=root->next;
     ind--;
   }
-  if(root!=0) 
+  if(root!=NULL) 
     return root;
   assert(false);
 }
@@ -34,7 +35,7 @@ void* list_get(list * lst, int ind) {
 
 // Note: contents aren't freed
 void llist_free(llist *lst) {
-  if(lst==(llist*)0) return;
+  if(lst==NULL) return;
   llist *next = lst->next;
   free(lst);
   llist_free(next);
@@ -48,6 +49,7 @@ void list_free(list *lst){
 
 void list_addToFront(list *lst, void *newOb) {
 	llist *newL = malloc(sizeof(llist));
+	if(newL == NULL) internalCompileError("Out of Memory");
 	newL->obj=newOb;
 	newL->next=lst->head;
 	lst->head=newL;
@@ -58,7 +60,7 @@ void list_addToBack(list *lst, void *newOb) {
   assert(newOb!=NULL);
   llist *newL = malloc(sizeof(llist));
   newL->obj = newOb;
-  newL->next = 0;
+  newL->next = NULL;
   assert(lst->length>=0);
   if(lst->length==0) 
     lst->head = newL;
@@ -70,7 +72,7 @@ void list_addToBack(list *lst, void *newOb) {
 
 
 void* list_popFromFront(list *lst) {
-	if(lst->length<=0) return 0;
+	if(lst->length<=0) return NULL;
 	void *r=lst->head->obj;
 	llist *oldHead=lst->head;
 	lst->head=oldHead->next;

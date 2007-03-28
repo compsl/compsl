@@ -15,11 +15,13 @@
 extern VM *cvm;
 extern compart *ccompart;
 
+int line_num = 1;
+
 %}
 %%
 
-\/\/.*\n		{}; /*comment*/
-
+\/\/.*		{}; /*comment*/
+\n			{DPRINTF("%4d\n",line_num); line_num++; };
 declare	     return DECLARE;
 cubbyhole    return CUBBY;
 global		return GLOBAL;

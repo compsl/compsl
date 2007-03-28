@@ -15,9 +15,11 @@ void compileError(const char *str) {
   fprintf(stderr,"Compile warning: %s\n",str);
  }
 
+char foo[1024];
 
 void internalCompileError(const char* str) {
-  sprintf(sprt,"INTERNAL ERROR: %s",str);
+	DPRINTF("internal Compile error");
+  sprintf(foo,"INTERNAL ERROR: %s",str);
   compileError(sprt);	
   exit(1);
 }

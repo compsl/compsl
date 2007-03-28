@@ -215,6 +215,10 @@ static void *jmptbl[] =
  	&&DBG
 
  };
+ 	#ifdef _COMPSL_TRACE
+ 		long int tractmp,sppos;
+ 	#endif
+ 
 	intfloat stack[VM_STACK_SIZE];
 	intfloat *sp = stack; // stack pointer
 	
@@ -234,8 +238,9 @@ static void *jmptbl[] =
 	
 	TOP: 
 		#ifdef _COMPSL_TRACE
-			long int tractmp = ((long int)(pc+1) - (long int)(com->cubbys[id].code))/sizeof(bytecode);
-			long int sppos =  ((long int)sp - (long int)stack)/sizeof(intfloat);
+			
+			tractmp = ((long int)(pc+1) - (long int)(com->cubbys[id].code))/sizeof(bytecode);
+			sppos =  ((long int)sp - (long int)stack)/sizeof(intfloat);
 			printf("%4ld: %s\tsa=%d\ta1=%d\tsp=%ld\n",
 				tractmp,tractbl[(pc+1)->code],(pc+1)->sa,(pc+1)->a1,sppos);
 		#endif

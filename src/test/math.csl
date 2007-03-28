@@ -105,8 +105,16 @@ cubbyhole testing
 
         testeqi(5, 1+2*2);         
         testeqi(5, 2*2+1);         
+        testeqi(5, (2*2)+1);         
 
 
+        testeqi(0, 2*2+1<1);         
+        testeqi(1, !1<1);
+        testeqi(0, 1<!1);
+        testeqi(1, !-1<1);
+
+        testeqi(0, 1==1<1);
+        testeqi(0, 1<1==1);
 
 	test_summary();
 } 

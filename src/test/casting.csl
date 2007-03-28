@@ -2,18 +2,28 @@
 declare
 {
 	int a;
-	int b;
-	float c;
+	float b, c;
 } 
 
 cubbyhole init 
 {
-	a = 4;
-	b = 3;
-	c = ((float)a);
-	a = a;
-	a = (float)a;
-	b = (int) (((int)c)+((float)d));
+        test_reset();
+	b = 3.5;
+        b = (int)b;
+        testeqf(3,b);
+
+        a = 3;
+        a = (float)a;
+        testeqi(3,a);
+        testeqf(3,a);
+
+        b = 3.4;
+        testeqf(b,(float)b);
+
+        testeqi(a,(int)a);
+        testeqi(a,(float)a);
+
+        test_summary();
 } 
 
 

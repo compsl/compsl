@@ -42,7 +42,7 @@ int main()
 	  if(ret==0){
 	    printf("\tCompile: OK, Run: ");
 	    runCubbyhole(com[i], 0); 
-	    if(i==0 || i==7)
+	    if(i==0)
 	      printf("OK\n");
 	  } else {
 	    printf("\tCompile: FAIL with exit code %i\n", ret);

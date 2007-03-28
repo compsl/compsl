@@ -93,7 +93,7 @@ int yywrap(void) {
 %token <sval> IDENTIFIER;
 %token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE BOR BAND POW SHFTL SHFTR; 
 %type <expr> expression math retable;
-%type <ival> cast post_modifier stdop;
+%type <ival> cast post_modifier;
 %type <sval> cubby_id;
 %type <bval> global_modifier intfloat_keyword;
 %type <bc> stmt block ife elsee control;
@@ -306,23 +306,41 @@ cast:
 // MATH		
 ////////////////////////////////////////////////////////////
 
-%left         OR;
-%left         AND;
 %nonassoc     ISEQ ISNEQ;
 %nonassoc     ISGEQ ISLEQ ISGT ISLT;
+%left         OR;
+%left         AND;
 %left         PLUS MINUS;
 %left         MULT DIV;
 %left         NOT; //unary ops
 		
-stdop:
-PLUS {$$=PLUS;} | MINUS {$$=MINUS;} | MULT {$$=MULT;} | DIV {$$=DIV;} | MOD { $$=MOD; } 
-| OR {$$=OR;} | AND {$$=AND;} 
-| ISEQ {$$=ISEQ;} | ISNEQ {$$=ISNEQ;} | ISGEQ {$$=ISGEQ;} | ISGT {$$=ISGT;} | ISLEQ {$$=ISLEQ;} | ISLT {$$=ISLT;};
 
 math:
-expression stdop expression {
-  $$=bin_op($2,$1,$3);
-}
+expression PLUS expression {   $$=bin_op(PLUS,$1,$3);}
+|
+expression MINUS expression {   $$=bin_op(MINUS,$1,$3);}
+|
+expression MULT expression {   $$=bin_op(MULT,$1,$3);}
+|
+expression DIV expression {   $$=bin_op(DIV,$1,$3);}
+|
+expression MOD expression {   $$=bin_op(MOD,$1,$3);}
+|
+expression OR expression {   $$=bin_op(OR,$1,$3);}
+|
+expression AND expression {   $$=bin_op(AND,$1,$3);}
+|
+expression ISEQ expression {   $$=bin_op(ISEQ,$1,$3);}
+|
+expression ISNEQ expression {   $$=bin_op(ISNEQ,$1,$3);}
+|
+expression ISGEQ expression {   $$=bin_op(ISGEQ,$1,$3);}
+|
+expression ISGT expression {   $$=bin_op(ISGT,$1,$3);}
+|
+expression ISLEQ expression {   $$=bin_op(ISLEQ,$1,$3);}
+|
+expression ISLT expression {   $$=bin_op(ISLT,$1,$3);}
 |
 NOT expression {
   expr_ensureLit($2);

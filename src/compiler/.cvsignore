@@ -4,3 +4,4 @@ lex.yy.c
 *.o
 *.d
 *.dep
+compsl.output

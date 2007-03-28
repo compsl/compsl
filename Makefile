@@ -171,7 +171,7 @@ $(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.tab.c
 
 $(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.y
 	rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
-	$(BISON) -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
+	$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
 
 $(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h
 	rm -f $(CMPATH)/lex.yy.c

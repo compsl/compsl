@@ -27,14 +27,14 @@
 
 #define YYERROR_VERBOSE 1
   
-  // NOTE: ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably
-  
+  // NOTE: ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably  
   
   extern FILE *yyin;
   
   int goparse(const char* fn, compart *com) {
     FILE* input;
-    
+
+    lineNo=1;
     input = fopen(fn, "r");
     if(NULL == input) {
       DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",fn);
@@ -47,25 +47,23 @@
     
     yyrestart(yyin);
     sprt=malloc(1024 * sizeof(char));
-    ZERO_CONSTANT = com_addConst(ccompart , (intfloat)(int32_t)0); 
     int ret = yyparse(fn);
     DPRINTF(">> DONE PARSE\n\n");
     free(sprt);
     return ret;
   }
   int fileCompile(const char *filename , VM* vm, compart** out) {
-    compart* com = createComp(vm);
-    *out = com;
-    return goparse(filename, com);
+    *out = createComp(vm);
+    return goparse(filename, *out);
   }
   int stringCompile(const char *code, size_t len, VM* vm, compart** out) {
     *out = (compart*)0;
-    return -1;
+    return -2;
   }
   
 void yyerror(const char *fn, const char *msg) {
-    fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",fn,msg,-1);//yylloc.first_line);
-	exit(2);
+    fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",fn,msg,lineNo);
+    return; 
 }
 
 int yywrap(void) {
@@ -82,7 +80,7 @@ int yywrap(void) {
 
 %union {
 	int ival;
-	float fval;
+  	float fval;
 	char *sval;
 	bool bval;
 	expression *expr;
@@ -93,9 +91,9 @@ int yywrap(void) {
 %token <fval> FLOAT_LIT;
 %token <ival> INT_LIT; 
 %token <sval> IDENTIFIER;
-%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE BOR; 
+%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE BOR BAND POW SHFTL SHFTR; 
 %type <expr> expression math retable;
-%type <ival> cast post_modifier;
+%type <ival> cast post_modifier stdop;
 %type <sval> cubby_id;
 %type <bval> global_modifier intfloat_keyword;
 %type <bc> stmt block ife elsee control;
@@ -315,73 +313,35 @@ cast:
 %left         PLUS MINUS;
 %left         MULT DIV;
 %left         NOT; //unary ops
-//%left         OPENP; // ??
+		
+stdop:
+PLUS {$$=PLUS;} | MINUS {$$=MINUS;} | MULT {$$=MULT;} | DIV {$$=DIV;} | MOD { $$=MOD; } 
+| OR {$$=OR;} | AND {$$=AND;} 
+| ISEQ {$$=ISEQ;} | ISNEQ {$$=ISNEQ;} | ISGEQ {$$=ISGEQ;} | ISGT {$$=ISGT;} | ISLEQ {$$=ISLEQ;} | ISLT {$$=ISLT;};
 
-		
 math:
-		expression PLUS expression {
-			$$=bin_op(PLUS,$1,$3);
-		}
-		| 
-		expression MINUS expression{
-			$$=bin_op(MINUS,$1,$3);
-		}
-		|
-		expression MULT expression{
-			$$=bin_op(MULT,$1,$3);
-		}
-		|
-		expression DIV expression{
-			$$=bin_op(DIV,$1,$3);
-		}
-		|
-		expression OR expression{
-			$$=bin_op(OR,$1,$3);
-		}
-		|
-		expression AND expression{
-			$$=bin_op(AND,$1,$3);
-		}
-		|
-		expression ISEQ expression{
-			$$=bin_op(ISEQ,$1,$3);
-		}
-		|
-		expression ISNEQ expression{
-			$$=bin_op(ISNEQ,$1,$3);
-		}
-		|
-		expression ISGEQ expression{
-			$$=bin_op(ISGEQ,$1,$3);
-		}
-		| 
-		expression ISGT expression{
-			$$=bin_op(ISGT,$1,$3);
-		}
-		|
-		expression ISLEQ expression{
-			$$=bin_op(ISLT,$1,$3);
-		}
-		|
-		expression ISLT expression{
-			$$=bin_op(ISLT,$1,$3);
-		}
-		| 
-		NOT expression {
-			//TODO: Not
-			
-		}
-		|
-		MINUS expression {
-		  expression *e = calloc(1, sizeof(expression));
-		  e->isLiteral = true;
-		  e->isFloat = false;
-		  e->val.in = 0;
-		  $$=bin_op(MINUS,e,$2);
-		}
-		;
-		
-		
+expression stdop expression {
+  $$=bin_op($2,$1,$3);
+}
+|
+NOT expression {
+  expr_ensureLit($2);
+    
+  int len = bc_len($2->val.bcode);
+  $2->val.bcode = realloc($2->val.bcode, len+2);
+  $2->val.bcode[len].code = BC_NOT;
+  $2->val.bcode[len+1].code = BC_NONO;
+  $$ = $2;
+}
+|
+MINUS expression {
+  expression *e = calloc(1, sizeof(expression));
+  e->isLiteral = true;
+  e->isFloat = false;
+  e->val.in = 0;
+  $$=bin_op(MINUS,e,$2);
+}
+;
 		
 retable:
 		IDENTIFIER {
@@ -407,8 +367,6 @@ retable:
 			$$ = a;
 		}
 		;
-
-
 
 control: 
 		ife
@@ -436,14 +394,8 @@ elsee:
 		{ $$ = (bytecode*)0; }
 		;
 		
-
 decls:
-		decl SEMI decls {
-		  DPRINTF("1 decl completed\n");
-		}
-|
-		{
-		};
+		decl SEMI decls {} | {};
 
 decl:	
 		global_modifier intfloat_keyword ident_list post_modifier {

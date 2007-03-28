@@ -1,33 +1,161 @@
 
 
-
-
 declare
 {
-        int a,b;
         int r;
-
+        float s;
 } 
 
 cubbyhole test
 {
         test_reset();
         r = 0;
-        a = 1;
-        b = 0;
-        if(a && b) r=1;
+        if(0 && 1) r=1;
+        testeqi(r,0);
+
+        if(0 && 23) r=1;
         testeqi(r,0);
 
         r=0;
-        if(a || b) r=1;
+        if(0 || 1) r=1;
         testeqi(r,1);
 
-        // TODO: <,>,>=,<=
-        // TODO: |,&
+        r=0;
+        if(0 < 1) r=1;
+        testeqi(r,1);
         
+        r=0;
+        if(1 < 0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(0 <= 1) r=1;
+        testeqi(r,1);
+
+        r=0;
+        if(1 <= 0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(1 <= 1) r=1;
+        testeqi(r,1);
+
+        r=0;
+        if(2 <= 1) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(0 > 1) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(1 > 0) r=1;
+        testeqi(r,1);
+
+        r=0;
+        if(0 >= 1) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(1 >= 0) r=1;
+        testeqi(r,1);
+
+
+        r=0;
+        if(1 >= 1) r=1;
+        testeqi(r,1);
+
+
+        // Same but with floats
+        // TODO: probably should do some more to check almost same equality
+        r = 0;
+        if(0.0 && 1.0) r=1;
+        testeqi(r,0);
+
+        if(0.0 && 23.0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(0.0 || 1.0) r=1;
+        testeqi(r,1);
+
+        r=0;
+        if(0.0 < 1.0) r=1;
+        testeqi(r,1);
+        
+        r=0;
+        if(1.0 < 0.0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(0.0 <= 1.0) r=1;
+        testeqi(r,1);
+
+        r=0;
+        if(1.0 <= 0.0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(1.0 <= 1.0) r=1;
+        testeqi(r,1);
+
+        r=0;
+        if(2.0 <= 1.0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(0.0 > 1.0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(1.0 > 0.0) r=1;
+        testeqi(r,1);
+
+        r=0;
+        if(0.0 >= 1.0) r=1;
+        testeqi(r,0);
+
+        r=0;
+        if(1.0 >= 0.0) r=1;
+        testeqi(r,1);
+
+
+        r=0;
+        if(1.0 >= 1.0) r=1;
+        testeqi(r,1);
+
+
+        r=0;
+        while(r<10) {
+                r=r+1;
+        }
+        testeqi(10,r);
+
+        r=0;
+        while(r == 10) {
+                r=r+1;
+        }
+        testeqi(0,r);
+
+        r=0;
+        while(!(r==10)) {
+                r=r+1;
+        }
+        testeqf(10,r);
+
+
+        s=0;
+        while(s == 10.0) {
+                s=s+1;
+        }
+        testeqi(0,s);
+
+        s=0;
+        while(!(s==11.0)) {
+                s=s+1;
+        }
+        testeqf(11.0,s);
+
 
         test_summary();
 }
-
-
-

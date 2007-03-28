@@ -22,6 +22,9 @@ FLEX  = flex
 CC    = gcc
 
 
+################################
+# FLAGS                        #
+################################
 ifndef _ARCH
 	_ARCH := $(strip $(shell uname -s))
 	export _ARCH
@@ -32,16 +35,14 @@ ifeq ($(_ARCH),Linux)
 endif
 
 
-################################
-# FLAGS                        #
-################################
-
 CFLAGS  += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 #CFLAGS += -Wunreachable-code
 
 CFLAGS += -fsingle-precision-constant -ffast-math
+
 # if none x86 need to disable this line
 CFLAGS += -mmmx -mno-ieee-fp
+
 #if sse instructions not available need to disable this line
 #CFLAGS += -msse -mfpmath=sse
 

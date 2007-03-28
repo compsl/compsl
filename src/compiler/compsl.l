@@ -19,6 +19,7 @@ extern compart *ccompart;
 %%
 
 \/\/.*\n		{}; /*comment*/
+
 declare	     return DECLARE;
 cubbyhole    return CUBBY;
 global		return GLOBAL;
@@ -44,6 +45,7 @@ continue	return CONTINUE;
 \*			return MULT;
 \/			return DIV;
 \%			return MOD;
+\^			return POW;
 ==			return ISEQ;
 !=			return ISNEQ;
 =			return ASSIGN;
@@ -52,12 +54,15 @@ continue	return CONTINUE;
 \>			return ISGT;
 \<			return ISLT;
 !			return NOT;
-&&			return AND;
+\<\<			return SHFTL;
+\>\>			return SHFTR;
+&&		return AND;
+& 		return BAND;
 \|\|		return OR;
 \|		return BOR;
 \ 			;
 \t			;
-\n			;
+\n		{ lineNo++; };
 [0-9]+  	{	yylval.ival = atoi( yytext ); 
 				return INT_LIT; 	
 			}
@@ -66,7 +71,7 @@ continue	return CONTINUE;
 	return FLOAT_LIT; 	
 }
 [_a-zA-Z0-9]+   {
-	yylval.sval = malloc(sizeof(char)*(strlen(yytext)+1));
+	yylval.sval = calloc(strlen(yytext)+1, sizeof(char));
 	if(yylval.sval==NULL) { 
 		internalCompileError("Out of memory");
 	}

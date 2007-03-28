@@ -54,6 +54,10 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
     if(isFloat) mcode[endi].code = BC_FDIV;
     else mcode[endi].code = BC_DIV;
     break;
+  case MOD:
+    if(isFloat) mcode[endi].code = BC_FMOD;
+    else mcode[endi].code = BC_MOD;
+    break;
   case OR:
     mcode[endi].code = BC_OR;
     break;
@@ -61,11 +65,29 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
     mcode[endi].code = BC_AND;
     break;
   case ISEQ:
+    if(isFloat) mcode[endi].code = BC_FEQ;
+    else mcode[endi].code = BC_EQ;
+    break;
   case ISNEQ:
+    if(isFloat) mcode[endi].code = BC_FNE;
+    else mcode[endi].code = BC_NE;
+    break;
   case ISGEQ:
+    if(isFloat) mcode[endi].code = BC_FGE;
+    else mcode[endi].code = BC_GE;
+    break;
   case ISGT:
+    if(isFloat) mcode[endi].code = BC_FGR;
+    else mcode[endi].code = BC_GR;
+    break;
   case ISLEQ:
+    if(isFloat) mcode[endi].code = BC_FLE;
+    else mcode[endi].code = BC_LE;
+    break;
   case ISLT:
+    if(isFloat) mcode[endi].code = BC_FL;
+    else mcode[endi].code = BC_LS;
+    break;
   default:
     free(mcode);
     return NULL;

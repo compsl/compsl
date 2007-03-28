@@ -19,9 +19,6 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   
   assert(condLen>0);
   
-  if(condExpr->isFloat)
-    compileWarning("Using float as boolean");
-  
   len = condLen+testLen+blockLen+1;
   if(elseLen>0) 
     len+=jmpLen + elseLen;
@@ -103,9 +100,6 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
 
   assert(condLen>0);
 
-  if(condExpr->isFloat)
-    compileWarning("Using float as boolean");
-  
   len = condLen+testLen+blockLen+jmpLen+1;
   
   cpos = 0;

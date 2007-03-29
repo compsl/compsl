@@ -37,14 +37,14 @@ void* list_get(list * lst, int ind) {
 void llist_free(llist *lst) {
   if(lst==NULL) return;
   llist *next = lst->next;
-  free(lst);
+  free(lst); lst = NULL;
   llist_free(next);
 }	
 
 // Note, contents aren't freed
 void list_free(list *lst){
   llist_free(lst->head);
-  free(lst);
+  free(lst); lst = NULL;
 }
 
 void list_addToFront(list *lst, void *newOb) {

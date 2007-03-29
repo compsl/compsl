@@ -81,6 +81,7 @@ void expr_free(expression* expr) {
   if(!expr->isLiteral) {
     assert(expr->val.bcode != NULL);      
     free(expr->val.bcode);
+    expr->val.bcode = NULL;
   }
   free(expr);
 }

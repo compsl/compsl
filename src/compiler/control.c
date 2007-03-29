@@ -69,10 +69,8 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   condExpr->isLiteral = true;
   expr_free(condExpr);
   free(block);
-  if(elseBlock!=NULL) free(elseBlock);		  
-
-
-
+  if(elseBlock!=NULL) free(elseBlock);
+  
   return cond;
 }
 
@@ -147,7 +145,6 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   condExpr->isLiteral = true;
   expr_free(condExpr);
   free(block);
-
 
   return cond;
 }

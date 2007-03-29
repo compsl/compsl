@@ -98,6 +98,7 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
   mcode[endi+1].a1=0;
   
   free(a->val.bcode);
+  a->val.bcode = NULL;
   
   expr_free(b);
   a->val.bcode = mcode;
@@ -123,6 +124,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
     }
     a->val.in = n1;
     free(b);
+    b=NULL;
     return a;
   }
   else {
@@ -142,7 +144,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
     }
     a->isFloat=true;
     a->val.fl=n1;
-    free(b);
+    free(b); b = NULL;
     return a;
   }
 }

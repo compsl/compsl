@@ -49,7 +49,7 @@
     sprt=malloc(1024 * sizeof(char));
     int ret = yyparse(fn);
     DPRINTF(">> DONE PARSE\n\n");
-    free(sprt);
+    free(sprt); sprt = NULL;
     return ret;
   }
   int fileCompile(const char *filename , VM* vm, compart** out) {
@@ -155,7 +155,7 @@ block:
 			while($2->length>0 && cur) {
 				int curlen=bc_len(cur->obj);
 				memcpy(&mcode[cpos], cur->obj, curlen*sizeof(bytecode));
-				free(cur->obj);
+				free(cur->obj); cur->obj = NULL;
 				cpos+=curlen;
 				cur=cur->next;
 			}

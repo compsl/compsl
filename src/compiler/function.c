@@ -59,10 +59,12 @@ expression *function_call(const char* name, list *params) {
     if(symbol.id<0) {
       sprintf(sprt, "Function %s does not exist",name);
       compileError(sprt);
+      free(ex);
       return NULL;
     } else if(symbol.isvar) {
       sprintf(sprt,"Variable %s used as a function call",name);
       compileError(sprt);
+      free(ex);
       return NULL;
     }
     funk = &ccompart->vm->natives[symbol.id];
@@ -101,6 +103,7 @@ expression *function_call(const char* name, list *params) {
     if(paramFlags[i] & IS_ARRAY) {
       sprintf(sprt, "Function %s has parameters %i as an array, however array wasn't found",name, i);
       compileError(sprt);
+      free(ex);
       return NULL;
     }
     

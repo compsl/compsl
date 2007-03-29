@@ -21,5 +21,5 @@ void internalCompileError(const char* str) {
 	DPRINTF("internal Compile error");
   sprintf(foo,"INTERNAL ERROR: %s",str);
   compileError(sprt);	
-  exit(1);
+  abort();
 }

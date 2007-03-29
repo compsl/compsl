@@ -1,14 +1,19 @@
-/* Torture test for all of compsl!
- */
 
 declare
 {
 	global int foo;
 } 
 
-init {
+cubbyhole init 
+{
 	foo = 2;
+	test_reset();
+	testeqf(4.6,2.6 + abs(-2) );
+	helloWorld();
 }
 
-run {
+cubbyhole run 
+{
+	testeqi(foo,1);
+	test_summary();
 }

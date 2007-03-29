@@ -347,7 +347,7 @@ NOT expression {
   expr_ensureLit($2);
     
   int len = bc_len($2->val.bcode);
-  $2->val.bcode = realloc($2->val.bcode, len+2);
+  $2->val.bcode = realloc($2->val.bcode, (len+2)*sizeof(bytecode));
   $2->val.bcode[len].code = BC_NOT;
   $2->val.bcode[len+1].code = BC_NONO;
   $$ = $2;

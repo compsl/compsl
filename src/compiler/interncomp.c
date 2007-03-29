@@ -5,7 +5,7 @@
 
 
 int bc_len(bytecode* bc) {
-  assert(bc!=(bytecode*)0);
+  assert(bc!=NULL);
   int len=0;
   while(bc->code!=BC_NONO&&bc->code!=BC_END) {
     bc++;

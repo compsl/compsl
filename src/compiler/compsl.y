@@ -48,10 +48,9 @@
     free(sprt); sprt = NULL;
     return ret;
   }
-  int fileCompile(const char *filename , VM* vm, compart** out) {
+  int fileCompile(const char *filename , VM* vm, compart* out) {
 	FILE* input = fopen(filename, "r");
-    *out = createComp(vm);
-    return goparse(input,filename, *out);
+    return goparse(input,filename, out);
   }
   int stringCompile(const char *code, VM* vm, compart* out) {
     FILE* input = fmemopen(code,strlen(code)*sizeof(char),"r");

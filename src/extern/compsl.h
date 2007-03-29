@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-int fileCompile(const char *filename , VM*, compart**);
+int fileCompile(const char *filename , VM*, compart*);
 int stringCompile(const char *code, VM*, compart*);
 
 void runCubbyhole(compart *com, int id); // runs 

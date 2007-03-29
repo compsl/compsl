@@ -28,8 +28,7 @@ int main()
 		"src/test/mincrash.csl",
 		"src/test/comparison.csl"
 	};
-	  
-	  
+	
 	VM *veem = createVM();
 	compart *com[NUM_FILES];
 	addPrintLibToVm(veem);

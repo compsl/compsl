@@ -1,4 +1,5 @@
 /* Torture test for all of compsl!
+ * 	Need 2 so we can test global vars
  */
 
 declare
@@ -7,8 +8,6 @@ declare
 } 
 
 init {
-	foo = 2;
+	foo = 1;
 }
 
-run {
-}

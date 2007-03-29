@@ -53,7 +53,7 @@ typedef enum  {
 	BC_FGR,		// >
 	BC_FGE,		// >=
 	BC_JMP, 	//jump to offeset in sa from current positon
-	BC_JMZ,		//if top of stack is zero, jump
+	BC_JMZ,		//if top of stack is zero, jump, always pop and discard top of stack
 	BC_JMN,		//if top of stack is non-zero, jump
 	BC_FLIN,	//cast float to int (top of stack)
 	BC_INFL, 	//cast int to float (top of stack)

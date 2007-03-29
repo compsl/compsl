@@ -28,7 +28,7 @@ int main()
 	
 	//TODO: add variables to compartments here
 	
-	compret1 = fileCompile("../src/test/tourture.csl", vm, &com1);
+	compret1 = fileCompile("../src/test/torture.csl", vm, &com1);
 	compret2 = stringCompile(test2, vm, com1);
 	
 	//TODO: run init cubby on both in order here.

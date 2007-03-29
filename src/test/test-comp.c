@@ -16,17 +16,17 @@ int main()
 	
 	const char * files[] = 
 	{
-		"src/test/mincrash.csl",
-		"src/test/comparison.csl",
 		"src/test/base.csl",
 		"src/test/debug.csl",
-		"src/test/math.csl",
-		"src/test/functions.csl",
 		"src/test/decls.csl",
 		"src/test/decls2.csl",
+		"src/test/math.csl",
+		"src/test/functions.csl",
 		"src/test/expressions.csl",
 		"src/test/casting.csl",
-		"src/test/flow.csl"
+		"src/test/flow.csl",
+		"src/test/mincrash.csl",
+		"src/test/comparison.csl"
 	};
 	  
 	  

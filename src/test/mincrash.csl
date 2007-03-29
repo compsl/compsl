@@ -6,6 +6,7 @@ declare
 
 cubbyhole test
 {
+        test_reset();
 		s=0;
         while(s == 10.0) {
                 s=s+1;
@@ -17,4 +18,5 @@ cubbyhole test
                 s=s+1;
         }
         testeqf(11.0,s);
+        test_summary();
 }

@@ -20,35 +20,22 @@ expression *function_call(const char* name, list *params) {
   
   llist *curParam;	  
   
-  // PYES bytecode
-  if(strcmp(name,"yes")==0) {
-    callcode.code = BC_PYES;
-    callcode.a1 =1;
-    found = true;
-  } else if(strcmp(name,"no")==0) {
-    callcode.code = BC_PYES;
-    callcode.a1 =0;
-    found = true;
-  }
-  
   // Built in funcs
-  if(!found) {
-    for(int i=0;i<builtins_len;i++) {
-      if(strcmp(name,builtins[i].name)==0) {
-	DPRINTF("Function \"%s\" found is a built in function\n",name);
-	bool isFloat = builtins[i].isFloat;
-	callcode.code = builtins[i].code;
-	callcode.a1 =0;
-	numParams = builtins[i].ac; 
-	ex->isFloat = builtins[i].isFloat;
-	paramFlags = malloc(sizeof(uint8_t)*numParams);
-	if(paramFlags == NULL) internalCompileError("Out of Memory");
-	freeParamFlags = true;
-	for(int q=0;q<numParams;q++)
-	  paramFlags[q] = ((isFloat)?FLOAT_VAR:0);
-	found = true;
-	break;
-      }
+  for(int i=0;i<builtins_len;i++) {
+    if(strcmp(name,builtins[i].name)==0) {
+      DPRINTF("Function \"%s\" found is a built in function\n",name);
+      bool isFloat = builtins[i].isFloat;
+      callcode.code = builtins[i].code;
+      callcode.a1 =0;
+      numParams = builtins[i].ac; 
+      ex->isFloat = builtins[i].isFloat;
+      paramFlags = malloc(sizeof(uint8_t)*numParams);
+      if(paramFlags == NULL) internalCompileError("Out of Memory");
+      freeParamFlags = true;
+      for(int q=0;q<numParams;q++)
+	paramFlags[q] = ((isFloat)?FLOAT_VAR:0);
+      found = true;
+      break;
     }
   }
   

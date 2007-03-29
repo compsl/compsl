@@ -92,7 +92,7 @@ DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h
 SOURCES := $(REG_SRCS) $(DERIVED_SRCS)
 OBJECTS := $(SOURCES:.c=.o)
 
-TESTSRCS := $(addprefix src/test/,test-interp.c test-intern.c test-api.c test-comp.c)
+TESTSRCS := $(addprefix src/test/,test-interp.c test-intern.c test-api.c test-comp.c test-tourture.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
 
 DEPS := $(SOURCES:.c=.dep) 

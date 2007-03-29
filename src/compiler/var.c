@@ -58,6 +58,7 @@ expression *readVar(const char* name) {
   }
   expression *ex = malloc(sizeof(expression));
   bytecode *bc = malloc(2*sizeof(bytecode));
+  if(ex == NULL || bc == NULL) internalCompileError("Out of Memory");
   if(!var.local) {
     bc->code = BC_GPSH;
     bc->a1 = var.id;

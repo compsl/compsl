@@ -31,17 +31,13 @@
   
   extern FILE *yyin;
   
-  int goparse(const char* fn, compart *com) {
-    FILE* input;
-
+  int goparse(FILE* input,const char *fn, compart *com) {
     lineNo=1;
-    input = fopen(fn, "r");
     if(NULL == input) {
       DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",fn);
       return -1;
     }
     yyin = input;
-    
     DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
     ccompart = com;
     
@@ -53,12 +49,13 @@
     return ret;
   }
   int fileCompile(const char *filename , VM* vm, compart** out) {
+	FILE* input = fopen(filename, "r");
     *out = createComp(vm);
-    return goparse(filename, *out);
+    return goparse(input,filename, *out);
   }
-  int stringCompile(const char *code, size_t len, VM* vm, compart** out) {
-    *out = (compart*)0;
-    return -2;
+  int stringCompile(const char *code, VM* vm, compart* out) {
+    FILE* input = fmemopen(code,strlen(code)*sizeof(char),"r");
+    return goparse(input,"STRING", out);
   }
   
 void yyerror(const char *fn, const char *msg) {

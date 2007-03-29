@@ -27,9 +27,13 @@ typedef enum  {
 	BC_PUSH, 	//push local var
 	BC_APUSH, 	//push element from local array (index on stack)
 	BC_CPUSH, 	//push constant
+	BC_GPSH,	//same as PUSH but for global
+	BC_GAPS, 	//samp as APUSH but for global
 	BC_POP, 	//pop to local var
 	BC_APOP,	//pop into local array (value on top of stack, index is next)
 	BC_DPOP, 	//pop and discard value
+	BC_GPOP,	//same as POP but for global
+	BC_GAPP,	//same as APOP but for global
 	BC_DUP, 	//duplicate top of stack
 	BC_CALL, 	//call native (native ID in a1, args on stack, ltr w/rightmost @ top)
 	BC_ADD, 	//add top 2 stack elements (integer)
@@ -42,6 +46,17 @@ typedef enum  {
 	BC_NE,		// !=
 	BC_GR,		// >
 	BC_GE,		// >=
+	BC_MOD,		//modulus of top 2 stack b = pop; a = pop; push a % b;
+	BC_FMOD,	//same as MOD only for float
+	BC_AND,		//boolean and of top two stack elements
+	BC_OR,		//boolean or of top two stack elements
+	BC_NOT, 	//boolean not of top stack element
+	BC_BAND,	//bitwise and of top two stack elements
+	BC_BOR,		//bitwise or of top two stack elements
+	BC_BXOR,	//bitwise xor of top two stack elements
+	BC_BNOT,	//bitwise not of top stack element
+	BC_SFTL,	//shift left, top of stack is shift, next is value
+	BC_SFTR,	//shift right, top of stack is shift, next is value
 	BC_FADD,	//same as ADD but for float
 	BC_FSUB, 	//same as SUB but for float
 	BC_FMUL, 	//same as MUL but for float
@@ -57,21 +72,6 @@ typedef enum  {
 	BC_JMN,		//if top of stack is non-zero, jump
 	BC_FLIN,	//cast float to int (top of stack)
 	BC_INFL, 	//cast int to float (top of stack)
-	BC_MOD,		//modulus of top 2 stack b = pop; a = pop; push a % b;
-	BC_FMOD,	//same as MOD only for float
-	BC_GPSH,	//same as PUSH but for global
-	BC_GAPS, 	//samp as APUSH but for global
-	BC_GPOP,	//same as POP but for global
-	BC_GAPP,	//same as APOP but for global
-	BC_AND,		//boolean and of top two stack elements
-	BC_OR,		//boolean or of top two stack elements
-	BC_NOT, 	//boolean not of top stack element
-	BC_BAND,	//bitwise and of top two stack elements
-	BC_BOR,		//bitwise or of top two stack elements
-	BC_BXOR,	//bitwise xor of top two stack elements
-	BC_BNOT,	//bitwise not of top stack element
-	BC_SFTL,	//shift left, top of stack is shift, next is value
-	BC_SFTR,	//shift right, top of stack is shift, next is value
 	
 	//builtins
 	BC_ABS,		BC_ABSF,	BC_SIN,		BC_COS,		//28-2B

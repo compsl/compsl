@@ -34,9 +34,13 @@ static const char *tractbl[] =
 	"PUSH",
  	"APUSH",
  	"CPUSH",
+ 	"GPSH",
+ 	"GAPS",
  	"POP", 
  	"APOP",
  	"DPOP",
+ 	"GPOP",
+ 	"GAPP",
  	"DUP",
  // native function call
  	"CALL", 
@@ -51,6 +55,21 @@ static const char *tractbl[] =
 	"NE",
  	"GR",
  	"GE",
+ //mod
+ 	"MOD", 
+ 	"FMOD",
+ //boolean 
+ 	"AND",
+ 	"OR",
+ 	"NOT",
+ //bitwise
+ 	"BAND",
+ 	"BOR",
+ 	"BXOR",
+ 	"BNOT",
+ //bit shifting
+ 	"SFTL",
+ 	"SFTR",
  // float operations 
  	"FADD", 
  	"FSUB", 
@@ -69,26 +88,6 @@ static const char *tractbl[] =
  //type conversion
  	"FLIN", 
  	"INFL",
- //mod
- 	"MOD", 
- 	"FMOD",
- //global vars
- 	"GPSH",
- 	"GAPS",
- 	"GPOP",
- 	"GAPP",
- //boolean 
- 	"AND",
- 	"OR",
- 	"NOT",
- //bitwise
- 	"BAND",
- 	"BOR",
- 	"BXOR",
- 	"BNOT",
- //bit shifting
- 	"SFTL",
- 	"SFTR",
 //builtins
 	"ABS",
 	"ABSF",
@@ -125,13 +124,17 @@ void runCubbyhole(compart *com, int id)
 static void *jmptbl[] = 
 {
 	&&NOOP,
-//stack operations with local vars
+//stack operations
 	&&PUSH,
  	&&APUSH,
  	&&CPUSH,
+ 	&&GPSH,
+ 	&&GAPS,
  	&&POP, 
  	&&APOP,
  	&&DPOP,
+ 	&&GPOP,
+ 	&&GAPP,
  	&&DUP,
  // native function call
  	&&CALL, 
@@ -147,6 +150,21 @@ static void *jmptbl[] =
 	&&NE,
  	&&GR,
  	&&GE,
+ //mod
+ 	&&MOD, 
+ 	&&FMOD,
+ //boolean 
+ 	&&AND,
+ 	&&OR,
+ 	&&NOT,
+ //bitwise
+ 	&&BAND,
+ 	&&BOR,
+ 	&&BXOR,
+ 	&&BNOT,
+ //bit shifting
+ 	&&SFTL,
+ 	&&SFTR,
  // float operations 
  	&&FADD, 
  	&&FSUB, 
@@ -166,26 +184,6 @@ static void *jmptbl[] =
  //type conversion
  	&&FLIN, 
  	&&INFL,
- //mod
- 	&&MOD, 
- 	&&FMOD,
- //global vars
- 	&&GPSH,
- 	&&GAPS,
- 	&&GPOP,
- 	&&GAPP,
- //boolean 
- 	&&AND,
- 	&&OR,
- 	&&NOT,
- //bitwise
- 	&&BAND,
- 	&&BOR,
- 	&&BXOR,
- 	&&BNOT,
- //bit shifting
- 	&&SFTL,
- 	&&SFTR,
 //builtins
 	&&ABS,
 	&&ABSF,

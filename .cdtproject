@@ -124,17 +124,24 @@
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="all Great Hall CPU optimizes" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="test Great Hall CPU optimizes" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>all SSE=2 CPUTYPE=pentium4</buildTarget>
+<buildTarget>test SSE=2 CPUTYPE=pentium4</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="all athlon64" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="test athlon64" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>all SSE=2 CPUTYPE=athlon64</buildTarget>
+<buildTarget>test SSE=2 CPUTYPE=athlon64</buildTarget>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="test autocpu" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments>-k -j2</buildArguments>
+<buildTarget>test CPUTYPE=auto</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

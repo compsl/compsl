@@ -35,7 +35,7 @@ ifeq ($(_ARCH),Linux)
 endif
 
 
-CFLAGS  += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
+CFLAGS  := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 #CFLAGS += -Wunreachable-code
 
 CFLAGS += -fsingle-precision-constant -ffast-math
@@ -45,15 +45,20 @@ ifeq ($(MMX),1)
 	CFLAGS += -mmmx -mno-ieee-fp
 endif
 #if sse instructions not available need to disable this line
-ifeq ($(SSE),1)
-	CFLAGS += -msse -mfpmath=sse -mno-ieee-fp 
-endif
-ifeq ($(SSE),2)
-	CFLAGS += -msse2 -mfpmath=sse -mno-ieee-fp 
+ifdef SSE
+	CFLAGS += -msse${SSE} -mfpmath=sse -mno-ieee-fp 
 endif
 
 ifdef CPUTYPE
-	CFLAGS += -mcpu=$(CPUTYPE) 
+	ifeq ($(CPUTYPE),auto)
+		override CPUFLAGS := $(shell ./gcc-arch) -mno-ieee-fp
+		ifeq ($(findstring sse,$(CPUFLAGS)),sse)
+			override CPUFLAGS += -mfpmath=sse
+		endif
+		CFLAGS += $(CPUFLAGS)
+	else
+		CFLAGS += -mcpu=$(CPUTYPE) 
+	endif
 endif
 
 
@@ -78,7 +83,7 @@ ifdef DEBUG
 else
 	CFLAGS += -O2 -fdata-sections -ffunction-sections -frename-registers
 	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
-	CFLAGS += -fsched-spec-load
+	CFLAGS += -fsched-spec-load -maccumulate-outgoing-args
 	CFLAGS += -minline-all-stringops
 	#CFLAGS += -fbranch-target-load-optimize -fsched2-use-superblocks
 	#-fmove-all-movables
@@ -91,7 +96,7 @@ overide CFLAGS += -DNDEBUG
 endif
 
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE
-ALL_CFLAGS = ${CFLAGS} ${MYCFLAGS}
+ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS}
 
 
 ################################

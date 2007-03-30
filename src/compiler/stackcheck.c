@@ -71,7 +71,8 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 		}
 		else if(code[i].code == BC_JMP)
 		{ // gotta follow it!
-			i += code[i].sa -1;
+			//i += code[i].sa -1;
+			return sp;
 		}
 		else if(code[i].code == BC_END || code[i].code == BC_DBG || code[i].code == BC_HLT)
 		{

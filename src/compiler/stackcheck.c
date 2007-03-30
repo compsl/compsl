@@ -22,9 +22,10 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 	bool badStack=false;
 	for(int i = 0; i < codelen; i++)
 	{
-		if(	(BC_POP <= code[i].code && code[i].code <= BC_GAPP) ||
+		if(	((BC_POP <= code[i].code && code[i].code <= BC_GAPP) ||
 			(BC_ADD <= code[i].code && code[i].code <= BC_FGE) || 
-			code[i].code == BC_JMZ || code[i].code == BC_JMN)
+			code[i].code == BC_JMZ || code[i].code == BC_JMN) 
+			&& code[i].code != BC_NOT && code[i].code != BC_BNOT)
 		{ // move stack pointer backwards 1 (pop)	
 			sp--;
 			if(sp < 0){

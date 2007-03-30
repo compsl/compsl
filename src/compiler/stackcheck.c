@@ -22,7 +22,9 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 	bool badStack=false;
 	for(int i = 0; i < codelen; i++)
 	{
-		if((BC_PUSH <= code[i].code && code[i].code <= BC_GAPS) || code[i].code == BC_DUP)
+		if(	(BC_POP <= code[i].code && code[i].code <= BC_GAPP) ||
+			(BC_ADD <= code[i].code && code[i].code <= BC_FGE) || 
+			code[i].code == BC_JMZ || code[i].code == BC_JMN)
 		{ // move stack pointer backwards 1 (pop)	
 			sp--;
 			if(sp < 0){
@@ -30,9 +32,9 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", i, lineNo, sp);
 			}
 		}
-		else if((BC_POP <= code[i].code && code[i].code <= BC_GAPP) || 
-				(BC_ADD <= code[i].code && code[i].code <= BC_FGE) || 
-				code[i].code == BC_JMZ || code[i].code == BC_JMN)
+		else if((BC_PUSH <= code[i].code && code[i].code <= BC_GAPS) ||
+			 	code[i].code == BC_DUP) 
+				
 		{ // move stack pointer forwards 1 (push)
 			sp++;
 			if(sp >= VM_STACK_SIZE){

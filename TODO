@@ -17,12 +17,8 @@ interpreter
  8. figure out how to make debug hooks
  9. 
  
-flex/bison
- 
- 3. Figure out how to keep track of line nos between compsl.l and .y . 
- 7. Implement bison symbol renaming
+======
 
-
-
+-- extern headers to 1 file?
 -- Last of the operators
--- String compile
+-- make release

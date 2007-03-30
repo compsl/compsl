@@ -1,5 +1,6 @@
 #include "interncomp.h"
 #include "../intern/bytecode.h"
+#include "../intern/gen.h"
 
 static void removeBytecode(bytecode *code, int ind, int codelen)
 {
@@ -11,8 +12,6 @@ static void removeBytecode(bytecode *code, int ind, int codelen)
 
 bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 {
-	int sp = 0;
-	
 	for(int i = 0; i < codelen; i++)
 	{
 		if(code[i].code == BC_DPOP)

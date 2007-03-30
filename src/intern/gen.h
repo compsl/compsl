@@ -24,4 +24,8 @@ typedef struct
  */
 symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure));
 
+#ifdef DEBUG
+void dumpBytecode(compart *com, int id);
+#endif
+
 #endif /*GEN_H_*/

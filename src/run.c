@@ -26,7 +26,7 @@
 void init_genrand(unsigned long s);
 double genrand_real1(void);
 
-#ifdef _COMPSL_TRACE
+#ifdef DEBUG
 static const char *tractbl[] = 
 {
 	"NOOP",
@@ -117,6 +117,26 @@ static const char *tractbl[] =
  	"DBG"
 
  };
+
+
+void dumpBytecode(compart *com, int id)
+{
+	//var *lvs = com->vt.vars;
+	//var *lcs = com->cons;
+	//var *gvs = com->vm->vt.vars;
+	
+	//nativeFN *natives = com->vm->natives;
+	
+	bytecode *pc= (bytecode *)(com->cubbys[id].code); // init program counter
+	
+	while(pc->code != BC_END && pc->code != BC_HLT && pc->code != BC_DBG)
+	{
+		long int tractmp = ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode);
+		printf("%4ld: %s\tsa=%d\ta1=%d\n",
+			tractmp,tractbl[pc->code],pc->sa,pc->a1);
+		pc++;
+	}
+}
 #endif
 
 void runCubbyhole(compart *com, int id)
@@ -228,8 +248,8 @@ static void *jmptbl[] =
 	
 	bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
 	
-	bool less, equal, greater; // comparison flags
-	less = equal = greater = false;
+	//bool less, equal, greater; // comparison flags
+	//less = equal = greater = false;
 	
 	//seed the rng
 	init_genrand(time(0));
@@ -608,10 +628,6 @@ static void *jmptbl[] =
  		
  		fprintf(stderr, "Program Counter: %lX", ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode));
  		
- 		fprintf(stderr, "Compare Flags (e,l,g): %s %s %s\n",
- 			(equal?"true":"false"),
- 			(less?"true":"false"),
- 			(greater?"true":"false"));
  		fprintf(stderr, "Stack Pointer: %lX\n", ((long int)sp - (long int)stack)/sizeof(intfloat)); // what does this do? index of sp?
  		fprintf(stderr, "Stack: \n");
  		st = stack;

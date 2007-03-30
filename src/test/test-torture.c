@@ -3,14 +3,18 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "../extern/vm.h"
 #include "../extern/compart.h"
 #include "../extern/compsl.h"
 #include "../extern/userspace.h"
 
+#include "../intern/gen.h"
+
 static const char *test2 = 
-"declare { global int foo; }\
- cubbyhole init { foo = 1; }";
+"declare { global int foo; int x;}\
+ cubbyhole init { foo = 1; }\
+ cubby foo {x=0;while(x<3)x = x + 1;}";
 
 int main()
 {
@@ -34,8 +38,13 @@ int main()
 	compret1 = fileCompile("src/test/torture.csl", vm, com1);
 	compret2 = stringCompile(test2, vm, com2);
 	
-	//TODO: run init cubby on both in order here.
 	int16_t cubbyid;
+	
+#ifdef DEBUG
+	cubbyid = getCubbyID(com2,"foo");
+	dumpBytecode(com2,cubbyid);
+#endif
+	
 	cubbyid = getCubbyID(com1,"init");
 	runCubbyhole(com1, cubbyid);
 	puts("Done first init");

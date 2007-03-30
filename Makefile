@@ -40,24 +40,23 @@ CFLAGS  := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 
 CFLAGS += -fsingle-precision-constant -ffast-math
 
-# if none x86 need to disable this line
-ifeq ($(MMX),1)
-	CFLAGS += -mmmx -mno-ieee-fp
-endif
-#if sse instructions not available need to disable this line
-ifdef SSE
-	CFLAGS += -msse${SSE} -mfpmath=sse -mno-ieee-fp 
-endif
+CPUTYPE=auto
 
-ifdef CPUTYPE
-	ifeq ($(CPUTYPE),auto)
+ifeq ($(CPUTYPE),auto)
 		override CPUFLAGS := $(shell ./gcc-arch) -mno-ieee-fp
 		ifeq ($(findstring sse,$(CPUFLAGS)),sse)
 			override CPUFLAGS += -mfpmath=sse
 		endif
 		CFLAGS += $(CPUFLAGS)
-	else
+else
+	ifdef CPUTYPE
 		CFLAGS += -mcpu=$(CPUTYPE) 
+	endif
+	ifeq ($(MMX),1)
+		CFLAGS += -mmmx -mno-ieee-fp
+	endif
+	ifdef SSE
+		CFLAGS += -msse${SSE} -mfpmath=sse -mno-ieee-fp 
 	endif
 endif
 

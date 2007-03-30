@@ -3,21 +3,6 @@
 
 #include "../extern/port.h"
 
-typedef struct
-{
-  uint16_t code;
-  union 
-  {
-    struct
-    {
-      uint8_t a1;
-      uint8_t a2;
-    };
-    uint16_t a; // look up wether this works as expected
-    int16_t sa;
-  };
-} bytecode;
-
 
 // all instructions working with variables take address in a1 unless otherwise
 // stated
@@ -91,3 +76,18 @@ typedef enum  {
 
 
 #endif /*BYTECODE_H_*/
+
+typedef struct
+{
+  BC_DEF code;
+  union 
+  {
+    struct
+    {
+      uint8_t a1;
+      uint8_t a2;
+    };
+    uint16_t a; // look up wether this works as expected
+    int16_t sa;
+  };
+} bytecode;

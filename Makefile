@@ -41,10 +41,21 @@ CFLAGS  += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 CFLAGS += -fsingle-precision-constant -ffast-math
 
 # if none x86 need to disable this line
-CFLAGS += -mmmx -mno-ieee-fp
-
+ifeq ($(MMX),1)
+	CFLAGS += -mmmx -mno-ieee-fp
+endif
 #if sse instructions not available need to disable this line
-#CFLAGS += -msse -mfpmath=sse
+ifeq ($(SSE),1)
+	CFLAGS += -msse -mfpmath=sse -mno-ieee-fp 
+endif
+ifeq ($(SSE),2)
+	CFLAGS += -msse2 -mfpmath=sse -mno-ieee-fp 
+endif
+
+ifdef CPUTYPE
+	CFLAGS += -mcpu=$(CPUTYPE) 
+endif
+
 
 ifdef DEBUG_COMP
 	CFLAGS += -DDEBUG_COMP
@@ -62,12 +73,13 @@ endif
 
 
 ifdef DEBUG
-	CFLAGS += -O0 -ggdb -DDEBUG
+	CFLAGS += -O0 -ggdb3 -DDEBUG
 	#CFLAGS += -D DEBUG $(DBG_ENVS)
 else
 	CFLAGS += -O2 -fdata-sections -ffunction-sections -frename-registers
 	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
 	CFLAGS += -fsched-spec-load
+	CFLAGS += -minline-all-stringops
 	#CFLAGS += -fbranch-target-load-optimize -fsched2-use-superblocks
 	#-fmove-all-movables
 

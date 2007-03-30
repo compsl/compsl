@@ -92,7 +92,7 @@
 <target name="debug test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG='1' -j2</buildArguments>
-<buildTarget>test DEBUG=1 STACK_CHECK=1</buildTarget>
+<buildTarget>test DEBUG=1</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
@@ -120,14 +120,21 @@
 <target name="compdbg test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>test DEBUG=1 DEBUG_COMP=1 STACK_CHECK=1</buildTarget>
+<buildTarget>test DEBUG=1 DEBUG_COMP=1</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="all no stack checker" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="all Great Hall CPU optimizes" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>all STACK_CHECK=0</buildTarget>
+<buildTarget>all SSE=2 CPUTYPE=pentium4</buildTarget>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="all athlon64" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments>-k -j2</buildArguments>
+<buildTarget>all SSE=2 CPUTYPE=athlon64</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

@@ -4,6 +4,7 @@
 
 #include "node.h"
 #include "../intern/vars.h"
+#include "interncomp.h"
 
 
 list* list_new(void) {

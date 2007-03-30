@@ -26,7 +26,7 @@
 void init_genrand(unsigned long s);
 double genrand_real1(void);
 
-#ifdef DEBUG
+#if defined DEBUG || defined _COMPSL_TRACE
 static const char *tractbl[] = 
 {
 	"NOOP",
@@ -117,8 +117,9 @@ static const char *tractbl[] =
  	"DBG"
 
  };
+#endif
 
-
+#ifdef DEBUG
 void dumpBytecode(compart *com, int id)
 {
 	//var *lvs = com->vt.vars;

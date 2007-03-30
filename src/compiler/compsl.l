@@ -22,6 +22,7 @@ extern compart *ccompart;
 \/\/.*\n		{}; /*comment*/
 declare	     return DECLARE;
 cubbyhole    return CUBBY;
+cubby    return CUBBY2;
 global		return GLOBAL;
 int			return INT;
 float		return FLOAT;

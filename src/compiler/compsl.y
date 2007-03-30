@@ -92,14 +92,13 @@ int yywrap(void) {
 %token <fval> FLOAT_LIT;
 %token <ival> INT_LIT; 
 %token <sval> IDENTIFIER;
-%token CUBBY GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE BOR BAND POW SHFTL SHFTR; 
+%token CUBBY CUBBY2 GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE BOR BAND POW SHFTL SHFTR cubby_keyboard; 
 %type <expr> expression math retable;
 %type <ival> cast post_modifier;
 %type <sval> cubby_id;
 %type <bval> global_modifier intfloat_keyword;
 %type <bc> stmt block ife elsee control;
 %type <xlist> paramlist stmts moreparamlist ident_list more_ident_list;
-
 %type <void> file header_stuff do_declare cubbys cubby decl decls;
 
 %locations
@@ -132,10 +131,13 @@ cubby:
 #endif
 		}
 cubby_id:
-		CUBBY IDENTIFIER {
+		cubby_keyword IDENTIFIER {
 			DPRINTF("> Cubby: %s\n",$2);
 			$$=$2;
 		}
+
+cubby_keyword:
+		CUBBY | CUBBY2;
 
 		
 block:

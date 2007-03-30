@@ -6,7 +6,7 @@ declare
         float s;
 } 
 
-cubbyhole test
+cubby test
 {
         test_reset();
         r = 0;

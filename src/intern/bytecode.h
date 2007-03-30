@@ -29,13 +29,17 @@ typedef enum  {
 	BC_CPUSH, 	//push constant
 	BC_GPSH,	//same as PUSH but for global
 	BC_GAPS, 	//samp as APUSH but for global
+	
 	BC_POP, 	//pop to local var
 	BC_APOP,	//pop into local array (value on top of stack, index is next)
 	BC_DPOP, 	//pop and discard value
 	BC_GPOP,	//same as POP but for global
 	BC_GAPP,	//same as APOP but for global
+	
 	BC_DUP, 	//duplicate top of stack
+	
 	BC_CALL, 	//call native (native ID in a1, args on stack, ltr w/rightmost @ top)
+	
 	BC_ADD, 	//add top 2 stack elements (integer)
 	BC_SUB, 	//subtract top 2 stack elements b = pop; a = pop; push a - b;
 	BC_MUL, 	//multiply top 2 stack elements 
@@ -67,6 +71,7 @@ typedef enum  {
 	BC_FNE,		// !=
 	BC_FGR,		// >
 	BC_FGE,		// >=
+	
 	BC_JMP, 	//jump to offeset in sa from current positon
 	BC_JMZ,		//if top of stack is zero, jump, always pop and discard top of stack
 	BC_JMN,		//if top of stack is non-zero, jump

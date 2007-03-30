@@ -40,8 +40,10 @@ CFLAGS  := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 
 CFLAGS += -fsingle-precision-constant -ffast-math
 
-CPUTYPE := auto
-
+ifeq ($(findstring MSYS_,$(_ARCH)),MSYS_)
+else
+	CPUTYPE := auto
+endif
 ifeq ($(CPUTYPE),auto)
 		override CPUFLAGS := $(shell ./gcc-arch) -mno-ieee-fp
 		ifeq ($(findstring sse,$(CPUFLAGS)),sse)

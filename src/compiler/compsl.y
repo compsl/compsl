@@ -226,6 +226,14 @@ stmt:
 			code[l].code = BC_DPOP;
 			code[l+1].code = BC_NONO;
 			$$=code;
+
+#ifdef COMP_STACKCHECK
+			int rs;
+			rs = stackcheck($$, bc_len($$), ccompart->vm, ccompart);
+			DPRINTF("Ran stackcheck() on stmt, result: %i\n",rs);
+			if(rs!=0) 
+			  internalCompileError("Unmatched bytecode in stmt!");
+#endif
 		}
         | 
         BREAK {

@@ -76,7 +76,7 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 		{
 			return sp;
 		}
-		else if(BC_NOOP < code[i].code || code[i].code > BC_DBG)
+		else if(BC_NOOP > code[i].code || code[i].code > BC_DBG)
 		{
 			internalCompileError("BAD OPCODE!!!!!");
 		}

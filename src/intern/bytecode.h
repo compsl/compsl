@@ -81,8 +81,8 @@ typedef struct
   {
     struct
     {
-      uint8_t a1;
-      uint8_t a2;
+      uint8_t a1 /*__deprecated__*/; // uncomment depreciated after first relase
+      uint8_t a2; // clean up all refernces to it
     };
     uint16_t a; // look up wether this works as expected
     int16_t sa;

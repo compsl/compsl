@@ -16,10 +16,46 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
+.SUFFIXES:
+.SUFFIXES: .c .o .h .gch
 
-BISON = bison
-FLEX  = flex
-CC    = gcc
+BISON   = bison
+FLEX    = flex
+CC      = gcc
+INSTALL = install
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = ${INSTALL} -m 644
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+
+prefix = /usr/local
+exec_prefix = $(prefix)
+bindir = $(exec_prefix)/bin
+#libexecdir for programs run by this package and plugins and such
+#should put that sort of thing in $(libexecdir)/<packagename>
+libexecdir = $(exec_prefix)/libexec
+datarootdir = $(prefix)/share
+datadir = $(datarootdir)
+sysconfdir = $(prefix)/etc
+includedir = $(prefix)/include
+docdir = $(datarootdir)/doc/compsl
+htmldir = $(docdir)
+libdir = $(exec_prefix)/lib
+mandir = $(datarootdir)/man
+man1dir = $(mandir)/man1
+man2dir = $(mandir)/man2
+man3dir = $(mandir)/man3
+man4dir = $(mandir)/man4
+man5dir = $(mandir)/man5
+man6dir = $(mandir)/man6
+man7dir = $(mandir)/man7
+man8dir = $(mandir)/man8
+manext = .1
 
 
 ################################
@@ -108,7 +144,7 @@ CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-REG_SRCS=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c \
+REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
 	$(CMPATH)/var.c $(CMPATH)/comp.c $(CMPATH)/control.c $(CMPATH)/compglobals.c \
 	src/mt.c src/userspace.c $(CMPATH)/stackcheck.c
@@ -121,7 +157,7 @@ OBJECTS := $(SOURCES:.c=.o)
 TESTSRCS := $(addprefix src/test/,test-interp.c test-intern.c test-api.c test-comp.c test-torture.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
 
-DEPS := $(SOURCES:.c=.dep) 
+DEPS := $(SOURCES:.c=.dep)
 
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
@@ -136,6 +172,11 @@ DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
 ################################
 
 all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
+
+install: all
+
+install-strip:
+	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
 
 clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
@@ -181,12 +222,11 @@ src/run.o: src/run.c
 	$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
 	$(CC) -c $(ALL_CFLAGS) $< -o $@
 
-
 $(STATIC_LIB_OUT): $(OBJECTS)
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
 $(DYN_LIB_OUT): $(OBJECTS)
-	$(CC) -shared -Wl,-soname,$(LIBNAME).so.1 $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT)
+	$(CC) -shared -Wl,-soname,$(LIBNAME).so.1 $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(CFLAGS)
 
 ################################
 # FLEX/BISON TARGETS           #
@@ -208,4 +248,4 @@ $(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h
 # Testers - assume each test is one sourcefile
 ####################################################
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
-	$(CC) ${MYCFLAGS} -MD $< $(OBJECTS) $(PLATLIBS) -o $@
+	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@

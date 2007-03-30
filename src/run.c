@@ -140,7 +140,7 @@ void dumpBytecode(compart *com, int id)
 }
 #endif
 
-void runCubbyhole(compart *com, int id)
+__attribute__((flatten)) void runCubbyhole(compart *com, int id)
 {
 static void *jmptbl[] = 
 {

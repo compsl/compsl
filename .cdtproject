@@ -120,7 +120,7 @@
 <target name="compdbg test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>test DEBUG=1 DEBUG_COMP=1</buildTarget>
+<buildTarget>test DEBUG=1 DEBUG_COMP=1 STACK_CHECK=1</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

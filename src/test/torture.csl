@@ -17,3 +17,8 @@ cubbyhole run
 	testeqi(foo,1);
 	test_summary();
 }
+
+cubbyhole runlots
+{ // cubby to run lots of times
+	x = x + 1;
+}

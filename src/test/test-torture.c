@@ -30,9 +30,9 @@ int main()
 	}
 	
 	//TODO: add variables to compartments here
-	
-	compret2 = stringCompile(test2, vm, com2);
+	int32_t *x = com_addInt(com1,"x");
 	compret1 = fileCompile("src/test/torture.csl", vm, com1);
+	compret2 = stringCompile(test2, vm, com2);
 	
 	//TODO: run init cubby on both in order here.
 	int16_t cubbyid;
@@ -43,8 +43,14 @@ int main()
 	cubbyid = getCubbyID(com2,"init");
 	runCubbyhole(com2, cubbyid);
 	puts("Done second init");
+	
 	//TODO: check value of foo global in cubbys
 	cubbyid = getCubbyID(com1,"run");
 	runCubbyhole(com1, cubbyid);
 	//TODO: other tests
+	
+	cubbyid = getCubbyID(com1,"runlots");
+	*x = 0;
+	while(*x < 100000) 
+		runCubbyhole(com1, cubbyid);
 }

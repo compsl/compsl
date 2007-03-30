@@ -20,7 +20,7 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 {
 	int sp = 0;
 	bool badStack=false;
-	for(int i = 0; i < codelen; i++)
+	for(int i = 0; i < codelen && i > -1; i++)
 	{
 		if(	((BC_POP <= code[i].code && code[i].code <= BC_GAPP) ||
 			(BC_ADD <= code[i].code && code[i].code <= BC_FGE) || 

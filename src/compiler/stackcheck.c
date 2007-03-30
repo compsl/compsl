@@ -22,7 +22,7 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 	bool badStack=false;
 	for(int i = 0; i < codelen; i++)
 	{
-		if(BC_PUSH <= code[i] && code[i] <= BC_GAPS || code[i] == DUP)
+		if((BC_PUSH <= code[i].code && code[i].code <= BC_GAPS) || code[i].code == BC_DUP)
 		{ // move stack pointer backwards 1 (pop)	
 			sp--;
 			if(sp < 0){
@@ -30,9 +30,9 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d", i, lineNo, sp);
 			}
 		}
-		else if(BC_POP <= code[i] && code[i] <= BC_GAPP || 
-				BC_ADD <= code[i] && code[i] <= BC_FGE || 
-				code[i] == BC_JMZ || code[i] == BC_JMN)
+		else if((BC_POP <= code[i].code && code[i].code <= BC_GAPP) || 
+				(BC_ADD <= code[i].code && code[i].code <= BC_FGE) || 
+				code[i].code == BC_JMZ || code[i].code == BC_JMN)
 		{ // move stack pointer forwards 1 (push)
 			sp++;
 			if(sp >= VM_STACK_SIZE){
@@ -40,11 +40,11 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 				fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d", i, lineNo, sp - VM_STACK_SIZE + 1);
 			}
 		}
-		else if(code[i] == BC_CALL)
+		else if(code[i].code == BC_CALL)
 		{ // function call
-			if(code[i].a1 < 0 || code[i].a1 >= vm->ncnt)
+			if(code[i].a1 >= vm->ncnt)
 			{
-				fprintf("BAD NATIVE CALL! instruction %d of expression on line %d", i, lineNo);
+				fprintf(stderr,"BAD NATIVE CALL! instruction %d of expression on line %d", i, lineNo);
 				internalCompileError("BAD NATIVE CALL GENERATED!");
 			}
 			
@@ -59,22 +59,22 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 				fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d", i, lineNo, sp - VM_STACK_SIZE + 1);
 			}
 		}
-		else if(BC_ABS <= code[i] && code[i] <= BC_HYPOT)
+		else if(BC_ABS <= code[i].code && code[i].code <= BC_HYPOT)
 		{ // builtin
 			int j;
-			for(j = 0; j < builtins_len && builtins[j].code != code[i]; j++);
+			for(j = 0; j < builtins_len && builtins[j].code != code[i].code; j++);
 			sp -= builtins[j].ac; sp++;
 			
 		}
-		else if(code[i] == BC_JMP)
+		else if(code[i].code == BC_JMP)
 		{ // gotta follow it!
 			i += code[i].sa -1;
 		}
-		else if(code[i] == BC_END || code[i] == BC_DBG || code[i] == BC_HLT)
+		else if(code[i].code == BC_END || code[i].code == BC_DBG || code[i].code == BC_HLT)
 		{
 			return sp;
 		}
-		else if(BC_NOOP < code[i] || code[i] > BC_DBG)
+		else if(BC_NOOP < code[i].code || code[i].code > BC_DBG)
 		{
 			internalCompileError("BAD OPCODE!!!!!");
 		}

@@ -18,8 +18,8 @@ void compileError(const char *str) {
 char foo[1024];
 
 void internalCompileError(const char* str) {
-	DPRINTF("internal Compile error");
-  sprintf(foo,"INTERNAL ERROR: %s",str);
-  compileError(sprt);	
+	DPRINTF("internal Compile error\n");
+  sprintf(foo,"INTERNAL ERROR: %s\n",str);
+  compileError(foo);	
   abort();
 }

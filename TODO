@@ -21,5 +21,8 @@ flex/bison
  
  3. Figure out how to keep track of line nos between compsl.l and .y . 
  7. Implement bison symbol renaming
- 1. flow control
- 
+
+
+
+-- Last of the operators
+-- String compile

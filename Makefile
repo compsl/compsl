@@ -53,6 +53,10 @@ endif
 ifdef TRACE_INTERP
 	CFLAGS += -D_COMPSL_TRACE
 endif
+ifdef STACK_CHECK
+	CFLAGS += -DCOMP_STACKCHECK
+endif
+
 
 ifdef DEBUG
 	CFLAGS += -O0 -ggdb -DDEBUG

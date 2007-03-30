@@ -32,6 +32,7 @@
   extern FILE *yyin;
   
   int goparse(FILE* input,const char *fn, compart *com) {
+    int ret;
     lineNo=1;
     
     DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
@@ -39,8 +40,9 @@
     
   
     sprt=malloc(1024 * sizeof(char));
-    int ret = yyparse(fn);
+    ret = yyparse(fn);
     DPRINTF(">> DONE PARSE\n\n");
+
     free(sprt); sprt = NULL;
     return ret;
   }
@@ -121,6 +123,13 @@ cubbys:
 cubby:	
 		cubby_id block {
 			com_addCubby(ccompart, $2, $1);
+#ifdef COMP_STACKCHECK
+			int rs;
+			rs = stackcheck($2, bc_len($2), ccompart->vm, ccompart);
+			DPRINTF("Ran stackcheck(), result: %i\n",rs);
+			if(rs!=0) 
+			  internalCompileError("Unmatched bytecode!");
+#endif
 		}
 cubby_id:
 		CUBBY IDENTIFIER {

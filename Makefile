@@ -70,13 +70,12 @@ ifeq ($(_ARCH),Linux)
 	PLATLIBS := -lm 
 endif
 
-
 CFLAGS  := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 #CFLAGS += -Wunreachable-code
 
 CFLAGS += -fsingle-precision-constant -ffast-math
 
-ifeq ($(findstring MSYS_,$(_ARCH)),MSYS_)
+ifeq ($(findstring MINGW,$(_ARCH)),MINGW)
 else
 	CPUTYPE := auto
 endif

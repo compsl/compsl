@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "intern/exports.h"
 /*
  * TODO: 
  *  1. write insert variable functions

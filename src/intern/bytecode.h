@@ -74,9 +74,6 @@ typedef enum  {
 		BC_PYES,	BC_NONO,	BC_END, 	BC_HLT, 	BC_DBG
 	} BC_DEF;
 
-
-#endif /*BYTECODE_H_*/
-
 typedef struct
 {
   BC_DEF code;
@@ -91,3 +88,6 @@ typedef struct
     int16_t sa;
   };
 } bytecode;
+
+#endif /*BYTECODE_H_*/
+

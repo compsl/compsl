@@ -40,7 +40,7 @@ CFLAGS  := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 
 CFLAGS += -fsingle-precision-constant -ffast-math
 
-CPUTYPE=auto
+CPUTYPE := auto
 
 ifeq ($(CPUTYPE),auto)
 		override CPUFLAGS := $(shell ./gcc-arch) -mno-ieee-fp

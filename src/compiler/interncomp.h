@@ -75,4 +75,6 @@ void compileWarning(const char *str);
  */
 int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com);
 
+bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com);
+
 #endif //INTERNCOMP_H_

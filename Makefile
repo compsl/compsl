@@ -87,7 +87,7 @@ ifeq ($(CPUTYPE),auto)
 		CFLAGS += $(CPUFLAGS)
 else
 	ifdef CPUTYPE
-		CFLAGS += -mcpu=$(CPUTYPE) 
+		CFLAGS += -march=$(CPUTYPE) 
 	endif
 	ifeq ($(MMX),1)
 		CFLAGS += -mmmx -mno-ieee-fp
@@ -146,7 +146,7 @@ LIBNAME := lib$(SHORTLIB)
 REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
 	$(CMPATH)/var.c $(CMPATH)/comp.c $(CMPATH)/control.c $(CMPATH)/compglobals.c \
-	src/mt.c src/userspace.c $(CMPATH)/stackcheck.c
+	src/mt.c src/userspace.c $(CMPATH)/stackcheck.c $(CMPATH)/optimize.c
 
 DERIVED_SRCS=$(CMPATH)/lex.yy.c $(CMPATH)/compsl.tab.c
 DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h 

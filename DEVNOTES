@@ -1,3 +1,6 @@
+To disable stack checker run 
+	make <target> STACK_CHECK=0
+
 
 1. all strings representing variable names are duplicated, the duplicate is used
    and is thus the responibilty of the interpreter to free.

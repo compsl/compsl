@@ -53,7 +53,10 @@ endif
 ifdef TRACE_INTERP
 	CFLAGS += -D_COMPSL_TRACE
 endif
-ifdef STACK_CHECK
+
+#allow overrides from command line, but enable by default
+STACK_CHECK = 1
+ifeq ($(STACK_CHECK), 1)
 	CFLAGS += -DCOMP_STACKCHECK
 endif
 

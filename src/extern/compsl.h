@@ -12,7 +12,7 @@ extern "C" {
 int fileCompile(const char *filename , VM*, compart*);
 int stringCompile(const char *code, VM*, compart*);
 
-void runCubbyhole(compart *com, int id); // runs 
+inline void runCubbyhole(compart *com, int id); // runs 
 
 #ifdef __cplusplus
 }

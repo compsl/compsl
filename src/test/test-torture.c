@@ -69,6 +69,6 @@ int main()
 	
 	cubbyid = getCubbyID(com1,"runlots");
 	*x = 0;
-	while(*x < 100000) 
+	while(*x < 1000000) 
 		runCubbyhole(com1, cubbyid);
 }

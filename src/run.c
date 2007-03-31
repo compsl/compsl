@@ -140,105 +140,105 @@ void dumpBytecode(compart *com, int id)
 }
 #endif
 
-__attribute__((flatten)) void runCubbyhole(compart *com, int id)
+inline __attribute__((flatten)) void runCubbyhole(compart *com, int id)
 {
-static void *jmptbl[] = 
+static const int jmptbl[] = 
 {
-	&&NOOP,
+	&&NOOP - &&NOOP,
 //stack operations
-	&&PUSH,
- 	&&APUSH,
- 	&&CPUSH,
- 	&&GPSH,
- 	&&GAPS,
- 	&&POP, 
- 	&&APOP,
- 	&&DPOP,
- 	&&GPOP,
- 	&&GAPP,
- 	&&DUP,
+	&&PUSH - &&NOOP,
+ 	&&APUSH - &&NOOP,
+ 	&&CPUSH - &&NOOP,
+ 	&&GPSH - &&NOOP,
+ 	&&GAPS - &&NOOP,
+ 	&&POP - &&NOOP,
+ 	&&APOP - &&NOOP,
+ 	&&DPOP - &&NOOP,
+ 	&&GPOP - &&NOOP,
+ 	&&GAPP - &&NOOP,
+ 	&&DUP - &&NOOP,
  // native function call
- 	&&CALL, 
+ 	&&CALL - &&NOOP,
  // integer operations
- 	&&ADD, 
- 	&&SUB, 
- 	&&MUL, 
- 	&&DIV, 
+ 	&&ADD - &&NOOP,
+ 	&&SUB - &&NOOP,
+ 	&&MUL - &&NOOP,
+ 	&&DIV - &&NOOP,
  //compares
- 	&&LE,
- 	&&LS,
-	&&EQ,
-	&&NE,
- 	&&GR,
- 	&&GE,
+ 	&&LE - &&NOOP,
+ 	&&LS - &&NOOP,
+	&&EQ - &&NOOP,
+	&&NE - &&NOOP,
+ 	&&GR - &&NOOP,
+ 	&&GE - &&NOOP,
  //mod
- 	&&MOD, 
- 	&&FMOD,
+ 	&&MOD - &&NOOP,
+ 	&&FMOD - &&NOOP,
  //boolean 
- 	&&AND,
- 	&&OR,
- 	&&NOT,
+ 	&&AND - &&NOOP,
+ 	&&OR - &&NOOP,
+ 	&&NOT - &&NOOP,
  //bitwise
- 	&&BAND,
- 	&&BOR,
- 	&&BXOR,
- 	&&BNOT,
+ 	&&BAND - &&NOOP,
+ 	&&BOR - &&NOOP,
+ 	&&BXOR - &&NOOP,
+ 	&&BNOT - &&NOOP,
  //bit shifting
- 	&&SFTL,
- 	&&SFTR,
+ 	&&SFTL - &&NOOP,
+ 	&&SFTR - &&NOOP,
  // float operations 
- 	&&FADD, 
- 	&&FSUB, 
- 	&&FMUL,
- 	&&FDIV, 
+ 	&&FADD - &&NOOP,
+ 	&&FSUB - &&NOOP,
+ 	&&FMUL - &&NOOP,
+ 	&&FDIV - &&NOOP,
  //float compares
- 	&&FLE,
- 	&&FLS,
-	&&FEQ,
-	&&FNE,
- 	&&FGR,
- 	&&FGE,
+ 	&&FLE - &&NOOP,
+ 	&&FLS - &&NOOP,
+	&&FEQ - &&NOOP,
+	&&FNE - &&NOOP,
+ 	&&FGR - &&NOOP,
+ 	&&FGE - &&NOOP,
  // jumps 
- 	&&JMP,
- 	&&JMZ,
- 	&&JMN,
+ 	&&JMP - &&NOOP,
+ 	&&JMZ - &&NOOP,
+ 	&&JMN - &&NOOP,
  //type conversion
- 	&&FLIN, 
- 	&&INFL,
+ 	&&FLIN - &&NOOP,
+ 	&&INFL - &&NOOP,
 //builtins
-	&&ABS,
-	&&ABSF,
-	&&SIN,
-	&&COS,
-	&&TAN,
-	&&ASIN,
-	&&ACOS,
-	&&ATAN,
-	&&SQRT,
-	&&LN,
-	&&FLOOR,
-	&&CEIL,
-	&&RAND,
-	&&ATAN2,
-	&&POW,
-	&&MIN,
-	&&MAX,
-	&&MINF,
-	&&MAXF,
-	&&HYPOT,
+	&&ABS - &&NOOP,
+	&&ABSF - &&NOOP,
+	&&SIN - &&NOOP,
+	&&COS - &&NOOP,
+	&&TAN - &&NOOP,
+	&&ASIN - &&NOOP,
+	&&ACOS - &&NOOP,
+	&&ATAN - &&NOOP,
+	&&SQRT - &&NOOP,
+	&&LN - &&NOOP,
+	&&FLOOR - &&NOOP,
+	&&CEIL - &&NOOP,
+	&&RAND - &&NOOP,
+	&&ATAN2 - &&NOOP,
+	&&POW - &&NOOP,
+	&&MIN - &&NOOP,
+	&&MAX - &&NOOP,
+	&&MINF - &&NOOP,
+	&&MAXF - &&NOOP,
+	&&HYPOT - &&NOOP,
 //misc
- 	&&PYES,
- 	&&NONO,
- 	&&END,
- 	&&HLT,
- 	&&DBG
+ 	&&PYES - &&NOOP,
+ 	&&NONO - &&NOOP,
+ 	&&END - &&NOOP,
+ 	&&HLT - &&NOOP,
+ 	&&DBG - &&NOOP
 
  };
  	#ifdef _COMPSL_TRACE
  		long int tractmp,sppos;
  	#endif
  
-	intfloat stack[VM_STACK_SIZE];
+	static intfloat stack[VM_STACK_SIZE];
 	intfloat *sp = stack; // stack pointer
 	
 	var *lvs = com->vt.vars;
@@ -263,7 +263,7 @@ static void *jmptbl[] =
 			printf("%4ld: %s\tsa=%d\ta1=%d\tsp=%ld\n",
 				tractmp,tractbl[(pc+1)->code],(pc+1)->sa,(pc+1)->a1,sppos);
 		#endif
-		goto *jmptbl[(++pc)->code]; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
+		goto *(&&NOOP + jmptbl[(++pc)->code]); // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
 	NOOP:
 		goto TOP;
 	PUSH:

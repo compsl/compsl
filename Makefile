@@ -73,7 +73,10 @@ endif
 CFLAGS  := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 #CFLAGS += -Wunreachable-code
 
-CFLAGS += -fsingle-precision-constant -ffast-math
+CFLAGS += -fsingle-precision-constant -ffast-math -fno-math-errno 
+CFLAGS += -ffinite-math-only -fno-trapping-math 
+
+CFLAGS += -funit-at-a-time -funroll-loops -funswitch-loops
 
 ifeq ($(findstring MINGW,$(_ARCH)),MINGW)
 else
@@ -117,11 +120,14 @@ ifdef DEBUG
 	CFLAGS += -O0 -ggdb3 -DDEBUG
 	#CFLAGS += -D DEBUG $(DBG_ENVS)
 else
-	CFLAGS += -O2 -fdata-sections -ffunction-sections -frename-registers
+	CFLAGS += -O3 -fdata-sections -ffunction-sections -frename-registers
 	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
 	CFLAGS += -fsched-spec-load -maccumulate-outgoing-args
-	CFLAGS += -minline-all-stringops
-	#CFLAGS += -fbranch-target-load-optimize -fsched2-use-superblocks
+	CFLAGS += -minline-all-stringops -fomit-frame-pointer
+	CFLAGS += -finline-limit=2000
+	CFLAGS += -frename-registers
+	#CFLAGS += -fbranch-target-load-optimize -fbranch-target-load-optimize2
+	# -fsched2-use-superblocks
 	#-fmove-all-movables
 
 	#for asserts

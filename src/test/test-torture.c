@@ -48,10 +48,6 @@ int main()
 	
 	cubbyid = getCubbyID(com2,"bar");
 	dumpBytecode(com2,cubbyid);
-	int tmp =bc_len((bytecode *)(com2->cubbys[cubbyid].code));
-	//for(;((bytecode *)(com2->cubbys[cubbyid].code))[tmp].code != BC_END; tmp++);
-	remUselessDUPs(((bytecode *)(com2->cubbys[cubbyid].code)),tmp, com2, vm);
-	dumpBytecode(com2,cubbyid);
 #endif
 	
 	cubbyid = getCubbyID(com1,"init");

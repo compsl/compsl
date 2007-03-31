@@ -140,7 +140,7 @@ void dumpBytecode(compart *com, int id)
 }
 #endif
 
-inline __attribute__((flatten)) void runCubbyhole(compart *com, int id)
+__attribute__((flatten,regparam (2))) void runCubbyhole(compart *com, int id)
 {
 static const int jmptbl[] = 
 {

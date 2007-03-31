@@ -126,6 +126,7 @@ else
 	CFLAGS += -minline-all-stringops -fomit-frame-pointer
 	CFLAGS += -finline-limit=2000
 	CFLAGS += -frename-registers
+	CFLAGS += -fno-stack-limit
 	#CFLAGS += -fbranch-target-load-optimize -fbranch-target-load-optimize2
 	# -fsched2-use-superblocks
 	#-fmove-all-movables

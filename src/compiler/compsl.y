@@ -114,15 +114,11 @@ int yywrap(void) {
 %locations
 
 %%
-file:
-		header_stuff do_declare cubbys
-        ;
+file: header_stuff do_declare cubbys;
 
 header_stuff: {};
 		
-do_declare: {
-		DPRINTF("Doing declare\n");
-		}
+do_declare: {DPRINTF("Doing declare\n");}
 		DECLARE OPENB decls CLOSEB {
 		  DPRINTF("Done declare\n");
 		}
@@ -239,6 +235,8 @@ stmt:
 			code[l].code = BC_DPOP;
 			code[l+1].code = BC_NONO;
 			$$=code;
+
+			$$ = remUselessDUPs($$, l+1, ccompart->vm, ccompart);
 
 #ifdef COMP_STACKCHECK
 			int rs;

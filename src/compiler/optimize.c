@@ -9,6 +9,7 @@ static void removeBytecode(bytecode *code, int ind, int codelen)
 	{
 		code[i] = code[i+1];
 	}
+	DPRINTF("OPTIMIZE->Saved one bytecode\n");
 }
 
 static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)

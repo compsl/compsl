@@ -11,7 +11,7 @@ static void removeBytecode(bytecode *code, int ind, int codelen)
 	}
 }
 
-int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
+static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 {
 	int sp = 0;
 	bool badStack=false;

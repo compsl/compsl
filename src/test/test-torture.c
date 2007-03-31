@@ -50,7 +50,7 @@ int main()
 	dumpBytecode(com2,cubbyid);
 	int tmp =0;
 	for(;((bytecode *)(com2->cubbys[cubbyid].code))[tmp].code != BC_END; tmp++);
-	remUselessDUPs(((bytecode *)(com2->cubbys[cubbyid].code)),tmp, com2, vm);
+	remUselessDUPs(((bytecode *)(com2->cubbys[cubbyid].code)),tmp+1, com2, vm);
 	dumpBytecode(com2,cubbyid);
 #endif
 	

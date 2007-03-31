@@ -96,7 +96,11 @@ else
 		CFLAGS += -mmmx -mno-ieee-fp
 	endif
 	ifdef SSE
-		CFLAGS += -msse${SSE} -mfpmath=sse -mno-ieee-fp 
+		ifeq ($(SSE),1)
+			CFLAGS += -msse -mfpmath=sse -mno-ieee-fp 
+		else
+			CFLAGS += -msse${SSE} -mfpmath=sse -mno-ieee-fp 
+		endif
 	endif
 endif
 
@@ -195,6 +199,9 @@ help:
 
 static: $(STATIC_LIB_OUT)
 dynamic: $(DYN_LIB_OUT)
+
+bin/dumper: src/dumper.o $(OBJECTS)
+	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
 
 cleantest: clean test 
 

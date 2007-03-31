@@ -9,9 +9,6 @@
 #include "../extern/compsl.h"
 #include "../extern/userspace.h"
 
-#include "../intern/gen.h"
-#include "../intern/bytecode.h"
-
 static const char *test2 = 
 "declare { global int foo; int x,y,z;}\
  cubbyhole init { foo = 1; }\
@@ -41,14 +38,6 @@ int main()
 	compret2 = stringCompile(test2, vm, com2);
 	
 	int16_t cubbyid;
-	
-#ifdef DEBUG
-	cubbyid = getCubbyID(com2,"foo");
-	dumpBytecode(com2,cubbyid);
-	
-	cubbyid = getCubbyID(com2,"bar");
-	dumpBytecode(com2,cubbyid);
-#endif
 	
 	cubbyid = getCubbyID(com1,"init");
 	runCubbyhole(com1, cubbyid);

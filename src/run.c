@@ -133,7 +133,7 @@ void dumpBytecode(compart *com, int id)
 	while(pc->code != BC_END && pc->code != BC_HLT && pc->code != BC_DBG)
 	{
 		long int tractmp = ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode);
-		printf("%4ld: %s\tsa=%d\ta1=%d\n",
+		printf("%4ld: %5s  sa=%- 8d  a1= %u\n",
 			tractmp,tractbl[pc->code],pc->sa,pc->a1);
 		pc++;
 	}
@@ -260,7 +260,7 @@ static const int jmptbl[] =
 			
 			tractmp = ((long int)(pc+1) - (long int)(com->cubbys[id].code))/sizeof(bytecode);
 			sppos =  ((long int)sp - (long int)stack)/sizeof(intfloat);
-			printf("%4ld: %s\tsa=%d\ta1=%d\tsp=%ld\n",
+			printf("%4ld: %s\tsa=%- 8d\ta1=%- 8d\tsp=%ld\n",
 				tractmp,tractbl[(pc+1)->code],(pc+1)->sa,(pc+1)->a1,sppos);
 		#endif
 		goto *(&&NOOP + jmptbl[(++pc)->code]); // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction

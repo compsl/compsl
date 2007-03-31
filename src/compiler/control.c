@@ -98,12 +98,10 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
 
   assert(condLen>0);
 
-  len = condLen+testLen+blockLen+jmpLen+1;
-  
-  cpos = 0;
+  len = 2*condLen+testLen+blockLen+jmpLen+1;
   
   // Calculate the condition value
-  tmp = realloc(cond, sizeof(bytecode)*len); // why does it die here on windows?
+  tmp = realloc(cond, sizeof(bytecode)*len);
   if(tmp == NULL)
   {
   	free(cond);
@@ -113,10 +111,10 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
     internalCompileError("Out of Memory");
   }
   cond = tmp;
-  cpos += condLen;
+  cpos = condLen;
 		  
   cond[cpos].code = BC_JMZ;
-  cond[cpos].sa = blockLen+jmpLen+1;
+  cond[cpos].sa = blockLen+jmpLen+condLen+1;
   cpos+=testLen;
   
   fixBreaksContinues(block, blockLen, condLen+testLen, jmpLen);
@@ -125,10 +123,12 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   memcpy(&cond[cpos], block, sizeof(bytecode)*blockLen);
   cpos+=blockLen;
   
+  memcpy(&cond[cpos], cond, sizeof(bytecode)*condLen);
+  cpos += condLen;
   // jmp
-  cond[cpos].code = BC_JMP;
-  cond[cpos].sa = -(blockLen+condLen+testLen);
-  cpos++;
+  cond[cpos].code = BC_JMN;
+  cond[cpos].sa = (condLen+testLen) - cpos;
+  cpos+=testLen;
 
 
   // End
@@ -164,15 +164,16 @@ void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen) {
     if(bc[i].code == BC_NOOP) {
       if(bc[i].a == CONTINUE_NOOP_IDEN) {
 
-	// Jump to before cond
-	bc[i].code=BC_JMP;
-	bc[i].sa= -(i+testLen);
+		// Jump to before cond
+		bc[i].code=BC_JMP;
+		//bc[i].sa= -(i+testLen);
+		bc[i].sa = len - i;
 
       } else if(bc[i].a == BREAK_NOOP_IDEN) {
 
 	// Jump to after end of block
 	bc[i].code=BC_JMP;
-	bc[i].sa= len+jmpLen-i;
+	bc[i].sa= len+testLen-i;
 
       } else {
 	    compileWarning("Produced code with a NOOP");

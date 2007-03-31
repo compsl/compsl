@@ -92,14 +92,24 @@ int yywrap(void) {
 %token <fval> FLOAT_LIT;
 %token <ival> INT_LIT; 
 %token <sval> IDENTIFIER;
-%token CUBBY CUBBY2 GLOBAL INT BOOL FLOAT TRUE FALSE IF ELSEIF ELSE WHILE BREAK RETURN SEMI COMA OPENB CLOSEB OPENP CLOSEP ISEQ ISNEQ ASSIGN ISGEQ ISLEQ ISGT ISLT NOT AND OR DECLARE PLUS MINUS MULT DIV MOD CLOSES OPENS CONTINUE BOR BAND POW SHFTL SHFTR cubby_keyboard; 
+%token CUBBY CUBBY2 GLOBAL INT FLOAT IF ELSE WHILE BREAK SEMI COMA OPENB CLOSEB OPENP CLOSEP DECLARE CLOSES OPENS CONTINUE;
+
+// regular operators
+%token BOR BAND SHFTL SHFTR PLUS MINUS MULT DIV MOD NOT AND OR;
+
+// comparison, 
+%token ISEQ ISNEQ ISGEQ ISLEQ ISGT ISLT;
+
+// assign
+%token ASSIGN PLUSEQ MINUSEQ MULTEQ DIVEQ MODEQ BANDEQ BOREQ; 
+
 %type <expr> expression math retable;
-%type <ival> cast post_modifier;
+%type <ival> cast post_modifier assignop;
 %type <sval> cubby_id;
 %type <bval> global_modifier intfloat_keyword;
 %type <bc> stmt block ife elsee control;
 %type <xlist> paramlist stmts moreparamlist ident_list more_ident_list;
-%type <void> file header_stuff do_declare cubbys cubby decl decls;
+%type <void> file header_stuff do_declare cubbys cubby decl decls cubby_keyword;
 
 %locations
 
@@ -137,7 +147,7 @@ cubby_id:
 		}
 
 cubby_keyword:
-		CUBBY | CUBBY2;
+		CUBBY {} | CUBBY2 {};
 
 		
 block:
@@ -281,10 +291,28 @@ expression:
 	    YYABORT;
 	}
 |
+	IDENTIFIER assignop expression {
+
+	  expression *expr = readVar($1);
+	  if(NULL == expr) 
+	    YYABORT;
+
+	  expr=bin_op($2,expr,$3);
+	  if(NULL == expr) 
+	    YYABORT;
+
+	  $$ = assignVar($1, expr);
+	  if(NULL == $$) 
+	    YYABORT;
+	}
+|
 	cast expression { 
 	  expr_autocast($1==FLOAT,$2);
 	  $$=$2;
 	}
+
+assignop: PLUSEQ {$$=PLUS;} | MINUSEQ {$$=MINUS;} | MULTEQ {$$=MULT;} | DIVEQ {$$=DIV;} 
+| MODEQ {$$=MOD;} | BANDEQ {$$=BAND;} | BOREQ {$$=BOR;} 
 		
 		
 paramlist:
@@ -325,12 +353,16 @@ cast:
 // MATH		
 ////////////////////////////////////////////////////////////
 
-%nonassoc     ISEQ ISNEQ;
-%nonassoc     ISGEQ ISLEQ ISGT ISLT;
+%nonassoc     PLUSEQ MINUSEQ DIVEQ MULTEQ MODEQ BANDEQ BOREQ;
 %left         OR;
 %left         AND;
+%left         BOR;
+%left         BAND;
+%nonassoc     ISEQ ISNEQ;
+%nonassoc     ISGEQ ISLEQ ISGT ISLT;
+%left         SHFTR SHFTL;
 %left         PLUS MINUS;
-%left         MULT DIV;
+%left         MULT DIV MOD;
 %left         NOT; //unary ops
 		
 
@@ -360,6 +392,14 @@ expression ISGT expression {   $$=bin_op(ISGT,$1,$3);}
 expression ISLEQ expression {   $$=bin_op(ISLEQ,$1,$3);}
 |
 expression ISLT expression {   $$=bin_op(ISLT,$1,$3);}
+|
+expression BOR expression {   $$=bin_op(BOR,$1,$3);}
+|
+expression BAND expression {   $$=bin_op(BAND,$1,$3);}
+|
+expression SHFTL expression {   $$=bin_op(SHFTL,$1,$3);}
+|
+expression SHFTR expression {   $$=bin_op(SHFTR,$1,$3);}
 |
 NOT expression {
   expr_ensureLit($2);

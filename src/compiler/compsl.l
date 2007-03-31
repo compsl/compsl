@@ -27,11 +27,9 @@ global		return GLOBAL;
 int			return INT;
 float		return FLOAT;
 if			return IF;
-elseif		return ELSEIF;
 else		return ELSE;
 while		return WHILE;
 break		return BREAK;
-return		return RETURN;
 continue	return CONTINUE;
 ;			return SEMI;
 ,			return COMA;
@@ -42,11 +40,15 @@ continue	return CONTINUE;
 \[			return OPENS;
 \]			return CLOSES;
 \+			return PLUS;
+\+=			return PLUSEQ;
 -			return MINUS;
+-=			return MINUSEQ;
 \*			return MULT;
+\*=			return MULTEQ;
 \/			return DIV;
+\/=			return DIVEQ;
 \%			return MOD;
-\^			return POW;
+\%=			return MODEQ;
 ==			return ISEQ;
 !=			return ISNEQ;
 =			return ASSIGN;
@@ -59,18 +61,15 @@ continue	return CONTINUE;
 \>\>			return SHFTR;
 &&		return AND;
 & 		return BAND;
+&=			return BANDEQ;
 \|\|		return OR;
 \|		return BOR;
-\ 			;
+\|=			return BOREQ;
+\ 		      	;
 \t			;
 \n		{ DPRINTF("%4d\n",lineNo); lineNo++; };
-[0-9]+  	{	yylval.ival = atoi( yytext ); 
-				return INT_LIT; 	
-			}
-[0-9]*\.[0-9]*  {	
-	yylval.fval = atof(yytext);
-	return FLOAT_LIT; 	
-}
+[0-9]+  	{ yylval.ival = atoi( yytext ); return INT_LIT; }
+[0-9]*\.[0-9]*  { yylval.fval = atof(yytext); return FLOAT_LIT; }
 [_a-zA-Z0-9]+   {
 	yylval.sval = calloc(strlen(yytext)+1, sizeof(char));
 	if(yylval.sval==NULL) { 

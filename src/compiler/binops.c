@@ -89,6 +89,22 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
     if(isFloat) mcode[endi].code = BC_FL;
     else mcode[endi].code = BC_LS;
     break;
+  case BOR:
+    if(isFloat) compileWarning("Doing bitwise OR of floats");
+    mcode[endi].code = BC_BOR;
+    break;
+  case BAND:
+    if(isFloat) compileWarning("Doing bitwise AND of floats");
+    mcode[endi].code = BC_BAND;
+    break;
+  case SHFTL:
+    if(isFloat) compileWarning("Doing left shift of floats");
+    mcode[endi].code = BC_SFTL;
+    break;
+  case SHFTR:
+    if(isFloat) compileWarning("Doing right shift of floats");
+    mcode[endi].code = BC_SFTR;
+    break;
   default:
     free(mcode);
     return NULL;

@@ -134,6 +134,7 @@ cubby:
 			com_addCubby(ccompart, $2, $1);
 #ifdef COMP_STACKCHECK
 			int rs;
+			remUselessDUPs($2, bc_len($2), ccompart->vm, ccompart);
 			rs = stackcheck($2, bc_len($2), ccompart->vm, ccompart);
 			DPRINTF("Ran stackcheck(), result: %i\n",rs);
 			if(rs!=0) 
@@ -241,6 +242,7 @@ stmt:
 
 #ifdef COMP_STACKCHECK
 			int rs;
+			remUselessDUPs($$, bc_len($$), ccompart->vm, ccompart);
 			rs = stackcheck($$, bc_len($$), ccompart->vm, ccompart);
 			DPRINTF("Ran stackcheck() on stmt, result: %i\n",rs);
 			if(rs!=0) 

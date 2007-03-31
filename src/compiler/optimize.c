@@ -5,7 +5,7 @@
 
 static void removeBytecode(bytecode *code, int ind, int codelen)
 {
-	for(int i = ind; i < codelen - 1; i++)
+	for(int i = ind; i < codelen; i++)
 	{
 		code[i] = code[i+1];
 	}

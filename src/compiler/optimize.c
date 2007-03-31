@@ -17,7 +17,7 @@ bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 		if(code[i].code == BC_DPOP)
 			// loop backwards and look for a DUP
 			for(int j = i; j >= 0; j--)
-				if(code[j].code == BC_DUP && stackcheck(&code[j],i - j,vm,com) == 0)
+				if(code[j].code == BC_DUP && stackcheck(&code[j],i - j - 1,vm,com) == 0)
 				{
 					removeBytecode(code,i,codelen);
 					removeBytecode(code,j,codelen);
@@ -25,4 +25,5 @@ bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 					break;
 				}
 	}
+	return code;
 }

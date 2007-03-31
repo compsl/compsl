@@ -10,11 +10,13 @@
 #include "../extern/userspace.h"
 
 #include "../intern/gen.h"
+#include "../intern/bytecode.h"
 
 static const char *test2 = 
-"declare { global int foo; int x;}\
+"declare { global int foo; int x,y,z;}\
  cubbyhole init { foo = 1; }\
- cubby foo {x=0;while(x<3)x = x + 1;}";
+ cubby foo {x=0;while(x<3)x = x + 1;}\
+ cubby bar {x=y=0; z = 1; x = y+z; }";
 
 int main()
 {
@@ -42,6 +44,13 @@ int main()
 	
 #ifdef DEBUG
 	cubbyid = getCubbyID(com2,"foo");
+	dumpBytecode(com2,cubbyid);
+	
+	cubbyid = getCubbyID(com2,"bar");
+	dumpBytecode(com2,cubbyid);
+	int tmp =0;
+	for(;((bytecode *)(com2->cubbys[cubbyid].code))[tmp].code != BC_END; tmp++);
+	remUselessDUPs(((bytecode *)(com2->cubbys[cubbyid].code)),tmp, com2, vm);
 	dumpBytecode(com2,cubbyid);
 #endif
 	

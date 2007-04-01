@@ -1,5 +1,3 @@
-
-
 #################################
 # Build compsl                  #
 #################################
@@ -15,6 +13,8 @@
 # symbols but also have optimizations in the release worthy stuff ie: end up with two
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
+
+COMPSL_VERSION := 0
 
 .SUFFIXES:
 .SUFFIXES: .c .o .h .gch
@@ -175,7 +175,7 @@ DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep)
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
 STATIC_LIB_OUT := bin/$(LIBNAME).a
-DYN_LIB_OUT := bin/$(LIBNAME).so.1.0.1
+DYN_LIB_OUT := bin/$(LIBNAME).so.$(COMPSL_VERSION)
 
 .PHONY: test cleantest all clean
 
@@ -193,7 +193,7 @@ install-strip:
 
 clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
-		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES) $(CMPATH)/compsl.output
+		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES) $(CMPATH)/compsl.output bin/dumper*
 
 help: 
 	@echo "Makefile for CompSL"
@@ -242,7 +242,7 @@ $(STATIC_LIB_OUT): $(OBJECTS)
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
 $(DYN_LIB_OUT): $(OBJECTS)
-	$(CC) -shared -Wl,-soname,$(LIBNAME).so.1 $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(CFLAGS)
+	$(CC) -shared -Wl,-soname,$(DYN_LIB_OUT) $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(CFLAGS)
 
 ################################
 # FLEX/BISON TARGETS           #

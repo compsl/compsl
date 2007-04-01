@@ -85,14 +85,14 @@
 <target name="debug all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG=1</buildArguments>
-<buildTarget>all DEBUG=1</buildTarget>
+<buildTarget>all DEBUG=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="debug test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG='1' -j2</buildArguments>
-<buildTarget>test DEBUG=1</buildTarget>
+<buildTarget>test DEBUG=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
@@ -106,21 +106,21 @@
 <target name="test-valgrind" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>test-valgrind DEBUG=1</buildTarget>
+<buildTarget>test-valgrind DEBUG=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="trace test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>cleantest DEBUG=1 TRACE_INTERP=1 DEBUG_COMP=1</buildTarget>
+<buildTarget>cleantest DEBUG=1 TRACE_INTERP=1 DEBUG_COMP=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
 <target name="compdbg test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>test DEBUG=1 DEBUG_COMP=1</buildTarget>
+<buildTarget>test DEBUG=1 DEBUG_COMP=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
@@ -141,14 +141,14 @@
 <target name="dumper" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>bin/dumper DEBUG=1 TRACE_INTERP=1</buildTarget>
+<buildTarget>bin/dumper DEBUG=1 TRACE_INTERP=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="test trace run" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>test DEBUG=1 TRACE_INTERP=1</buildTarget>
+<buildTarget>test DEBUG=1 TRACE_INTERP=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

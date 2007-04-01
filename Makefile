@@ -121,9 +121,16 @@ endif
 
 
 ifdef DEBUG
-	CFLAGS += -O0 -ggdb3 -DDEBUG
+	CFLAGS += -ggdb3 -DDEBUG
 	#CFLAGS += -D DEBUG $(DBG_ENVS)
+	OPTIMIZE=0
 else
+	#for asserts
+overide CFLAGS += -DNDEBUG
+	OPTIMIZE=1
+endif
+
+ifeq ($(OPTIMIZE),1)
 	CFLAGS += -O3 -fdata-sections -ffunction-sections -frename-registers
 	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
 	CFLAGS += -fsched-spec-load -maccumulate-outgoing-args
@@ -135,11 +142,10 @@ else
 	# -fsched2-use-superblocks
 	#-fmove-all-movables
 
-	#for asserts
-overide CFLAGS += -DNDEBUG
-
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
+else
+	CFLAGS += -O0
 endif
 
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE

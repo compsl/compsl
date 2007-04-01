@@ -45,6 +45,14 @@ const char *src =
         if(a-16) continue;\n\
 		break;\n\
 	}\n\
+ }\n\
+ cubby baz {\n\
+ 	a=5;\n\
+	while (a) {\n\
+    	a = a - 1;\n\
+    	b=3;\n\
+    	while(b) b = b-1;\n\
+	}\n\
 }";
 
 int main()
@@ -72,6 +80,12 @@ int main()
 	printf("\nSecond\n\n");
 	
 	cubbyid = getCubbyID(com,"bar");
+	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
+	dumpBytecode(com,cubbyid);
+	
+	printf("\nThird\n\n");
+	
+	cubbyid = getCubbyID(com,"baz");
 	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
 	dumpBytecode(com,cubbyid);
 	

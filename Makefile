@@ -167,7 +167,10 @@ OBJECTS := $(SOURCES:.c=.o)
 TESTSRCS := $(addprefix src/test/,test-interp.c test-intern.c test-api.c test-comp.c test-torture.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
 
-DEPS := $(SOURCES:.c=.dep)
+OTHERSRC := src/dumper.c
+OTHEROBJ := $(OTHERSRC:.c=.o)
+
+DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep)
 
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
@@ -189,8 +192,8 @@ install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
 
 clean:
-	-rm -f -- $(OBJECTS) $(TESTOBJS) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
-		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES)
+	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
+		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES) $(CMPATH)/compsl.output
 
 help: 
 	@echo "Makefile for CompSL"

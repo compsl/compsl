@@ -12,7 +12,7 @@
 static const char *test2 = 
 "declare { global int foo; int x,y,z;}\
  cubbyhole init { foo = 1; }\
- cubby foo {x=0;while(x<3)x = x + 1;}\
+ cubby foo {x=0;while(x<3) x+=1;}\
  cubby bar {x=y=0; z = 1; x = y+z; }";
 
 int main()
@@ -36,7 +36,10 @@ int main()
 	int32_t *x = com_addInt(com1,"x");
 	compret1 = fileCompile("src/test/torture.csl", vm, com1);
 	compret2 = stringCompile(test2, vm, com2);
-	
+	if(compret1 != 0 || compret2 != 0) {
+		fputs("Bad compsl!",stderr);
+		exit(1);
+	}
 	int16_t cubbyid;
 	
 	cubbyid = getCubbyID(com1,"init");

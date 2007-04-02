@@ -253,12 +253,6 @@ static const int jmptbl[] =
 	
 	bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
 	
-	//bool less, equal, greater; // comparison flags
-	//less = equal = greater = false;
-	
-	//seed the rng
-	init_genrand(time(0));
-	
 	TOP: 
 		#ifdef _COMPSL_TRACE
 			

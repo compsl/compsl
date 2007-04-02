@@ -28,6 +28,9 @@ VM *createVM(void)
     
     tmp->errorno = COMPSL_NOERR;
     
+    //seed the rng
+	init_genrand(time(0));
+    
     return tmp;
 }
 

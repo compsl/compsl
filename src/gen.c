@@ -1,7 +1,6 @@
 #include "intern/gen.h"
 #include "intern/vars.h"
 #include "intern/panic.h"
-#include "intern/exports.h"
 #include "extern/compsl.h"
 #include <inttypes.h>
 #include <stdbool.h>

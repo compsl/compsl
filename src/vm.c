@@ -1,6 +1,5 @@
 #include "extern/compsl.h"
 #include "intern/vars.h"
-#include "intern/exports.h"
 #include <stdlib.h>
 #include <malloc.h>
 #include <ctype.h>
@@ -18,7 +17,7 @@ void init_genrand(unsigned long s);
 /**
  * create a new VM
  */
-DLLEXPORT VM *createVM(void)
+COMPSL_EXPORT VM *createVM(void)
 {
     VM *tmp = (VM *)malloc(sizeof(VM));
     if(tmp == NULL)
@@ -40,7 +39,7 @@ DLLEXPORT VM *createVM(void)
 /**
  * destroy a VM
  */
-DLLEXPORT void destroyVM(VM *vm)
+COMPSL_EXPORT void destroyVM(VM *vm)
 {	
 	varTableDestroy(&(vm->vt));
 	
@@ -59,7 +58,7 @@ DLLEXPORT void destroyVM(VM *vm)
     free(vm);
 }
 
-DLLEXPORT float *vm_getFloat(VM *vm, const char *name)
+COMPSL_EXPORT float *vm_getFloat(VM *vm, const char *name)
 {
 	int i = findVar(&(vm->vt), name);
 	if(i >= 0)
@@ -69,7 +68,7 @@ DLLEXPORT float *vm_getFloat(VM *vm, const char *name)
     return NULL;
 }
 
-DLLEXPORT int32_t *vm_getInt(VM *vm, const char *name)
+COMPSL_EXPORT int32_t *vm_getInt(VM *vm, const char *name)
 {
 	int i = findVar(&(vm->vt), name);
 	if(i >= 0)
@@ -78,7 +77,7 @@ DLLEXPORT int32_t *vm_getInt(VM *vm, const char *name)
     return NULL;
 }
 
-DLLEXPORT float *vm_addFloat(VM *vm, const char *name)
+COMPSL_EXPORT float *vm_addFloat(VM *vm, const char *name)
 {
 	var *tmp;
 	if(vm->vt.cnt < VM_MAX_GVARS)
@@ -93,7 +92,7 @@ DLLEXPORT float *vm_addFloat(VM *vm, const char *name)
 	}
 }
 
-DLLEXPORT int32_t *vm_addInt(VM *vm, const char *name)
+COMPSL_EXPORT int32_t *vm_addInt(VM *vm, const char *name)
 {
 	var *tmp;
 	if(vm->vt.cnt < VM_MAX_GVARS)
@@ -109,7 +108,7 @@ DLLEXPORT int32_t *vm_addInt(VM *vm, const char *name)
 }
 
 
-DLLEXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char *params, bool retFloat, bool isVoid)
+COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char *params, bool retFloat, bool isVoid)
 {
 	if(vm->ncnt == VM_NATIVEFN_INIT_SIZE)
 	{

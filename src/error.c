@@ -1,5 +1,4 @@
 #include "extern/compsl.h"
-#include "intern/exports.h"
 #include <stdio.h>
 
 static const char *emessgs[] =
@@ -19,13 +18,13 @@ static const char *emessgs[] =
 
 //static char *noSuchMessage = "Non-existant error message";
 
-DLLEXPORT const char *compsl_getErrstr(COMPSL_ERROR err)
+COMPSL_EXPORT const char *compsl_getErrstr(COMPSL_ERROR err)
 {
 	//TODO: find some way to bounds check this
 	return emessgs[err];
 }
 
-DLLEXPORT void compsl_printErr(COMPSL_ERROR err)
+COMPSL_EXPORT void compsl_printErr(COMPSL_ERROR err)
 {
 	//TODO: find some way to bounds check this
 	fprintf(stderr, "ERROR %i: %s", err, emessgs[err]);

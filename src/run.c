@@ -3,7 +3,6 @@
 #include "intern/panic.h"
 #include "intern/vars.h"
 #include "intern/bytecode.h"
-#include "intern/exports.h"
 
 #include <malloc.h>
 #include <stdlib.h>
@@ -140,7 +139,7 @@ void dumpBytecode(compart *com, int id)
 }
 #endif
 
-DLLEXPORT void runCubbyhole(compart *com, int id)
+COMPSL_EXPORT void runCubbyhole(compart *com, int id)
 {
 static const int jmptbl[] = 
 {

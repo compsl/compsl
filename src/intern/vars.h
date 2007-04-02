@@ -25,4 +25,7 @@ void varTableCreate(varTable *vt, uint16_t size);
 // also free the names of the vars
 void varTableDestroy(varTable *vt);
 
+bool var_testEqi(var* a, var* b);
+bool var_testEqf(var* a, var* b);
+
 #endif /*VARS_H_*/

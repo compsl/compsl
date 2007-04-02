@@ -1,7 +1,6 @@
 #include "extern/compsl.h"
 #include "intern/gen.h"
 #include "intern/vars.h"
-#include "intern/exports.h"
 #include <inttypes.h>
 #include <malloc.h>
 #include <string.h>

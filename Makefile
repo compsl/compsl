@@ -17,7 +17,7 @@
 COMPSL_VERSION := 0
 
 .SUFFIXES:
-.SUFFIXES: .c .o .h .gch
+#.SUFFIXES: .c .o .h .gch .dep
 
 BISON   = bison
 FLEX    = flex
@@ -79,6 +79,7 @@ CFLAGS += -ffinite-math-only -fno-trapping-math
 CFLAGS += -funit-at-a-time -funroll-loops -funswitch-loops
 
 ifeq ($(findstring MINGW,$(_ARCH)),MINGW)
+	WINDOWS := 1
 else
 	CPUTYPE := auto
 endif
@@ -153,7 +154,7 @@ override CFLAGS += -fvisibility=hidden
 
 override CFLAGS := $(shell ./gcc-optioncheck $(CFLAGS))
 
-MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE
+MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL
 ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS}
 
 
@@ -186,7 +187,15 @@ DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep)
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
 STATIC_LIB_OUT := bin/$(LIBNAME).a
-DYN_LIB_OUT := bin/$(LIBNAME).so.$(COMPSL_VERSION)
+ifdef WINDOWS
+	DYN_LIB_OUT := bin/$(SHORTLIB).dll
+	DEFFILE     := bin/$(SHORTLIB).def
+	IMPLIB      := bin/$(SHORTLIB).a
+	LIBFILE     := bin/$(SHORTLIB).lib
+	ALL_CFLAGS += -DWINDOWS
+else
+	DYN_LIB_OUT := bin/$(LIBNAME).so.$(COMPSL_VERSION)
+endif
 
 .PHONY: test cleantest all clean
 
@@ -202,9 +211,14 @@ install: all
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
 
+strip: all
+	strip --strip-unneeded $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
+
 clean:
-	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(STATIC_LIB_OUT) $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) \
-		$(DEPS) $(TEST_EXES:=*) $(DERIVED_FILES) $(CMPATH)/compsl.output bin/dumper*
+	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(STATIC_LIB_OUT) \
+		 $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*)  \
+		 $(DERIVED_FILES) $(CMPATH)/compsl.output bin/dumper*      \
+		 $(EXPORTS) $(DEFFILE) $(LIBFILE) $(IMPLIB)
 
 help: 
 	@echo "Makefile for CompSL"
@@ -253,11 +267,23 @@ src/run.o: src/run.c
 	$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
 	$(CC) -c $(ALL_CFLAGS) $< -o $@
 
+ifdef WINDOWS
+$(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
+	$(CC) $(ALL_CFLAGS) $(OBJECTS) -shared \
+		-Wl,--out-implib,$(IMPLIB)  \
+		-Wl,--output-def,$(DEFFILE) \
+		-Wl,-soname,$(DYN_LIB_OUT)  \
+		-Wl,--add-stdcall-alias     \
+		-o $(DYN_LIB_OUT)
+	
+else
+$(DYN_LIB_OUT): $(OBJECTS)
+	$(CC) -shared -Wl,-soname,$(DYN_LIB_OUT) $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
+endif
+
 $(STATIC_LIB_OUT): $(OBJECTS)
 	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
-$(DYN_LIB_OUT): $(OBJECTS)
-	$(CC) -shared -Wl,-soname,$(DYN_LIB_OUT) $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(CFLAGS)
 
 ################################
 # FLEX/BISON TARGETS           #

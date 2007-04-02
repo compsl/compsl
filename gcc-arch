@@ -134,6 +134,8 @@ read_cpu_data() {
     flags=""
     if [ "`uname`" = "Linux" ]; then
         read_cpu_data_linux
+    elif [ "`uname`" = "CYGWIN_NT-5.1" ]; then
+        read_cpu_data_linux
     elif [ "`uname`" = "FreeBSD" ]; then
         read_cpu_data_freebsd
     else

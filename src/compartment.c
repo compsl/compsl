@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "intern/exports.h"
 /*
  * TODO: 
  *  1. write insert variable functions
@@ -18,7 +17,7 @@
  *  3. write other stuff
  */
  
-DLLEXPORT compart *createComp(VM *vm)
+COMPSL_EXPORT compart *createComp(VM *vm)
 {
 	compart *tmp = (compart *)malloc(sizeof(compart));
     if(tmp == NULL)
@@ -42,7 +41,7 @@ DLLEXPORT compart *createComp(VM *vm)
     return tmp;
 }
 
-DLLEXPORT void destroyComp(compart *c)
+COMPSL_EXPORT void destroyComp(compart *c)
 {
 	varTableDestroy(&(c->vt));
 	//varTableDestroy(&(c->ct));
@@ -56,7 +55,7 @@ DLLEXPORT void destroyComp(compart *c)
 	free(c);
 }
 
-DLLEXPORT int16_t getCubbyID(compart *com, const char *name)
+COMPSL_EXPORT int16_t getCubbyID(compart *com, const char *name)
 {
 	int i;
 	
@@ -70,7 +69,7 @@ DLLEXPORT int16_t getCubbyID(compart *com, const char *name)
 	return -1; // not found
 }
 
-DLLEXPORT float *com_getFloat(compart *com, const char *name)
+COMPSL_EXPORT float *com_getFloat(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -79,7 +78,7 @@ DLLEXPORT float *com_getFloat(compart *com, const char *name)
     return NULL;	
 }
 
-DLLEXPORT int32_t *com_getInt(compart *com, const char *name)
+COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -88,7 +87,7 @@ DLLEXPORT int32_t *com_getInt(compart *com, const char *name)
     return NULL;	
 }
 
-DLLEXPORT float *com_addFloat(compart *com, const char *name)
+COMPSL_EXPORT float *com_addFloat(compart *com, const char *name)
 {
 	var *tmp;
 	if(com->vt.cnt < COMPART_MAX_VARS)
@@ -103,7 +102,7 @@ DLLEXPORT float *com_addFloat(compart *com, const char *name)
 	}
 }
 
-DLLEXPORT int32_t *com_addInt(compart *com, const char *name)
+COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name)
 {
 	var *tmp;
 	if(com->vt.cnt < COMPART_MAX_VARS)

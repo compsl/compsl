@@ -6,10 +6,7 @@
  
 #include <stdio.h>
 #include <stdlib.h>
-#include "extern/vm.h"
-#include "extern/compart.h"
 #include "extern/compsl.h"
-#include "extern/userspace.h"
 
 #include "intern/gen.h"
 #include "intern/bytecode.h"

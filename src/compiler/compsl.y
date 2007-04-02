@@ -97,13 +97,15 @@ int yywrap(void) {
 // regular operators
 %token BOR BAND SHFTL SHFTR PLUS MINUS MULT DIV MOD NOT AND OR;
 
+%token PLUSPLUS MINUSMINUS;
+
 // comparison, 
 %token ISEQ ISNEQ ISGEQ ISLEQ ISGT ISLT;
 
 // assign
 %token ASSIGN PLUSEQ MINUSEQ MULTEQ DIVEQ MODEQ BANDEQ BOREQ; 
 
-%type <expr> expression math retable;
+%type <expr> expression math retable var;
 %type <ival> cast post_modifier assignop;
 %type <sval> cubby_id;
 %type <bval> global_modifier intfloat_keyword;
@@ -421,29 +423,63 @@ MINUS expression {
 ;
 		
 retable:
-		IDENTIFIER {
-		  $$ = readVar($1);
-		  if(NULL == $$) {
-		    YYABORT;
-		  }
-		}
+var {
+  $$ = $1;
+}
 | 
-		FLOAT_LIT { 
-			expression *a = malloc(sizeof(expression));
-			a->isFloat=true;
-			a->isLiteral=true;
-			a->val.fl=$1;
-			$$ = a;
-		} 
-		| 
-		INT_LIT { 
-			expression *a = malloc(sizeof(expression));
-			a->isFloat=false;
-			a->isLiteral=true;
-			a->val.in=$1;
-			$$ = a;
-		}
-		;
+FLOAT_LIT { 
+  expression *a = malloc(sizeof(expression));
+  a->isFloat=true;
+  a->isLiteral=true;
+  a->val.fl=$1;
+  $$ = a;
+} 
+| 
+INT_LIT { 
+  expression *a = malloc(sizeof(expression));
+  a->isFloat=false;
+  a->isLiteral=true;
+  a->val.in=$1;
+  $$ = a;
+}
+;
+
+var:
+IDENTIFIER {
+  $$ = readVar($1);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+PLUSPLUS IDENTIFIER {
+  $$ = incVar($2, true, false);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+IDENTIFIER PLUSPLUS {
+  $$ = incVar($1, true, true);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+MINUSMINUS IDENTIFIER {
+  $$ = incVar($2, false, false);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+IDENTIFIER MINUSMINUS {
+  $$ = incVar($1, false, true);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+;
 
 control: 
 		ife

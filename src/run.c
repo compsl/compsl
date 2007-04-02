@@ -90,6 +90,8 @@ static const char *tractbl[] =
  	"INFL",
  	"INC",
 	"DEC",
+ 	"FINC",
+	"FDEC",
 //builtins
 	"ABS",
 	"ABSF",
@@ -209,6 +211,8 @@ static const int jmptbl[] =
  	&&INFL - &&NOOP,
  	&&INC - &&NOOP,
  	&&DEC - &&NOOP,
+ 	&&FINC - &&NOOP,
+ 	&&FDEC - &&NOOP,
 //builtins
 	&&ABS - &&NOOP,
 	&&ABSF - &&NOOP,
@@ -352,12 +356,18 @@ static const int jmptbl[] =
  	INC:
  		(sp - 1)->i++;
  		goto TOP;
+ 	FINC:
+ 		(sp - 1)->f++;
+ 		goto TOP;
  	SUB:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i - sp->i;
  		goto TOP;
  	DEC:
  		(sp - 1)->i--;
+ 		goto TOP;
+ 	FDEC:
+ 		(sp - 1)->f--;
  		goto TOP;
  	MUL:
 	 	sp--;

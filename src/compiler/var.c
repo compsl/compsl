@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include "interncomp.h"
 
 expression *assignVar(const char *name, expression *ex) {
@@ -72,5 +73,65 @@ expression *readVar(const char* name) {
   ex->isLiteral=false;
   ex->isFloat=var.isfloat;
   
+  return ex;
+}
+
+
+expression *incVar(const char *name, bool plus, bool post) {
+  symbolinfo var = searchSym(name,ccompart);
+  int cpos;
+  const int len = 5;
+
+  if(var.id<0) {
+    sprintf(sprt,"Symbol \"%s\" not resolved",name);
+    compileError(sprt);
+    return NULL;
+  }
+  
+  if(!var.isvar) {
+    sprintf(sprt,"Symbol \"%s\" is a function but is used in an assignment",name);
+    compileError(sprt);
+    return NULL;
+  }
+  expression *ex = malloc(sizeof(expression));
+  bytecode *bc = calloc(len,sizeof(bytecode));
+
+  if(ex == NULL || bc == NULL) internalCompileError("Out of Memory");
+
+  cpos=0;
+  if(!var.local) 
+    bc[cpos].code = BC_GPSH;
+  else 
+    bc[cpos].code = BC_PUSH;
+  bc[cpos].a1 = var.id;
+  cpos++;
+
+  if(post)
+    bc[cpos++].code = BC_DUP;
+
+  // Increment or decrement the top of the stack
+  if(var.isfloat)
+    bc[cpos++].code = ((plus)?BC_FINC:BC_FDEC);
+  else
+    bc[cpos++].code = ((plus)?BC_INC:BC_DEC);
+
+  if(!post)
+    bc[cpos++].code = BC_DUP;
+
+
+  if(!var.local)
+    bc[cpos].code = BC_GPOP;
+  else
+    bc[cpos].code = BC_POP;
+  bc[cpos].a1 = var.id;
+  cpos++;
+
+  bc[cpos++].code = BC_NONO;
+
+  assert(cpos==len);
+
+  ex->val.bcode=bc;
+  ex->isLiteral=false;
+  ex->isFloat=var.isfloat;
   return ex;
 }

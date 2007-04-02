@@ -52,6 +52,7 @@ int bc_len(bytecode *);
 // var.c
 expression *assignVar(const char *str, expression *e);
 expression *readVar(const char* name);
+expression *incVar(const char *name, bool plus, bool post);
 
 // control.c
 bytecode *ctrlWhile(expression *cond, bytecode *block);

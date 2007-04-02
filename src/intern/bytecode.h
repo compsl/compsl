@@ -64,6 +64,8 @@ typedef enum  {
 	BC_INFL, 	//cast int to float (top of stack)
 	BC_INC,		//increment top of stack
 	BC_DEC,		//decrement top of stack
+	BC_FINC,		//increment top of stack
+	BC_FDEC,		//decrement top of stack
 	
 	//builtins
 	BC_ABS,		BC_ABSF,	BC_SIN,		BC_COS,		//28-2B

@@ -145,6 +145,39 @@ cubbyhole testing
         testeqi(10, a);
         a%=3;
         testeqi(1, a);
+
+        a=1;
+        testeqi(1, a);
+        a++;
+        testeqi(2, a);  
+        a--;
+        testeqi(1, a);
+        ++a;
+        testeqi(2, a);
+        --a;
+        testeqi(1, a);
+        
+        xx=1;
+        xx++;
+        testeqf(2, xx);  
+        xx--;
+        testeqf(1, xx);
+        ++xx;
+        testeqf(2, xx);
+        --xx;
+        testeqf(1, xx);
+
+        a=1;
+        testeqi(1,a++);
+        testeqi(2,a);
+        testeqi(3,++a);
+        testeqi(3,a);
+
+        testeqi(3,a--);
+        testeqi(2,a);
+        testeqi(1,--a);
+        testeqi(1,a);
+
 	test_summary();
 } 
 

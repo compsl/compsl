@@ -20,6 +20,22 @@ extern compart *ccompart;
 %%
 
 \/\/.*\n		{}; /*comment*/
+\/\* {
+  register int c;
+
+  for ( ; ; ) {
+     while ( (c = input()) != '*' &&c != EOF ) ;
+     if ( c == '*' ) {
+       while ( (c = input()) == '*' ) ;
+       if ( c == '/' ) break; 
+     }
+     if ( c == EOF ) {
+       compileWarning( "Comment ended in EOF" );
+       
+       break;
+     }
+   }
+}
 declare	     return DECLARE;
 cubbyhole    return CUBBY;
 cubby    return CUBBY2;

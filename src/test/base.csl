@@ -3,12 +3,14 @@
 // testing BASIC STRUCTURE & COMMENTS
 
 // comment <>?}}}}{
-
+/**/
 
 declare
 {
   // comment
-
+/*sadf sdf sdfsd fsdf*/
+/*sadf sdf sdfsd 
+fsdf*/
 } 
 
 cubbyhole init // comment
@@ -23,6 +25,7 @@ cubbyhole frame
 }
 
 cubbyhole point
-{ 
+{/*
+*/ 
 }
 

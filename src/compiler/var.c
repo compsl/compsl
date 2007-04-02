@@ -111,9 +111,10 @@ expression *incVar(const char *name, bool plus, bool post) {
 
   // Increment or decrement the top of the stack
   if(var.isfloat)
-    bc[cpos++].code = ((plus)?BC_FINC:BC_FDEC);
+    bc[cpos].code = ((plus)?BC_FINC:BC_FDEC);
   else
-    bc[cpos++].code = ((plus)?BC_INC:BC_DEC);
+    bc[cpos].code = ((plus)?BC_INC:BC_DEC);
+  cpos++;
 
   if(!post)
     bc[cpos++].code = BC_DUP;

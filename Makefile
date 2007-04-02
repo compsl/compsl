@@ -211,6 +211,10 @@ help:
 static: $(STATIC_LIB_OUT)
 dynamic: $(DYN_LIB_OUT)
 
+package: clean
+	zip ../compsl.zip *
+	tar -cjf ../compsl.tar.bz2 *
+
 bin/dumper: src/dumper.o $(OBJECTS)
 	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
 

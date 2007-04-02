@@ -16,15 +16,14 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 {
 	int sp = 0;
 	for(int i = 0; i < codelen && i > -1; i++)
-	{
-		if(sp < 0) return sp;
-		
+	{	
+		if(sp < 0) return -1;
 		if(	((BC_POP <= code[i].code && code[i].code <= BC_GAPP) ||
 			(BC_ADD <= code[i].code && code[i].code <= BC_FGE) || 
 			code[i].code == BC_JMZ || code[i].code == BC_JMN) 
 			&& code[i].code != BC_NOT && code[i].code != BC_BNOT)
 		{ // move stack pointer backwards 1 (pop)	
-			sp--;
+			sp--; //if(sp == 0 && i > 0) return -1;
 		}
 		else if((BC_PUSH <= code[i].code && code[i].code <= BC_GAPS) ||
 			 	code[i].code == BC_DUP) 
@@ -42,6 +41,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 			
 			sp -= vm->natives[code[i].a1].numParam;
 			sp++;
+			return -1; // we will just not handle this case...
 		}
 		else if(BC_ABS <= code[i].code && code[i].code <= BC_HYPOT)
 		{ // builtin
@@ -63,6 +63,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 		{
 			internalCompileError("BAD OPCODE!!!!!");
 		}
+		
 	}
 	return sp;
 }

@@ -35,10 +35,11 @@ const char *src =
  		a = a + 1;\n\
  	}\n\
  }\n\
+ cubby pp { a=2; testeqi(2,a++);}\n\
  cubby bar { \n\
  	    a=8;\n\
 	while ( 1+a) {\n\
-        a = a+1;\n\
+        a = a++;\n\
         if(a-16) continue;\n\
 		break;\n\
 	}\n\
@@ -85,6 +86,13 @@ int main()
 	cubbyid = getCubbyID(com,"baz");
 	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
 	dumpBytecode(com,cubbyid);
+	
+	printf("\nINC\n\n");
+	
+	cubbyid = getCubbyID(com,"pp");
+	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
+	dumpBytecode(com,cubbyid);
+	
 	
 //	setvbuf(stdout,NULL,_IONBF,0);
 //	runCubbyhole(com,cubbyid);

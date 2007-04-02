@@ -241,7 +241,7 @@ static const int jmptbl[] =
  		long int tractmp,sppos;
  	#endif
  
-	static intfloat stack[VM_STACK_SIZE];
+	intfloat stack[VM_STACK_SIZE];
 	intfloat *sp = stack; // stack pointer
 	
 	var *lvs = com->vt.vars;

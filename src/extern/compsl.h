@@ -8,7 +8,7 @@
 #define COMPSL_LOCAL
 #endif
 
-#ifdef WINDOWS
+#ifdef WIN32
 	#ifdef BUILDING_COMPSL
 		#define COMPSL_EXPORT __declspec(dllexport)
 	#else

@@ -23,7 +23,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 			code[i].code == BC_JMZ || code[i].code == BC_JMN) 
 			&& code[i].code != BC_NOT && code[i].code != BC_BNOT)
 		{ // move stack pointer backwards 1 (pop)	
-			sp--; //if(sp == 0 && i > 0) return -1;
+			sp--; if(sp == 0 && i < codelen -1) return -1;
 		}
 		else if((BC_PUSH <= code[i].code && code[i].code <= BC_GAPS) ||
 			 	code[i].code == BC_DUP) 
@@ -41,7 +41,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 			
 			sp -= vm->natives[code[i].a1].numParam;
 			sp++;
-			return -1; // we will just not handle this case...
+			//return -1; // we will just not handle this case...
 		}
 		else if(BC_ABS <= code[i].code && code[i].code <= BC_HYPOT)
 		{ // builtin

@@ -6,8 +6,7 @@
 #include <ctype.h>
 #include "interncomp.h"
 #include "node.h"
-#include "../extern/vm.h"
-#include "../extern/compart.h"
+#include "../extern/compsl.h"
 #include "../intern/compartment.h"
 #include "../intern/gen.h"
 #include "compsl.tab.h"

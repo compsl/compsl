@@ -1,5 +1,4 @@
-#include "../extern/port.h"
-#include "../extern/compart.h"
+#include "../extern/compsl.h"
 
 compart *ccompart;
 char *sprt;

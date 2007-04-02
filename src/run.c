@@ -1,11 +1,9 @@
-#include "extern/vm.h"
-#include "extern/compart.h"
-#include "extern/compslerr.h"
 #include "extern/compsl.h"
 
 #include "intern/panic.h"
 #include "intern/vars.h"
 #include "intern/bytecode.h"
+#include "intern/exports.h"
 
 #include <malloc.h>
 #include <stdlib.h>
@@ -15,7 +13,6 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <float.h>
-#include <time.h>
 
 #ifndef __GNUC__
 #error "gotta have gcc!"
@@ -23,7 +20,6 @@
 
 #define VM_FLOAT_EPSILON FLT_EPSILON
 
-void init_genrand(unsigned long s);
 double genrand_real1(void);
 
 #if defined DEBUG || defined _COMPSL_TRACE
@@ -144,7 +140,7 @@ void dumpBytecode(compart *com, int id)
 }
 #endif
 
-__attribute__((flatten,regparam (2))) void runCubbyhole(compart *com, int id)
+DLLEXPORT void runCubbyhole(compart *com, int id)
 {
 static const int jmptbl[] = 
 {

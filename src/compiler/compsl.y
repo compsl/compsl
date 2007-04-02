@@ -17,13 +17,10 @@
 #include "node.h"
 #include "interncomp.h"
 #include "compsl.tab.h"
+#include "../extern/compsl.h"
 #include "../intern/gen.h"
-#include "../extern/vm.h"
-#include "../extern/compart.h"
 #include "../intern/compartment.h"
 #include "../intern/builtins.h"
-#include "../extern/compsl.h"
-#include "../extern/port.h"
 
 #define YYERROR_VERBOSE 1
   

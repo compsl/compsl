@@ -22,3 +22,7 @@ interpreter
 -- extern headers to 1 file?
 -- make release
 -- remove useless dups
+-- write documentation (Overview/Tutorial)
+-- document external API in headers
+-- use macros from export.h to control what symbols are exported by the shared
+	library

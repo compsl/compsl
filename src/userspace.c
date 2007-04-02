@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
-#include "extern/userspace.h"
-
+#include "extern/compsl.h"
+#include "intern/exports.h"
 
 
 ///////////////////////////
@@ -59,14 +59,14 @@ intfloat compsl_printHello(var *args) { printf("Hello world\n"); return (intfloa
 ////////////////////////////////////
 // Actual addFunct calls          //
 ////////////////////////////////////
-void addDebugLibToVm(VM *vm) {
+DLLEXPORT void addDebugLibToVm(VM *vm) {
   assert(addFunc(vm, &compsl_testEqi, "testeqi", "int int",false,true));
   assert(addFunc(vm, &compsl_testEqf, "testeqf", "float float",false,true));
   assert(addFunc(vm, &compsl_testReset, "test_reset", "",false,true));
   assert(addFunc(vm, &compsl_testSummary, "test_summary", "",false,true));
 }
 
-void addPrintLibToVm(VM *vm)
+DLLEXPORT void addPrintLibToVm(VM *vm)
 {
   assert(addFunc(vm, &compsl_printFloat, "printf", "float",false,true));
   assert(addFunc(vm, &compsl_printInt, "printi", "int",false,true));

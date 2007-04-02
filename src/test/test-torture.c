@@ -4,10 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../extern/vm.h"
-#include "../extern/compart.h"
 #include "../extern/compsl.h"
-#include "../extern/userspace.h"
 
 static const char *test2 = 
 "declare { global int foo; int x,y,z;}\

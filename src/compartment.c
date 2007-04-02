@@ -1,8 +1,6 @@
-#include "extern/vm.h"
-#include "extern/compart.h"
+#include "extern/compsl.h"
 #include "intern/compartment.h"
 #include "intern/vars.h"
-#include "extern/var.h"
 #include "compiler/node.h"
 
 #include <malloc.h>
@@ -20,7 +18,7 @@
  *  3. write other stuff
  */
  
-compart *createComp(VM *vm)
+DLLEXPORT compart *createComp(VM *vm)
 {
 	compart *tmp = (compart *)malloc(sizeof(compart));
     if(tmp == NULL)
@@ -43,7 +41,8 @@ compart *createComp(VM *vm)
     
     return tmp;
 }
-void destroyComp(compart *c)
+
+DLLEXPORT void destroyComp(compart *c)
 {
 	varTableDestroy(&(c->vt));
 	//varTableDestroy(&(c->ct));
@@ -57,7 +56,7 @@ void destroyComp(compart *c)
 	free(c);
 }
 
-int16_t getCubbyID(compart *com, const char *name)
+DLLEXPORT int16_t getCubbyID(compart *com, const char *name)
 {
 	int i;
 	
@@ -71,7 +70,7 @@ int16_t getCubbyID(compart *com, const char *name)
 	return -1; // not found
 }
 
-float *com_getFloat(compart *com, const char *name)
+DLLEXPORT float *com_getFloat(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -80,7 +79,7 @@ float *com_getFloat(compart *com, const char *name)
     return NULL;	
 }
 
-int32_t *com_getInt(compart *com, const char *name)
+DLLEXPORT int32_t *com_getInt(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -89,7 +88,7 @@ int32_t *com_getInt(compart *com, const char *name)
     return NULL;	
 }
 
-float *com_addFloat(compart *com, const char *name)
+DLLEXPORT float *com_addFloat(compart *com, const char *name)
 {
 	var *tmp;
 	if(com->vt.cnt < COMPART_MAX_VARS)
@@ -104,7 +103,7 @@ float *com_addFloat(compart *com, const char *name)
 	}
 }
 
-int32_t *com_addInt(compart *com, const char *name)
+DLLEXPORT int32_t *com_addInt(compart *com, const char *name)
 {
 	var *tmp;
 	if(com->vt.cnt < COMPART_MAX_VARS)

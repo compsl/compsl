@@ -1,10 +1,7 @@
 #ifndef GEN_H_
 #define GEN_H_
-#include "../extern/var.h"
-#include "../extern/vm.h"
-#include "../extern/compart.h"
+#include "../extern/compsl.h"
 #include "../intern/vars.h"
-#include "../extern/port.h"
 #include <stdbool.h>
 
 typedef struct

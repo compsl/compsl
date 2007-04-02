@@ -148,7 +148,10 @@ else
 	CFLAGS += -O0
 endif
 
-CFLAGS := $(shell ./gcc-optioncheck $(CFLAGS))
+# for shared library
+override CFLAGS += -fvisibility=hidden
+
+override CFLAGS := $(shell ./gcc-optioncheck $(CFLAGS))
 
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE
 ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS}

@@ -1,8 +1,7 @@
 #ifndef COMPARTMENT_H_
 #define COMPARTMENT_H_
 
-#include "../extern/compart.h"
-#include "../extern/port.h"
+#include "../extern/compsl.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,8 +1,8 @@
 #include "intern/gen.h"
-#include "extern/var.h"
 #include "intern/vars.h"
 #include "intern/panic.h"
-//#include "intern/builtins.h"
+#include "intern/exports.h"
+#include "extern/compsl.h"
 #include <inttypes.h>
 #include <stdbool.h>
 #include <malloc.h>

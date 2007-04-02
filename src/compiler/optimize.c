@@ -15,7 +15,6 @@ static void removeBytecode(bytecode *code, int ind, int codelen)
 static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 {
 	int sp = 0;
-	bool badStack=false;
 	for(int i = 0; i < codelen && i > -1; i++)
 	{
 		if(sp < 0) return sp;

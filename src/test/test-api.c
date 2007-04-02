@@ -1,7 +1,4 @@
 #include "../extern/compsl.h"
-#include "../extern/compart.h"
-#include "../extern/var.h"
-#include "../extern/vm.h"
 
 #include <stdio.h>
 

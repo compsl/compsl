@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include "../intern/bytecode.h"
-#include "../extern/vm.h"
-#include "../extern/compart.h"
+#include "../extern/compsl.h"
 
 #include "../intern/debug.h"
 

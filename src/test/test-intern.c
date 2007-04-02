@@ -1,13 +1,8 @@
 #include "../extern/compsl.h"
-#include "../extern/compart.h"
-#include "../extern/var.h"
-#include "../extern/vm.h"
 
 #include "../intern/gen.h"
 #include "../intern/vars.h"
 #include "../intern/compartment.h"
-
-#include "../extern/port.h"
 
 #include <stdio.h>
 #include <assert.h>

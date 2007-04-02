@@ -4,9 +4,6 @@
 #include <float.h>
 #include <math.h>
 
-#include "../extern/vm.h"
-#include "../extern/compart.h"
-#include "../extern/var.h"
 #include "../intern/bytecode.h"
 #include "../extern/compsl.h"
 #include "../intern/vars.h"

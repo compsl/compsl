@@ -1,11 +1,8 @@
 #ifndef VARS_H_
 #define VARS_H_
 
-#include "../extern/var.h"
-#include "../extern/vm.h"
-#include "../extern/compart.h"
+#include "../extern/compsl.h"
 #include "../intern/vars.h"
-#include "../extern/port.h"
 #include <stdbool.h>
 
 #define INT_VAR 0

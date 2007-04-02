@@ -3,7 +3,7 @@
 #define INTERNCOMP_H_
 
 #include "node.h"
-#include "../extern/port.h"
+#include "../extern/compsl.h"
 #include "../intern/bytecode.h"
 #include "../intern/vars.h"
 #include "../intern/builtins.h"

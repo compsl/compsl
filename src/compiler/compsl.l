@@ -95,5 +95,5 @@ continue	return CONTINUE;
 	strcpy(yylval.sval,yytext);
 	return IDENTIFIER;
 }
-<<EOF>> yyterminate();
+<<EOF>> {yy_delete_buffer(YY_CURRENT_BUFFER); yyterminate();}
 %%

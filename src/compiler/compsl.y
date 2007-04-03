@@ -126,7 +126,8 @@ cubbys:
 		cubby cubbys {} | {};
 cubby:	
 		cubby_id block {
-			com_addCubby(ccompart, $2, $1);
+		  com_addCubby(ccompart, $2, $1);
+		  free($1);
 #ifdef COMP_STACKCHECK
 			int rs;
 			remUselessDUPs($2, bc_len($2), ccompart->vm, ccompart);
@@ -139,6 +140,7 @@ cubby:
 cubby_id:
 		cubby_keyword IDENTIFIER {
 			DPRINTF("> Cubby: %s\n",$2);
+			// MEM: Identifier free'd in 'cubby'
 			$$=$2;
 		}
 
@@ -275,6 +277,7 @@ expression:
 |
 	IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
 	  $$ = function_call($1, $3);
+	  free($1);
 	  if(NULL == $$) 
 	    YYABORT;
 	}
@@ -285,8 +288,10 @@ expression:
 |
 	IDENTIFIER ASSIGN expression {
 	  $$ = assignVar($1, $3);
+	  free($1);
 	  if(NULL == $$) 
 	    YYABORT;
+	  
 	}
 |
 	IDENTIFIER assignop expression {
@@ -302,6 +307,7 @@ expression:
 	  $$ = assignVar($1, expr);
 	  if(NULL == $$) 
 	    YYABORT;
+	  free($1);
 	}
 |
 	cast expression { 
@@ -443,6 +449,7 @@ INT_LIT {
 var:
 IDENTIFIER {
   $$ = readVar($1);
+  free($1);
   if(NULL == $$) {
     YYABORT;
   }
@@ -450,6 +457,7 @@ IDENTIFIER {
 |
 PLUSPLUS IDENTIFIER {
   $$ = incVar($2, true, false);
+  free($2);
   if(NULL == $$) {
     YYABORT;
   }
@@ -457,6 +465,7 @@ PLUSPLUS IDENTIFIER {
 |
 IDENTIFIER PLUSPLUS {
   $$ = incVar($1, true, true);
+  free($1);
   if(NULL == $$) {
     YYABORT;
   }
@@ -464,6 +473,7 @@ IDENTIFIER PLUSPLUS {
 |
 MINUSMINUS IDENTIFIER {
   $$ = incVar($2, false, false);
+  free($2);
   if(NULL == $$) {
     YYABORT;
   }
@@ -471,6 +481,7 @@ MINUSMINUS IDENTIFIER {
 |
 IDENTIFIER MINUSMINUS {
   $$ = incVar($1, false, true);
+  free($1);
   if(NULL == $$) {
     YYABORT;
   }
@@ -519,7 +530,7 @@ decl:
 			  sprintf(sprt, "Declaration of global float var %s failed",iden);
 			  compileWarning(sprt);
 			}
-			
+			free(iden);
 		      }
 		    }
 		    else {
@@ -529,6 +540,7 @@ decl:
 			  sprintf(sprt, "Declaration of global int var %s failed",iden);
 			  compileWarning(sprt);
 			}
+			free(iden);
 		      }
 		    }
 		  }
@@ -540,6 +552,7 @@ decl:
 			  sprintf(sprt, "Declaration of local float var %s failed",iden);
 			  compileWarning(sprt);
 			}
+			free(iden);
 		      }
 		    }
 		    else {
@@ -549,6 +562,7 @@ decl:
 			  sprintf(sprt, "Declaration of local int var %s failed",iden);
 			  compileWarning(sprt);
 			}
+			free(iden);
 		      }
 		    }
 		  }
@@ -617,11 +631,13 @@ ident_list:
 more_ident_list:	
 		IDENTIFIER COMA more_ident_list {
 			list_addToFront($3,$1);
+			// MEM: Identifier is free'd in 'decl'
 			$$=$3;
 		}
 		| IDENTIFIER {
 			list *lst = list_new();
 			list_addToFront(lst,$1);
+			// MEM: Identifier is free'd in 'decl'
 			$$=lst;
 		}
 		;		

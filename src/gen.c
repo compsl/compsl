@@ -7,6 +7,8 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
+
 
 __attribute__ ((pure)) symbolinfo searchSym(const char *name, compart *com) 
 {
@@ -52,6 +54,13 @@ __attribute__ ((pure)) symbolinfo searchSym(const char *name, compart *com)
 	}
 	
 	return res;
+}
+
+
+
+__attribute__ ((constructor)) void init_func(void)
+{
+	
 }
 
 void panic(const char *s)

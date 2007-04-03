@@ -6,14 +6,10 @@
 #include <string.h>
 #include <time.h>
 
-void init_genrand(unsigned long s);
-
-//TODO unbreak all the code broken by swiching to varTable instead of just sructs in the vm
-
 /*TODO: add error checking and set compsl errorno, where possible, otherwise just
  * cleanup and return error condition
  */
-
+void init_genrand(unsigned long s);
 /**
  * create a new VM
  */

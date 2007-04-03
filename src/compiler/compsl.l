@@ -95,5 +95,5 @@ continue	return CONTINUE;
 	strcpy(yylval.sval,yytext);
 	return IDENTIFIER;
 }
-
+<<EOF>> yyterminate();
 %%

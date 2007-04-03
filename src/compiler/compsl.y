@@ -362,6 +362,14 @@ cast:
 // MATH		
 ////////////////////////////////////////////////////////////
 
+/*
+You need to watch out for order of operation - sometimes 
+it doesn't matter like if you on your shirt before your 
+pants - but sometimes it does like if you put on your pants
+before you underwear, then you become superman instead 
+of a man - Chang PMath331 
+*/
+
 %nonassoc     PLUSEQ MINUSEQ DIVEQ MULTEQ MODEQ BANDEQ BOREQ;
 %left         OR;
 %left         AND;

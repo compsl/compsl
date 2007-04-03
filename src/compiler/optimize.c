@@ -3,6 +3,10 @@
 #include "../intern/gen.h"
 #include <stdio.h>
 
+// "Your User can't help you now, my little program!" - Master Control Program, 'Tron'
+
+
+
 static void removeBytecode(bytecode *code, int ind, int codelen)
 {
 	for(int i = ind; i < codelen; i++)
@@ -67,6 +71,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 	}
 	return sp;
 }
+
 bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 {
 	for(int i = 0; i < codelen; i++)

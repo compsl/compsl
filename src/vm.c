@@ -116,6 +116,12 @@ COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char
 		return false;
 	}
 	
+	if(vm == NULL || name == NULL || params == NULL)
+	{
+		vm->errorno = COMPSL_NULL_POINTER;
+		return false;
+	}
+	
 	char *tmp;
 	
 	vm->natives[vm->ncnt].func = func;
@@ -140,6 +146,17 @@ COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char
 		tok= strtok(NULL," ,");
 	}
 	
+	if(tokCount == 0)
+	{
+		vm->natives[vm->ncnt].numParam = 0;
+		vm->natives[vm->ncnt].paramFlags = NULL;
+		vm->natives[vm->ncnt].params = NULL;
+		free(tmp);
+		vm->ncnt++; // we are done adding another native!
+	
+		return true;
+		
+	}
 	vm->natives[vm->ncnt].numParam = tokCount;
 	vm->natives[vm->ncnt].paramFlags = malloc(tokCount * sizeof(uint8_t));
 	vm->natives[vm->ncnt].params = malloc(tokCount * sizeof(var));

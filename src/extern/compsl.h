@@ -60,7 +60,8 @@ typedef enum _COMPSL_ERROR_TYPE_
 	COMPSL_NO_SUCH_CUBBY,
 	COMPSL_NO_SUCH_VAR,
 	COMPSL_NO_SUCH_FUNC,
-	COMPSL_BAD_PARM_FRMT	//invalid native function parameter spec
+	COMPSL_BAD_PARM_FRMT,	//invalid native function parameter spec
+	COMPSL_NULL_POINTER		//got passed a NULL pointer
 } COMPSL_ERROR;
 
 COMPSL_EXPORT const char *compsl_getErrstr(COMPSL_ERROR err);

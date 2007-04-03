@@ -28,7 +28,7 @@
   
   extern FILE *yyin;
   
-  int goparse(FILE* input,const char *fn, compart *com) {
+  int goparse(const char *fn, compart *com) {
     int ret;
     lineNo=1;
     
@@ -42,6 +42,7 @@
     free(sprt); sprt = NULL;
     return ret;
   }
+
   int fileCompile(const char *filename , VM* vm, compart* out) {
     FILE* input = fopen(filename, "r");
     int ret; 
@@ -53,14 +54,14 @@
     yyin = input;
     yyrestart(yyin);
 
-    ret = goparse(input,filename, out);
+    ret = goparse(filename, out);
     fclose(input);
     return ret;
   }
   int stringCompile(const char *code, VM* vm, compart* out) {
     //FILE* input = fmemopen(code,strlen(code)*sizeof(char),"r");
     yy_scan_string(code);
-    return goparse(NULL,"STRING", out);
+    return goparse("STRING", out);
   }
   
 void yyerror(const char *fn, const char *msg) {

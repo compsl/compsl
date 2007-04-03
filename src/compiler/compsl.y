@@ -35,7 +35,6 @@
     DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
     ccompart = com;
     
-  
     sprt=malloc(1024 * sizeof(char));
     ret = yyparse(fn);
     DPRINTF(">> DONE PARSE\n\n");
@@ -44,14 +43,19 @@
     return ret;
   }
   int fileCompile(const char *filename , VM* vm, compart* out) {
-	FILE* input = fopen(filename, "r");
-	if(NULL == input) {
+    FILE* input = fopen(filename, "r");
+    int ret; 
+
+    if(NULL == input) {
       DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",filename);
       return -1;
     }
     yyin = input;
     yyrestart(yyin);
-    return goparse(input,filename, out);
+
+    ret = goparse(input,filename, out);
+    fclose(input);
+    return ret;
   }
   int stringCompile(const char *code, VM* vm, compart* out) {
     //FILE* input = fmemopen(code,strlen(code)*sizeof(char),"r");

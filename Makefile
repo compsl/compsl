@@ -14,7 +14,7 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-COMPSL_VERSION := 0.0.0
+COMPSL_VERSION := 0.1.0
 
 .SUFFIXES:
 #.SUFFIXES: .c .o .h .gch .dep
@@ -229,8 +229,7 @@ static: $(STATIC_LIB_OUT)
 dynamic: $(DYN_LIB_OUT)
 
 package: clean
-	zip ../compsl.zip *
-	tar -cjf ../compsl.tar.bz2 *
+	tar --exclude "*/.svn*" --exclude "*~" -cjvf ../compsl-${COMPSL_VERSION}.tar.bz2 *
 
 bin/dumper: src/dumper.o $(OBJECTS)
 	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
@@ -275,7 +274,6 @@ $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 		-Wl,-soname,$(DYN_LIB_OUT)  \
 		-Wl,--add-stdcall-alias     \
 		-o $(DYN_LIB_OUT)
-	
 else
 $(DYN_LIB_OUT): $(OBJECTS)
 	$(CC) -shared -Wl,-soname,$(DYN_LIB_OUT) $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)

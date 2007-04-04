@@ -122,7 +122,7 @@ endif
 
 
 ifdef DEBUG
-	CFLAGS += -ggdb3 -DDEBUG
+	CFLAGS += -ggdb3 -DDEBUG -fmudflap
 	#CFLAGS += -D DEBUG $(DBG_ENVS)
 	OPTIMIZE=0
 else

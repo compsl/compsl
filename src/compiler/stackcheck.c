@@ -73,12 +73,14 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 			}
 			
 			sp -= vm->natives[code[i].a1].numParam;
-			sp++;
 			if(sp < 0){
 				badStack = true;
 				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", i, lineNo, sp);
 			}
-			else if(sp >= VM_STACK_SIZE){
+			
+			sp++;
+			
+			if(sp >= VM_STACK_SIZE){
 				badStack = true;
 				fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d", i, lineNo, sp - VM_STACK_SIZE + 1);
 			}

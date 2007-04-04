@@ -222,8 +222,8 @@ clean:
 
 help: 
 	@echo "Makefile for CompSL"
-	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic"
-	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP"
+	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic, package"
+	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
 
 static: $(STATIC_LIB_OUT)
 dynamic: $(DYN_LIB_OUT)

@@ -22,7 +22,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "extern/compsl.h"
-
+#include "intern/vars.h"
 
 ///////////////////////////
 // Test lib stuff        //

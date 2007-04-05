@@ -35,6 +35,27 @@
 
 extern VM *cvm;
 extern compart *ccompart;
+int goparse(const char *fn, compart *com);
+
+int fileCompile(const char *filename , VM* vm, compart* out) {
+	FILE* input = fopen(filename, "r");
+	int ret; 
+	
+	if(NULL == input) {
+		DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",filename);
+		return -1;
+	}
+	yyin = input;
+	yyrestart(yyin);
+	
+	ret = goparse(filename, out);
+	fclose(input);
+	return ret;
+}
+int stringCompile(const char *code, VM* vm, compart* out) {
+	yy_scan_string(code);
+	return goparse("STRING", out);
+}  
 
 %}
 

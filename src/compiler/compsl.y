@@ -46,56 +46,29 @@
   
   // NOTE: ANY INCLUDES HERE SHOULD ALSO GO IN compsl.l probably  
   
-  extern FILE *yyin;
+extern FILE *yyin;
   
-  int goparse(const char *fn, compart *com) {
-    int ret;
-    lineNo=1;
-    
-    DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
-    ccompart = com;
-    
-    sprt=malloc(1024 * sizeof(char));
-    ret = yyparse(fn);
-    DPRINTF(">> DONE PARSE\n\n");
-
-    free(sprt); sprt = NULL;
-    return ret;
-  }
-
-  int fileCompile(const char *filename , VM* vm, compart* out) {
-    FILE* input = fopen(filename, "r");
-    int ret; 
-
-    if(NULL == input) {
-      DPRINTF("\n\n>> COULDN'T OPEN INPUT FILE - %s\n",filename);
-      return -1;
-    }
-    yyin = input;
-    yyrestart(yyin);
-
-    ret = goparse(filename, out);
-    fclose(input);
-    return ret;
-  }
-  int stringCompile(const char *code, VM* vm, compart* out) {
-    //FILE* input = fmemopen(code,strlen(code)*sizeof(char),"r");
-    yy_scan_string(code);
-    return goparse("STRING", out);
-  }
+int goparse(const char *fn, compart *com) {
+	int ret;
+	lineNo=1;
+	
+	DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
+	ccompart = com;
+	
+	sprt=malloc(1024 * sizeof(char));
+	ret = yyparse(fn);
+	DPRINTF(">> DONE PARSE\n\n");
+	
+	free(sprt); sprt = NULL;
+	return ret;
+}
   
 void yyerror(const char *fn, const char *msg) {
     fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",fn,msg,lineNo);
     return; 
 }
 
-int yywrap(void) {
-        return 1;
-} 
-
-
-  
-
+int yywrap(void) {return 1;}
 ///////////////////////////////////////////////////////////////////////
 // END FUNC DECLS
 

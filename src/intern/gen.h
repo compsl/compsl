@@ -40,7 +40,7 @@ typedef struct
  * Post: if symbol doesn't exist returns a symbolinfo with id=-1
  * 		 else returns info on symbol
  */
-symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure));
+COMPSL_INTERN symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure));
 
 #ifdef DEBUG
 void dumpBytecode(compart *com, int id);

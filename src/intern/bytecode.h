@@ -28,7 +28,7 @@
 // all instructions working with variables take address in a1 unless otherwise
 // stated
 
-typedef enum  { 
+COMPSL_INTERN typedef enum  { 
 	BC_NOOP = 0, // do nothing
 	BC_PUSH, 	//push local var
 	BC_APUSH, 	//push element from local array (index on stack)

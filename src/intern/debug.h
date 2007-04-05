@@ -34,12 +34,6 @@
 // #define xxx_DPRINTF(...) dbg_noop()
 // #endif
 
-
-
-
-
-
-
 #ifndef DEBUG_H
 #define DEBUG_H 
 

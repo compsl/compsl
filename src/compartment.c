@@ -38,7 +38,7 @@
  *  3. write other stuff
  */
  
-COMPSL_EXPORT compart *createComp(VM *vm)
+COMPSL_EXPORT __attribute__ ((nonnull)) compart *createComp(VM *vm)
 {
 	compart *tmp = (compart *)malloc(sizeof(compart));
     if(tmp == NULL)
@@ -62,7 +62,7 @@ COMPSL_EXPORT compart *createComp(VM *vm)
     return tmp;
 }
 
-COMPSL_EXPORT void destroyComp(compart *c)
+COMPSL_EXPORT  __attribute__ ((nonnull)) void destroyComp(compart *c)
 {
 	varTableDestroy(&(c->vt));
 	//varTableDestroy(&(c->ct));
@@ -76,7 +76,7 @@ COMPSL_EXPORT void destroyComp(compart *c)
 	free(c);
 }
 
-COMPSL_EXPORT int16_t getCubbyID(compart *com, const char *name)
+COMPSL_EXPORT __attribute__ ((pure,nonnull)) int16_t getCubbyID(compart *com, const char *name)
 {
 	int i;
 	
@@ -90,7 +90,7 @@ COMPSL_EXPORT int16_t getCubbyID(compart *com, const char *name)
 	return -1; // not found
 }
 
-COMPSL_EXPORT float *com_getFloat(compart *com, const char *name)
+COMPSL_EXPORT __attribute__ ((nonnull)) float *com_getFloat(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -99,7 +99,7 @@ COMPSL_EXPORT float *com_getFloat(compart *com, const char *name)
     return NULL;	
 }
 
-COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name)
+COMPSL_EXPORT  __attribute__ ((nonnull)) int32_t *com_getInt(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -108,7 +108,7 @@ COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name)
     return NULL;	
 }
 
-COMPSL_EXPORT float *com_addFloat(compart *com, const char *name)
+COMPSL_EXPORT  __attribute__ ((nonnull)) float *com_addFloat(compart *com, const char *name)
 {
 	var *tmp;
 	if(com->vt.cnt < COMPART_MAX_VARS)
@@ -123,7 +123,7 @@ COMPSL_EXPORT float *com_addFloat(compart *com, const char *name)
 	}
 }
 
-COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name)
+COMPSL_EXPORT  __attribute__ ((nonnull)) int32_t *com_addInt(compart *com, const char *name)
 {
 	var *tmp;
 	if(com->vt.cnt < COMPART_MAX_VARS)
@@ -138,7 +138,7 @@ COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name)
 	}
 }
 
-int16_t com_addConst(compart *com, intfloat val)
+COMPSL_INTERN int16_t  __attribute__ ((nonnull)) com_addConst(compart *com, intfloat val)
 {
 	if(com->numConst >= COMPART_MAX_CONSTS)
 	{
@@ -156,7 +156,7 @@ int16_t com_addConst(compart *com, intfloat val)
 	return com->numConst - 1;
 }
 
-int com_addCubby(compart *com, void *code, const char *name) 
+COMPSL_INTERN int  __attribute__ ((nonnull)) com_addCubby(compart *com, void *code, const char *name) 
 {
 	if(com->numCubbys >= COMPART_MAX_CUBBYS)
 	{
@@ -175,7 +175,7 @@ int com_addCubby(compart *com, void *code, const char *name)
 	return true;
 }
 
-int bc_len(bytecode *);
+COMPSL_INTERN int bc_len(bytecode *);
 
 void com_prStats(compart *com){
 	for(int i=0;i<com->numCubbys;i++) {

@@ -70,7 +70,8 @@ ifeq ($(_ARCH),Linux)
 	PLATLIBS := -lm 
 endif
 
-CFLAGS  := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
+CFLAGS := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
+CFLAGS := -Wnonnull
 #CFLAGS += -Wunreachable-code
 
 CFLAGS += -fsingle-precision-constant -ffast-math -fno-math-errno 
@@ -83,28 +84,31 @@ ifeq ($(findstring MINGW,$(_ARCH)),MINGW)
 else
 	CPUTYPE := auto
 endif
+
 ifeq ($(CPUTYPE),auto)
-		override CPUFLAGS := $(shell ./gcc-arch) -mno-ieee-fp
-		ifeq ($(findstring sse,$(CPUFLAGS)),sse)
-			override CPUFLAGS += -mfpmath=sse
-		endif
+		override CPUFLAGS := $(shell ./gcc-arch)
+		#ifeq ($(findstring sse,$(CPUFLAGS)),sse)
+		#	override CPUFLAGS += -mfpmath=sse,387
+		#endif
 		CFLAGS += $(CPUFLAGS)
 else
 	ifdef CPUTYPE
 		CFLAGS += -march=$(CPUTYPE) 
 	endif
 	ifeq ($(MMX),1)
-		CFLAGS += -mmmx -mno-ieee-fp
+		CFLAGS += -mmmx  -DCOMPSL_MMX
 	endif
 	ifdef SSE
+		CFLAGS += -DCOMPSL_SSE
 		ifeq ($(SSE),1)
-			CFLAGS += -msse -mfpmath=sse -mno-ieee-fp 
+			CFLAGS += -msse -mfpmath=sse,387 
 		else
-			CFLAGS += -msse${SSE} -mfpmath=sse -mno-ieee-fp 
+			CFLAGS += -msse${SSE} -mfpmath=sse,387
 		endif
 	endif
 endif
 
+CFLAGS += -mno-ieee-fp
 
 ifdef DEBUG_COMP
 	CFLAGS += -DDEBUG_COMP

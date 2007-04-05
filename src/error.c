@@ -34,6 +34,7 @@ static const char *emessgs[] =
 	"No Such Variable: the specified name does not exist",
 	"No Such Function: the specified name does not exist",
 	"Cannot add function: Bad Function Parameter Format",
+	"Unexpected NULL pointer",
 	NULL
 };
 

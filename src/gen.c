@@ -31,7 +31,7 @@
 #include <time.h>
 
 
-__attribute__ ((pure)) symbolinfo searchSym(const char *name, compart *com) 
+__attribute__ ((pure,nonnull)) symbolinfo searchSym(const char *name, compart *com) 
 {
 	symbolinfo res;
 	

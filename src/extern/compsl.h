@@ -38,13 +38,16 @@
 		#define COMPSL_EXPORT __declspec(dllimport)
 	#endif
 	#define COMPSL_LOCAL
+	#define COMPSL_INTERN
 #else
 	#ifdef HAVE_GCCVISIBILITYPATCH
 		#define COMPSL_EXPORT __attribute__ ((visibility("default")))
 		#define COMPSL_LOCAL __attribute__ ((visibility("hidden")))
+		#define COMPSL_INTERN __attribute__ ((visibility("internal")))
 	#else
 		#define COMPSL_EXPORT
 		#define COMPSL_LOCAL
+		#define COMPSL_INTERN
 	#endif
 #endif
 

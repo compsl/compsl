@@ -233,8 +233,8 @@ fi
 [ -z "$_CFLAGS" ] && _CFLAGS="-march=`try_line "native $line"`"
 
 if echo "$flags" | grep -q "sse"; then
-    if try_gcc_options "-mfpmath=sse"; then #gcc >= 3.1
-        _CFLAGS="$_CFLAGS -mfpmath=sse"
+    if try_gcc_options "-mfpmath=sse,387"; then #gcc >= 3.1
+        _CFLAGS="$_CFLAGS -mfpmath=sse,387"
     fi
 fi
 if echo "$flags" | grep -E -q "(sse3|pni)"; then

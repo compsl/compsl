@@ -245,11 +245,13 @@ static: $(STATIC_LIB_OUT)
 dynamic: $(DYN_LIB_OUT)
 
 package: clean
+	rm -f compsl-${COMPSL_VERSION}.tar.bz2
 	-ln -sf . compsl-${COMPSL_VERSION}
-	tar --exclude "*/.svn*" --exclude "*~" \
-		--exclude "compsl-${COMPSL_VERSION}.tar*"\
+	tar --exclude "*/.svn*" --exclude "*/.settings*" \
+		--exclude "*/.cvsignore" --exclude "*/.*project*" \
 		--exclude "compsl-${COMPSL_VERSION}/compsl-${COMPSL_VERSION}"\
-		-cjvf compsl-${COMPSL_VERSION}.tar.bz2 *
+		-cjvf compsl-${COMPSL_VERSION}.tar.bz2\
+		compsl-${COMPSL_VERSION}
 	-rm -fd ./compsl-${COMPSL_VERSION}
 
 bin/dumper: src/dumper.o $(OBJECTS)

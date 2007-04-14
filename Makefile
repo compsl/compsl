@@ -219,7 +219,11 @@ endif
 all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
 install: all
-
+	$(INSTALL) -d $(libdir)
+	$(INSTALL) -m 755 $(STATIC_LIB_OUT) $(libdir)/$(notdir $(STATIC_LIB_OUT))
+	$(INSTALL) -m 755 $(DYN_LIB_OUT) $(libdir)/$(notdir $(DYN_LIB_OUT))
+	$(INSTALL) extern/compsl.h $(includedir)/compsl.h
+	
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
 

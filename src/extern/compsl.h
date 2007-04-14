@@ -27,20 +27,15 @@
 #include <malloc.h>
 
 #ifdef _MSC_VER
-#define COMPSL_EXPORT __declspec(dllimport)
-#define COMPSL_LOCAL
-#endif
-
-#ifdef WIN32
-	#ifdef BUILDING_COMPSL
-		#define COMPSL_EXPORT __declspec(dllexport)
-	#else
-		#define COMPSL_EXPORT __declspec(dllimport)
-	#endif
+	#define COMPSL_EXPORT __declspec(dllimport) __cdecl
 	#define COMPSL_LOCAL
 	#define COMPSL_INTERN
-#else
-	#ifdef HAVE_GCCVISIBILITYPATCH
+#elif defined(BUILDING_COMPSL)
+	#ifdef WIN32
+		#define COMPSL_EXPORT __declspec(dllexport) _cdecl
+		#define COMPSL_LOCAL
+		#define COMPSL_INTERN
+	#elif (__GNUC__ > 3)
 		#define COMPSL_EXPORT __attribute__ ((visibility("default")))
 		#define COMPSL_LOCAL __attribute__ ((visibility("hidden")))
 		#define COMPSL_INTERN __attribute__ ((visibility("internal")))
@@ -49,6 +44,14 @@
 		#define COMPSL_LOCAL
 		#define COMPSL_INTERN
 	#endif
+#elif defined(WIN32)
+	#define COMPSL_EXPORT __declspec(dllimport) _cdecl
+	#define COMPSL_LOCAL
+	#define COMPSL_INTERN
+#else
+	#define COMPSL_EXPORT
+	#define COMPSL_LOCAL
+	#define COMPSL_INTERN
 #endif
 
 #ifdef __cplusplus

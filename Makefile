@@ -19,12 +19,15 @@ COMPSL_VERSION := 0.1.0
 .SUFFIXES:
 #.SUFFIXES: .c .o .h .gch .dep
 
-BISON   = bison
-FLEX    = flex
-CC      = gcc
-INSTALL = install
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = ${INSTALL} -m 644
+ifndef CC
+CC      		:= gcc
+endif
+
+BISON   		:= bison
+FLEX    		:= flex
+INSTALL 		:= install
+INSTALL_PROGRAM := $(INSTALL)
+INSTALL_DATA 	:= ${INSTALL} -m 644
 
 NORMAL_INSTALL = :
 PRE_INSTALL = :
@@ -153,13 +156,18 @@ else
 	CFLAGS += -O0
 endif
 
-# for shared library
-override CFLAGS += -fvisibility=hidden
+ifdef PIC
+	COMPSL_PIC := -fpic
+endif
 
+# for shared library
+ifndef WINDOWS
+	override CFLAGS += -fvisibility=hidden
+endif
 override CFLAGS := $(shell ./gcc-optioncheck $(CFLAGS))
 
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL
-ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS}
+ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}
 
 
 ################################

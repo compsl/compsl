@@ -3,7 +3,7 @@
 # takes a list of options for gcc and tries them
 # outputs all the ones that work
 
-[ -z "$CC" ] && CC=gcc
+[ -z "$CC" ]
 
 try_gcc_options() {
     $CC $* -S -o /dev/null -xc /dev/null >/dev/null 2>&1

@@ -14,7 +14,7 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-COMPSL_VERSION := 0.1.0
+COMPSL_VERSION := 0.1.1
 
 .SUFFIXES:
 #.SUFFIXES: .c .o .h .gch .dep
@@ -76,7 +76,7 @@ ifeq ($(_ARCH),Linux)
 endif
 
 CFLAGS := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
-CFLAGS := -Wnonnull
+CFLAGS += -Wnonnull
 #CFLAGS += -Wunreachable-code
 
 CFLAGS += -fsingle-precision-constant -ffast-math -fno-math-errno 

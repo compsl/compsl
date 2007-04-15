@@ -28,6 +28,8 @@ FLEX    		:= flex
 INSTALL 		:= install
 INSTALL_PROGRAM := $(INSTALL)
 INSTALL_DATA 	:= ${INSTALL} -m 644
+LDCONFIG		:= ldconfig
+RANLIB			:= ranlib
 
 NORMAL_INSTALL = :
 PRE_INSTALL = :
@@ -220,9 +222,12 @@ all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
 install: all
 	$(INSTALL) -d $(libdir)
+	$(INSTALL) -d $(includedir)
 	$(INSTALL) -m 755 $(STATIC_LIB_OUT) $(libdir)/$(notdir $(STATIC_LIB_OUT))
 	$(INSTALL) -m 755 $(DYN_LIB_OUT) $(libdir)/$(notdir $(DYN_LIB_OUT))
-	$(INSTALL) extern/compsl.h $(includedir)/compsl.h
+	$(INSTALL) src/extern/compsl.h $(includedir)/compsl.h
+	$(LDCONFIG) -n $(libdir)
+	$(RANLIB) $(libdir)/$(notdir $(STATIC_LIB_OUT))
 	
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
@@ -297,7 +302,7 @@ $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 		-o $(DYN_LIB_OUT)
 else
 $(DYN_LIB_OUT): $(OBJECTS)
-	$(CC) -shared -Wl,-soname,$(DYN_LIB_OUT) $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
+	$(CC) -shared -Wl,-soname,lib$(SHORTLIB).so $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
 endif
 
 $(STATIC_LIB_OUT): $(OBJECTS)

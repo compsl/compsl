@@ -20,16 +20,16 @@ COMPSL_VERSION := 0.1.1
 #.SUFFIXES: .c .o .h .gch .dep
 
 ifndef CC
-CC      		:= gcc
+CC      		= gcc
 endif
 
-BISON   		:= bison
-FLEX    		:= flex
-INSTALL 		:= install
-INSTALL_PROGRAM := $(INSTALL)
-INSTALL_DATA 	:= ${INSTALL} -m 644
-LDCONFIG		:= ldconfig
-RANLIB			:= ranlib
+BISON   		= bison
+FLEX    		= flex
+INSTALL 		= install
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA 	= ${INSTALL} -m 644
+LDCONFIG		= ldconfig
+RANLIB			= ranlib
 
 NORMAL_INSTALL = :
 PRE_INSTALL = :
@@ -75,7 +75,7 @@ ifeq ($(_ARCH),Linux)
 	PLATLIBS := -lm 
 endif
 
-CFLAGS := -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
+CFLAGS  = -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 CFLAGS += -Wnonnull
 #CFLAGS += -Wunreachable-code
 
@@ -85,7 +85,7 @@ CFLAGS += -ffinite-math-only -fno-trapping-math
 CFLAGS += -funit-at-a-time -funroll-loops -funswitch-loops
 
 ifeq ($(findstring MINGW,$(_ARCH)),MINGW)
-	WINDOWS := 1
+	override WINDOWS := 1
 else
 	CPUTYPE := auto
 endif

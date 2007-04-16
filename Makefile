@@ -166,7 +166,7 @@ endif
 ifndef WINDOWS
 	override CFLAGS += -fvisibility=hidden
 endif
-override CFLAGS := $(shell ./gcc-optioncheck $(CFLAGS))
+override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
 
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL
 ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}

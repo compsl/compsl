@@ -19,7 +19,7 @@ COMPSL_VERSION := 0.1.1
 .SUFFIXES:
 #.SUFFIXES: .c .o .h .gch .dep
 
-ifndef CC
+ifeq ($(strip $(CC)),)
 CC      		= gcc
 endif
 

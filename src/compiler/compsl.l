@@ -78,25 +78,25 @@ int stringCompile(const char *code, VM* vm, compart* out) {
      }
    }
 }
-declare	     return DECLARE;
-cubbyhole    return CUBBY;
-cubby    return CUBBY2;
-global		return GLOBAL;
-int			return INT;
-float		return FLOAT;
-if			return IF;
-else		return ELSE;
-while		return WHILE;
-break		return BREAK;
-continue	return CONTINUE;
-;			return SEMI;
+declare	     return DECLARE_KEYWORD;
+cubbyhole    return CUBBYHOLE_KEYWORD;
+cubby    return CUBBY_KEYWORD;
+global		return GLOBAL_KEYWORD;
+int			return INT_KEYWORD;
+float		return FLOAT_KEYWORD;
+if			return IF_KEYWORD;
+else		return ELSE_KEYWORD;
+while		return WHILE_KEYWORD;
+break		return BREAK_KEYWORD;
+continue	return CONTINUE_KEYWORD;
+;			return SEMICOLON;
 ,			return COMA;
-\{			return OPENB; /*"bracket"*/
-\}			return CLOSEB;
-\(			return OPENP; /*"parenthesis"*/
-\)			return CLOSEP;
-\[			return OPENS;
-\]			return CLOSES;
+\{			return OPEN_CURLY_BRACKET; /*"bracket"*/
+\}			return CLOSE_CURLY_BRACKET;
+\(			return OPEN_ROUND_BRACKET; /*"parenthesis"*/
+\)			return CLOSE_ROUND_BRACKET;
+\[			return OPEN_SQUARE_BRACKET;
+\]			return CLOSE_SQUARE_BRACKET;
 \+			return PLUS;
 \+\+			return PLUSPLUS;
 \+=			return PLUSEQ;
@@ -117,19 +117,19 @@ continue	return CONTINUE;
 \>			return ISGT;
 \<			return ISLT;
 !			return NOT;
-\<\<			return SHFTL;
-\>\>			return SHFTR;
+\<\<			return SHIFT_LEFT;
+\>\>			return SHIFT_RIGHT;
 &&		return AND;
-& 		return BAND;
-&=			return BANDEQ;
+& 		return BITWISE_AND;
+&=			return BITWISE_ANDEQ;
 \|\|		return OR;
-\|		return BOR;
-\|=			return BOREQ;
+\|		return BITWISE_OR;
+\|=			return BITWISE_OREQ;
 \ 		      	;
 \t			;
 \n		{ DPRINTF("%4d\n",lineNo); lineNo++; };
-[0-9]+  	{ yylval.ival = atoi( yytext ); return INT_LIT; }
-[0-9]*\.[0-9]*  { yylval.fval = atof(yytext); return FLOAT_LIT; }
+[0-9]+  	{ yylval.ival = atoi( yytext ); return INT_LITERAL; }
+[0-9]*\.[0-9]*  { yylval.fval = atof(yytext); return FLOAT_LITERAL; }
 [_a-zA-Z0-9]+   {
 	yylval.sval = calloc(strlen(yytext)+1, sizeof(char));
 	if(yylval.sval==NULL) { 

@@ -84,13 +84,13 @@ int yywrap(void) {return 1;}
 	bytecode *bc;
 }
 
-%token <fval> FLOAT_LIT;
-%token <ival> INT_LIT; 
+%token <fval> FLOAT_LITERAL;
+%token <ival> INT_LITERAL; 
 %token <sval> IDENTIFIER;
-%token CUBBY CUBBY2 GLOBAL INT FLOAT IF ELSE WHILE BREAK SEMI COMA OPENB CLOSEB OPENP CLOSEP DECLARE CLOSES OPENS CONTINUE;
+%token CUBBYHOLE_KEYWORD CUBBY_KEYWORD GLOBAL_KEYWORD INT_KEYWORD FLOAT_KEYWORD IF_KEYWORD ELSE_KEYWORD WHILE_KEYWORD BREAK_KEYWORD SEMICOLON COMA OPEN_CURLY_BRACKET CLOSE_CURLY_BRACKET OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET DECLARE_KEYWORD CLOSE_SQUARE_BRACKET OPEN_SQUARE_BRACKET CONTINUE_KEYWORD;
 
 // regular operators
-%token BOR BAND SHFTL SHFTR PLUS MINUS MULT DIV MOD NOT AND OR;
+%token BITWISE_OR BITWISE_AND SHIFT_LEFT SHIFT_RIGHT PLUS MINUS MULT DIV MOD NOT AND OR;
 
 %token PLUSPLUS MINUSMINUS;
 
@@ -98,7 +98,7 @@ int yywrap(void) {return 1;}
 %token ISEQ ISNEQ ISGEQ ISLEQ ISGT ISLT;
 
 // assign
-%token ASSIGN PLUSEQ MINUSEQ MULTEQ DIVEQ MODEQ BANDEQ BOREQ; 
+%token ASSIGN PLUSEQ MINUSEQ MULTEQ DIVEQ MODEQ BITWISE_ANDEQ BITWISE_OREQ; 
 
 %type <expr> expression math retable var;
 %type <ival> cast array_length assignop;
@@ -116,7 +116,7 @@ file: header_stuff do_declare cubbys;
 header_stuff: {};
 		
 do_declare: {DPRINTF("Doing declare\n");}
-		DECLARE OPENB decls CLOSEB {
+		DECLARE_KEYWORD OPEN_CURLY_BRACKET decls CLOSE_CURLY_BRACKET {
 		  DPRINTF("Done declare\n");
 		}
 
@@ -143,11 +143,11 @@ cubby_id:
 		}
 
 cubby_keyword:
-		CUBBY {} | CUBBY2 {};
+		CUBBY_KEYWORD {} | CUBBYHOLE_KEYWORD {};
 
 		
 block:
-		OPENB stmts CLOSEB {
+		OPEN_CURLY_BRACKET stmts CLOSE_CURLY_BRACKET {
 			DPRINTF("Parsed block with %i statements\n",$2->length);
 
 			llist *cur=$2->head;
@@ -185,11 +185,11 @@ block:
 			$$=mcode;
 		}
 		|
-		stmt SEMI {
+		stmt SEMICOLON {
 			$$=$1;
 		}
 		|
-		SEMI {
+		SEMICOLON {
 		  bytecode *r = calloc(1,sizeof(bytecode));
 		  r[0].code=BC_NONO;
 		  $$ = r;
@@ -197,7 +197,7 @@ block:
 
 
 stmts:
-		stmts stmt SEMI {
+		stmts stmt SEMICOLON {
 			list_addToBack($1,$2);
 			$$=$1;
 		}
@@ -246,7 +246,7 @@ stmt:
 #endif
 		}
         | 
-        BREAK {
+        BREAK_KEYWORD {
 		  DPRINTF("Break statement\n");
 		  bytecode *code = calloc(2, sizeof(bytecode));
 		  code[0].code = BC_NOOP; //JMP 0 = break, tobe parsed in block
@@ -255,7 +255,7 @@ stmt:
 		  $$=code;
         }
         |
-        CONTINUE {
+        CONTINUE_KEYWORD {
         	DPRINTF("Continue statement\n");
 			bytecode *code = calloc(2, sizeof(bytecode));
 			code[0].code = BC_NOOP; //NOOP 0 = continue, tobe parsed in block
@@ -265,7 +265,7 @@ stmt:
         };
 		
 expression:
-	OPENP expression CLOSEP {
+	OPEN_ROUND_BRACKET expression CLOSE_ROUND_BRACKET {
 	  $$ = $2;
 	}
 |
@@ -273,7 +273,7 @@ expression:
 	  $$ = $1;
 	}
 |
-	IDENTIFIER OPENP paramlist CLOSEP { 		// FUNCTION CALL
+	IDENTIFIER OPEN_ROUND_BRACKET paramlist CLOSE_ROUND_BRACKET { 		// FUNCTION CALL
 	  $$ = function_call($1, $3);
 	  free($1);
 	  if(NULL == $$) 
@@ -309,12 +309,12 @@ expression:
 	}
 |
 	cast expression { 
-	  expr_autocast($1==FLOAT,$2);
+	  expr_autocast($1==FLOAT_KEYWORD,$2);
 	  $$=$2;
 	}
 
 assignop: PLUSEQ {$$=PLUS;} | MINUSEQ {$$=MINUS;} | MULTEQ {$$=MULT;} | DIVEQ {$$=DIV;} 
-| MODEQ {$$=MOD;} | BANDEQ {$$=BAND;} | BOREQ {$$=BOR;} 
+| MODEQ {$$=MOD;} | BITWISE_ANDEQ {$$=BITWISE_AND;} | BITWISE_OREQ {$$=BITWISE_OR;} 
 		
 		
 paramlist:
@@ -341,12 +341,12 @@ moreparamlist:
 		;
 
 cast: 
-		OPENP INT CLOSEP {
-			$$ = INT; 
+		OPEN_ROUND_BRACKET INT_KEYWORD CLOSE_ROUND_BRACKET {
+			$$ = INT_KEYWORD; 
 		}
 		| 
-		OPENP FLOAT CLOSEP {
-			$$ = FLOAT;
+		OPEN_ROUND_BRACKET FLOAT_KEYWORD CLOSE_ROUND_BRACKET {
+			$$ = FLOAT_KEYWORD;
 		}
 		;
 
@@ -363,14 +363,14 @@ before you underwear, then you become superman instead
 of a man - Chang PMath331 
 */
 
-%nonassoc     PLUSEQ MINUSEQ DIVEQ MULTEQ MODEQ BANDEQ BOREQ;
+%nonassoc     PLUSEQ MINUSEQ DIVEQ MULTEQ MODEQ BITWISE_ANDEQ BITWISE_OREQ;
 %left         OR;
 %left         AND;
-%left         BOR;
-%left         BAND;
+%left         BITWISE_OR;
+%left         BITWISE_AND;
 %nonassoc     ISEQ ISNEQ;
 %nonassoc     ISGEQ ISLEQ ISGT ISLT;
-%left         SHFTR SHFTL;
+%left         SHIFT_RIGHT SHIFT_LEFT;
 %left         PLUS MINUS;
 %left         MULT DIV MOD;
 %left         NOT; //unary ops
@@ -403,13 +403,13 @@ expression ISLEQ expression {   $$=bin_op(ISLEQ,$1,$3);}
 |
 expression ISLT expression {   $$=bin_op(ISLT,$1,$3);}
 |
-expression BOR expression {   $$=bin_op(BOR,$1,$3);}
+expression BITWISE_OR expression {   $$=bin_op(BITWISE_OR,$1,$3);}
 |
-expression BAND expression {   $$=bin_op(BAND,$1,$3);}
+expression BITWISE_AND expression {   $$=bin_op(BITWISE_AND,$1,$3);}
 |
-expression SHFTL expression {   $$=bin_op(SHFTL,$1,$3);}
+expression SHIFT_LEFT expression {   $$=bin_op(SHIFT_LEFT,$1,$3);}
 |
-expression SHFTR expression {   $$=bin_op(SHFTR,$1,$3);}
+expression SHIFT_RIGHT expression {   $$=bin_op(SHIFT_RIGHT,$1,$3);}
 |
 NOT expression {
   expr_ensureLit($2);
@@ -435,7 +435,7 @@ var {
   $$ = $1;
 }
 | 
-FLOAT_LIT { 
+FLOAT_LITERAL { 
   expression *a = malloc(sizeof(expression));
   a->isFloat=true;
   a->isLiteral=true;
@@ -443,7 +443,7 @@ FLOAT_LIT {
   $$ = a;
 } 
 | 
-INT_LIT { 
+INT_LITERAL { 
   expression *a = malloc(sizeof(expression));
   a->isFloat=false;
   a->isLiteral=true;
@@ -497,7 +497,7 @@ IDENTIFIER MINUSMINUS {
 control: 
 		ife
 		|
-		WHILE OPENP expression CLOSEP block {
+		WHILE_KEYWORD OPEN_ROUND_BRACKET expression CLOSE_ROUND_BRACKET block {
 		  $$ = ctrlWhile($3,$5);
 		  if(NULL == $$) {
 		    YYABORT;
@@ -505,7 +505,7 @@ control:
 		};
 
 ife: 
-		IF OPENP expression CLOSEP block elsee {
+		IF_KEYWORD OPEN_ROUND_BRACKET expression CLOSE_ROUND_BRACKET block elsee {
 		  $$ = ctrlIf($3,$5,$6);
 		  if(NULL == $$) {
 		    YYABORT;
@@ -513,15 +513,15 @@ ife:
 		} 
 
 elsee:
-		ELSE ife { $$ = $2; }
+		ELSE_KEYWORD ife { $$ = $2; }
 		|
-		ELSE block { $$ = $2; }
+		ELSE_KEYWORD block { $$ = $2; }
 		| 
 		{ $$ = (bytecode*)0; }
 		;
 		
 decls:
-		decl SEMI decls {} | {};
+		decl SEMICOLON decls {} | {};
 
 decl:	
 		global_modifier intfloat_keyword ident_list {
@@ -582,18 +582,18 @@ decl:
 		
 		
 intfloat_keyword:
-		INT  { 
+		INT_KEYWORD  { 
 		  DPRINTF("  Declaration is an int\n");
 			$$=false; 
 		}
 		| 
-		FLOAT { 
+		FLOAT_KEYWORD { 
 		  DPRINTF("  Declaration is a float\n");
 			$$=true; 
 		};
 		
 global_modifier:
-		GLOBAL { 
+		GLOBAL_KEYWORD { 
 		  DPRINTF("  Declaration is a global\n");
 			$$=1; 
 		}
@@ -603,7 +603,7 @@ global_modifier:
 		};
 
 array_length:
-		OPENS expression CLOSES {
+		OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET {
 		  DPRINTF("  Declaration is array\n");
 			if(!$2->isLiteral) {
 				compileError("Array declaration with non-literal length");

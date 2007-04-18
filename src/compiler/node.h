@@ -45,6 +45,11 @@ typedef struct _list_t {
 	llist *head;
 } list;
 
+typedef struct _ipair_t {
+  void *a;
+  int b;
+} ipair;
+
 
 list* list_new(void);
 void* list_get(list *, int);

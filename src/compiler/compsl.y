@@ -101,7 +101,7 @@ int yywrap(void) {return 1;}
 %token ASSIGN PLUSEQ MINUSEQ MULTEQ DIVEQ MODEQ BANDEQ BOREQ; 
 
 %type <expr> expression math retable var;
-%type <ival> cast post_modifier assignop;
+%type <ival> cast array_length assignop;
 %type <sval> cubby_id;
 %type <bval> global_modifier intfloat_keyword;
 %type <bc> stmt block ife elsee control;
@@ -524,53 +524,56 @@ decls:
 		decl SEMI decls {} | {};
 
 decl:	
-		global_modifier intfloat_keyword ident_list post_modifier {
+		global_modifier intfloat_keyword ident_list {
 		  bool isGlobal = $1;
 		  bool isFloat = $2;
+		  bool stat;
+		  ipair* p;
+		  char* iden;
+
 		  DPRINTF("Doing decl");
-		  if(isGlobal) {
-		    if(isFloat) {
-		      char* iden;
-		      while((iden = (char*)list_popFromFront($3))) {
-			if(!vm_addFloat(ccompart->vm,iden)) {
-			  sprintf(sprt, "Declaration of global float var %s failed",iden);
-			  compileWarning(sprt);
+		  
+		  while((p = (ipair*)list_popFromFront($3))) {
+		    iden = p->a;
+
+		    if(p->b<0) {
+		      if(isGlobal){
+			if(isFloat) {
+			  stat = vm_addFloat(ccompart->vm,iden);
+			} else {
+			  stat = vm_addInt(ccompart->vm,iden);
 			}
-			free(iden);
-		      }
-		    }
-		    else {
-		      char* iden;
-		      while((iden = (char*)list_popFromFront($3))) {
-			if(!vm_addInt(ccompart->vm,iden)) {
-			  sprintf(sprt, "Declaration of global int var %s failed",iden);
-			  compileWarning(sprt);
+		      } else {
+			if(isFloat) {
+			  stat = com_addFloat(ccompart,iden);
+			} else {
+			  stat = com_addInt(ccompart,iden);
 			}
-			free(iden);
 		      }
-		    }
-		  }
-		  else {
-		    if(isFloat) {
-		      char* iden;
-		      while((iden = (char*)list_popFromFront($3))) {
-			if(!com_addFloat(ccompart,iden)) {
-			  sprintf(sprt, "Declaration of local float var %s failed",iden);
-			  compileWarning(sprt);
-			}
-			free(iden);
+		    } else{
+		      varTable *vt;
+		      if(isGlobal)
+			vt = &ccompart->vm->vt;
+		      else 
+			vt = &ccompart->vt;
+		      
+		      // At some point this can be moved to a seperate function
+		      var *tmp=addVar(vt,((isFloat)?FLOAT_VAR:INT_VAR) | IS_ARRAY,iden);
+		      tmp->size = p->b;
+		      tmp->p = calloc(p->b, sizeof(intfloat));
+		      if(NULL==tmp->p) {
+			compileError("Out of memory when declaring array :(");
+			YYERROR;
 		      }
+		      stat = true; 
 		    }
-		    else {
-		      char* iden;
-		      while((iden = (char*)list_popFromFront($3))) {
-			if(!com_addInt(ccompart,iden)) {
-			  sprintf(sprt, "Declaration of local int var %s failed",iden);
-			  compileWarning(sprt);
-			}
-			free(iden);
-		      }
+		    
+		    if(!stat) {
+		      sprintf(sprt, "Declaration of variable: \"%s\" failed, global=%i, float=%i",iden, isGlobal, isFloat);
+		      compileWarning(sprt);
 		    }
+		    free(iden);
+		    free(p);
 		  }
 		  DPRINTF(" - Done declare\n");
 		  list_free($3);
@@ -599,7 +602,7 @@ global_modifier:
 			$$=0;
 		};
 
-post_modifier:
+array_length:
 		OPENS expression CLOSES {
 		  DPRINTF("  Declaration is array\n");
 			if(!$2->isLiteral) {
@@ -635,16 +638,27 @@ ident_list:
 		;
 
 more_ident_list:	
-		IDENTIFIER COMA more_ident_list {
-			list_addToFront($3,$1);
-			// MEM: Identifier is free'd in 'decl'
-			$$=$3;
+		IDENTIFIER array_length COMA more_ident_list {
+		  ipair * p = calloc(1, sizeof(ipair));
+
+		  p->a = $1;
+		  p->b = $2;
+
+		  list_addToFront($4,p);
+
+		  // MEM: Identifier is free'd in 'decl'
+		  $$=$4;
 		}
-		| IDENTIFIER {
-			list *lst = list_new();
-			list_addToFront(lst,$1);
-			// MEM: Identifier is free'd in 'decl'
-			$$=lst;
+		| IDENTIFIER array_length {
+		  list *lst = list_new();
+		  ipair * p = calloc(1, sizeof(ipair));
+
+		  p->a = $1;
+		  p->b = $2;
+		  list_addToFront(lst,p);
+
+		  // MEM: Identifier is free'd in 'decl'
+		  $$=lst;
 		}
 		;		
 				

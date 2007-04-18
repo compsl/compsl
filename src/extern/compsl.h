@@ -166,7 +166,7 @@ typedef struct _VM_t
 COMPSL_EXPORT VM *createVM(void);
 COMPSL_EXPORT void destroyVM(VM *vm);
 
-//NOTE: the string of the name of new vars is copyed and the copy is retained by the VM
+//NOTE: the string of the name of new vars is copied and the copy is retained by the VM
 //      for the purpose of identifying the variable. Same goes for native functions.
 
 // note that when adding vars if an identical var is already present a pointer to it 

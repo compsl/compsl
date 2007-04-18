@@ -9,7 +9,7 @@
 
 int main()
 {
-	const int NUM_FILES=11;
+	const int NUM_FILES=12;
 	
 	const char * files[] = 
 	{
@@ -23,7 +23,8 @@ int main()
 		"src/test/casting.csl",
 		"src/test/flow.csl",
 		"src/test/mincrash.csl",
-		"src/test/comparison.csl"
+		"src/test/comparison.csl",
+		"src/test/arrays.csl"
 	};
 	
 	VM *veem = createVM();

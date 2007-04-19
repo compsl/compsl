@@ -1581,10 +1581,9 @@ int main()
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, {{.a1 =0}}},
-			{.code = BC_CPUSH, {{.a1 =0}}},
+			{.code = BC_CPUSH, {{.a1 =0}}},	
+			{.code = BC_CPUSH, {{.a1 =2}}},	
 			{.code = BC_CPUSH, {{.a1 =1}}}, 
-			{.code = BC_CPUSH, {{.a1 =2}}},
-			
 			{.code = BC_APOP, {{.a1 = 0}}},
 			{.code = BC_APOP, {{.a1 = 0}}},
 			

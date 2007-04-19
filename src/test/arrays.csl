@@ -1,16 +1,56 @@
 declare
 {
-	int nothing[0];
-	float  a[1];
-        int b[100];
+//	int nothing[0];
+	int thearray[1], i;
+        float ar2[1];
+        
+        int a[100];
 } 
 
 cubbyhole testing
 {
 	test_reset();
-        a[0]=1;
+        testeqi(1, thearray[0] = 1);
+        testeqi(0, thearray[0] = 0);
+        testeqi(0, thearray[((27%28)+1-28)/2] = 0);
+        i=0;
+        testeqi(100, thearray[i] = 100);
+        i=10;
+        testeqi(1010, thearray[i-10] = 1010);
 
-	testeqi(1,1);
+
+        testeqf(2.3, ar2[0]=2.3);
+        testeqi(2, ar2[0]=2.3);
+        testeqf(2.3, ar2[0.1]=2.3);
+
+        testeqi(1010, thearray[0]);
+        testeqf(1010, thearray[0]);
+
+        i=0;
+        while(i++<100-1) {
+                a[i]=i;
+                testeqi(i, a[i]);     
+        }       
+        testeqi(100,i);
+        testeqi(42, a[42]);        
+        testeqi(21, a[42]/2);        
+        testeqi(1, 42/a[42]);        
+
+
+        testeqf(2.3, ar2[0]);
+        ar2[0]=1.4;
+        testeqf(2.4 , ar2[0]+1);
+        testeqi(2, (int)ar2[0]+1);
+
+        i=0;
+        while(i++<100-1) {
+                a[i]+=a[i];
+                testeqi(i*2, a[i]);     
+        }       
+        a[0] =5;
+        a[0] %=3;
+        testeqi(2,a[0]);
+
 	test_summary();
 
 } 

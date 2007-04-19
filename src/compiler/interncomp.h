@@ -72,7 +72,9 @@ int bc_len(bytecode *);
 
 // var.c
 expression *assignVar(const char *str, expression *e);
+expression *assignArray(const char *str, bytecode *arrayIndex, expression *e);
 expression *readVar(const char* name);
+expression *readArray(const char* name, bytecode *arrayIndex);
 expression *incVar(const char *name, bool plus, bool post);
 
 // control.c

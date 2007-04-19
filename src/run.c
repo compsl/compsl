@@ -319,15 +319,13 @@ static const int jmptbl[] =
  	APOP:
  		//TODO: test this
  		sp -=2;
- 		if(lvs[pc->a1].size > (sp)->i && (sp)->i >= 0)
- 		{
- 			lvs[pc->a1].p[(sp)->i] = *(sp+1);
+ 		if(lvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0) {
+ 			lvs[pc->a1].p[(sp+1)->i] = *(sp);
  		}
- 		else
- 		{
+ 		else {
  			fprintf(stderr, 
- 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
- 				pc->a1, com->vt.symbols[pc->a1].name, lvs[pc->a1].size, sp->i);
+ 				"ERROR: Index out of bounds! (Local array) \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i\n", 
+ 				com->vt.symbols[pc->a1].name, pc->a1, lvs[pc->a1].size, (sp+1)->i);
 #ifdef DEBUG
  				goto DBG;
 #else
@@ -493,8 +491,8 @@ static const int jmptbl[] =
  		else
  		{
  			fprintf(stderr, 
- 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
- 				pc->a1, com->vt.symbols[pc->a1].name, gvs[pc->a1].size, (sp - 1)->i);
+ 				"ERROR: Index out of bounds! (global array)\n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i", 
+ 				com->vt.symbols[pc->a1].name, pc->a1, gvs[pc->a1].size, (sp - 1)->i);
  			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
 #ifdef DEBUG
 				goto DBG;
@@ -511,15 +509,15 @@ static const int jmptbl[] =
  	GAPP:
  		//TODO: test this
  		sp -=2;
- 		if(gvs[pc->a1].size > (sp)->i && (sp)->i >= 0)
+ 		if(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0)
  		{
- 			gvs[pc->a1].p[(sp)->i] = *(sp+1);
+ 			gvs[pc->a1].p[(sp+1)->i] = *(sp);
  		}
  		else
  		{
  			fprintf(stderr, 
- 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
- 				pc->a1, com->vt.symbols[pc->a1].name, gvs[pc->a1].size, sp->i);
+ 				"ERROR: Index out of bounds! \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i", 
+ 				com->vt.symbols[pc->a1].name, pc->a1, gvs[pc->a1].size, (sp+1)->i);
 #ifdef DEBUG
  				goto DBG;
 #else

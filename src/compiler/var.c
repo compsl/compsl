@@ -21,9 +21,16 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 #include "interncomp.h"
 
 expression *assignVar(const char *name, expression *ex) {
+  return assignArray(name, NULL, ex);
+}
+
+
+// TODO: free mem
+expression *assignArray(const char *name, bytecode *arrayIndex, expression *ex) {
   int len;
   
   symbolinfo var = searchSym(name,ccompart);
@@ -40,31 +47,67 @@ expression *assignVar(const char *name, expression *ex) {
     return NULL;
   }
 
-  if(var.array) {
-    sprintf(sprt,"Symbol \"%s\" resolved to array, not yet implemented", name);
-    compileError(sprt);
-    return NULL;
-  }
-
-  DPRINTF("Assignent to variable \"%s\" with id=%i, local=%i, isfloat=%i\n", name, var.id, var.local, var.isfloat);
   expr_autocast(var.isfloat,ex);
   expr_ensureLit(ex);
   len = bc_len(ex->val.bcode);
-  ex->val.bcode = realloc(ex->val.bcode, sizeof(bytecode)*(len+3));
-  
-  ex->val.bcode[len].code = BC_DUP;
-  if(var.local)
-    ex->val.bcode[len+1].code = BC_POP;
-  else
-    ex->val.bcode[len+1].code = BC_GPOP;
-  ex->val.bcode[len+1].a1 = var.id;
-  ex->val.bcode[len+2].code = BC_NONO;
-  
+
+  DPRINTF("Assignent to variable \"%s\" with id=%i, local=%i, isfloat=%i\n", name, var.id, var.local, var.isfloat);
+  if(var.array && arrayIndex!=NULL) {
+    // Assignment of an array
+    int cur = 0;
+    int arLen = bc_len(arrayIndex);
+    bytecode *mcode;
+
+    cur = len;
+
+    // Push the value
+    mcode = realloc(ex->val.bcode, (len+arLen+3) * sizeof(bytecode));
+
+    mcode[cur++].code = BC_DUP;
+
+    // Push the array index
+    memcpy(&mcode[cur], arrayIndex, arLen* sizeof(bytecode));
+    cur +=arLen;
+
+    // Do the assignment
+    if(var.local)
+      mcode[cur].code = BC_APOP;
+    else
+      mcode[cur].code = BC_GAPP;
+    mcode[cur++].a1 = var.id;
+    mcode[cur++].code = BC_NONO;
+    
+    assert(cur==len+arLen+3);
+
+    ex->val.bcode = mcode; 
+
+  } else if(!var.array && arrayIndex==NULL) {
+
+    // Plain old assignment
+    ex->val.bcode = realloc(ex->val.bcode, sizeof(bytecode)*(len+3));
+    
+    ex->val.bcode[len].code = BC_DUP;
+    if(var.local)
+      ex->val.bcode[len+1].code = BC_POP;
+    else
+      ex->val.bcode[len+1].code = BC_GPOP;
+    ex->val.bcode[len+1].a1 = var.id;
+    ex->val.bcode[len+2].code = BC_NONO;
+
+  } else {
+    sprintf(sprt,"Symbol \"%s\" used in wrong array context", name);
+    compileError(sprt);
+    return NULL;
+  }
   return ex;
 }
 
 
 expression *readVar(const char* name) {
+  return readArray(name, NULL);
+}
+
+expression *readArray(const char* name, bytecode *arrayIndex) {
   symbolinfo var = searchSym(name,ccompart);
   
   if(var.id<0) {
@@ -78,18 +121,43 @@ expression *readVar(const char* name) {
     compileError(sprt);
     return NULL;
   }
+
   expression *ex = malloc(sizeof(expression));
-  bytecode *bc = malloc(2*sizeof(bytecode));
-  if(ex == NULL || bc == NULL) internalCompileError("Out of Memory");
-  if(!var.local) {
-    bc->code = BC_GPSH;
+  bytecode *bc;
+  if(var.array && arrayIndex!=NULL) {
+    int len = bc_len(arrayIndex);
+    // Array
+    bc = calloc(len+2, sizeof(bytecode));
+    if(ex == NULL || bc == NULL) internalCompileError("Out of Memory");
+    memcpy(bc, arrayIndex, len*sizeof(bytecode));
+
+    if(!var.local) 
+      bc[len].code = BC_GAPS;
+    else 
+      bc[len].code = BC_APUSH;
+
+    bc[len].a1 = var.id;
+    bc[len+1].code = BC_NONO;
+
+  } else if(!var.array && arrayIndex==NULL) {
+
+    // Plain old variable
+    bc = malloc(2*sizeof(bytecode));
+    if(ex == NULL || bc == NULL) internalCompileError("Out of Memory");
+
+    if(!var.local) 
+      bc->code = BC_GPSH;
+    else 
+      bc->code = BC_PUSH;
+        
     bc->a1 = var.id;
+    bc[1].code = BC_NONO;
+    
+  } else {
+    compileError("Array accessed in bad context");
+    return NULL;
   }
-  else {
-    bc->code = BC_PUSH;
-    bc->a1 = var.id;
-  }
-  bc[1].code = BC_NONO;
+
   ex->val.bcode=bc;
   ex->isLiteral=false;
   ex->isFloat=var.isfloat;

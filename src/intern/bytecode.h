@@ -37,7 +37,7 @@ COMPSL_INTERN typedef enum  {
 	BC_GAPS, 	//samp as APUSH but for global
 	
 	BC_POP, 	//pop to local var
-	BC_APOP,	//pop into local array (value on top of stack, index is next)
+	BC_APOP,	//pop into local array (index on top of stack, value is next)
 	BC_DPOP, 	//pop and discard value
 	BC_GPOP,	//same as POP but for global
 	BC_GAPP,	//same as APOP but for global

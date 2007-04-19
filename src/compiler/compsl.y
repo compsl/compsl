@@ -128,7 +128,8 @@ cubby:
 		  free($1);
 #ifdef COMP_STACKCHECK
 			int rs;
-			remUselessDUPs($2, bc_len($2), ccompart->vm, ccompart);
+			// TODO: Should this be removed?
+			//$2 = remUselessDUPs($2, bc_len($2), ccompart->vm, ccompart);
 			rs = stackcheck($2, bc_len($2), ccompart->vm, ccompart);
 			DPRINTF("Ran stackcheck(), result: %i\n",rs);
 			if(rs!=0) 
@@ -292,6 +293,17 @@ expression:
 	  
 	}
 |
+	IDENTIFIER OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET ASSIGN expression {
+	  expr_autocast(false, $3);
+	  expr_ensureLit($3);
+
+	  $$ = assignArray($1, $3->val.bcode, $6);
+	  free($1);
+	  if(NULL == $$) 
+	    YYABORT;
+	  
+	}
+|
 	IDENTIFIER assignop expression {
 
 	  expression *expr = readVar($1);
@@ -306,6 +318,25 @@ expression:
 	  if(NULL == $$) 
 	    YYABORT;
 	  free($1);
+	}
+|
+	IDENTIFIER OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET assignop expression {
+	  expr_autocast(false, $3);
+	  expr_ensureLit($3);
+	  expression *expr = readArray($1, $3->val.bcode);
+	  if(NULL == expr) 
+	    YYABORT;
+
+	  expr=bin_op($5,expr,$6);
+	  if(NULL == expr) 
+	    YYABORT;
+
+	  $$ = assignArray($1,$3->val.bcode, expr);
+	  if(NULL == $$) 
+	    YYABORT;
+	  free($1);
+	  free($3);
+	  // TODO: MEM
 	}
 |
 	cast expression { 
@@ -461,6 +492,18 @@ IDENTIFIER {
   }
 }
 |
+IDENTIFIER OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET{
+  expr_autocast(false, $3);
+  expr_ensureLit($3);
+  $$ = readArray($1,$3->val.bcode);
+  // don't free $3 since its reused
+  free($1);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+// TODO: increment, etc for array
 PLUSPLUS IDENTIFIER {
   $$ = incVar($2, true, false);
   free($2);

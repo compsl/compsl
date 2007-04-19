@@ -49,9 +49,15 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 			&& code[i].code != BC_NOT && code[i].code != BC_BNOT)
 		{ // move stack pointer backwards 1 (pop)	
 			sp--;
+
+			// Array ones take two params
+			if(code[i].code==BC_GAPP || code[i].code==BC_APOP)
+			  sp--;
+
 			if(sp < 0){
 				badStack = true;
-				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", i, lineNo, sp);
+				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", 
+					i, lineNo, sp);
 			}
 		}
 		else if((BC_PUSH <= code[i].code && code[i].code <= BC_GAPS) ||
@@ -59,30 +65,36 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 				
 		{ // move stack pointer forwards 1 (push)
 			sp++;
+			if(code[i].code==BC_GAPS || code[i].code==BC_APUSH)
+			  sp--;
+			
+
 			if(sp >= VM_STACK_SIZE){
 				badStack = true;
-				fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d\n", i, lineNo, sp - VM_STACK_SIZE + 1);
+				fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d\n", 
+					i, lineNo, sp - VM_STACK_SIZE + 1);
 			}
 		}
 		else if(code[i].code == BC_CALL)
 		{ // function call
-			if(code[i].a1 >= vm->ncnt)
-			{
+			if(code[i].a1 >= vm->ncnt) {
 				fprintf(stderr,"BAD NATIVE CALL! instruction %d of expression on line %d", i, lineNo);
 				internalCompileError("BAD NATIVE CALL GENERATED!");
 			}
 			
 			sp -= vm->natives[code[i].a1].numParam;
-			if(sp < 0){
+			if(sp < 0) {
 				badStack = true;
-				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", i, lineNo, sp);
+				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", 
+					i, lineNo, sp);
 			}
 			
 			sp++;
 			
 			if(sp >= VM_STACK_SIZE){
 				badStack = true;
-				fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d", i, lineNo, sp - VM_STACK_SIZE + 1);
+				fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d", 
+					i, lineNo, sp - VM_STACK_SIZE + 1);
 			}
 		}
 		else if(BC_ABS <= code[i].code && code[i].code <= BC_HYPOT)

@@ -76,6 +76,7 @@ expression *assignArray(const char *str, bytecode *arrayIndex, expression *e);
 expression *readVar(const char* name);
 expression *readArray(const char* name, bytecode *arrayIndex);
 expression *incVar(const char *name, bool plus, bool post);
+expression *incArray(const char *name, bytecode *arIndex, bool plus, bool post);
 
 // control.c
 bytecode *ctrlWhile(expression *cond, bytecode *block);

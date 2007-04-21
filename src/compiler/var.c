@@ -167,6 +167,13 @@ expression *readArray(const char* name, bytecode *arrayIndex) {
 
 
 expression *incVar(const char *name, bool plus, bool post) {
+  return incArray(name, NULL, plus, post);
+}
+
+expression *incArray(const char *name, bytecode *incArray, bool plus, bool post) {
+
+  // TODO: Implement the array case
+
   symbolinfo var = searchSym(name,ccompart);
   int cpos;
   const int len = 5;

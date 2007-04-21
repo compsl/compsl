@@ -503,7 +503,6 @@ IDENTIFIER OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET{
   }
 }
 |
-// TODO: increment, etc for array
 PLUSPLUS IDENTIFIER {
   $$ = incVar($2, true, false);
   free($2);
@@ -530,6 +529,48 @@ MINUSMINUS IDENTIFIER {
 |
 IDENTIFIER MINUSMINUS {
   $$ = incVar($1, false, true);
+  free($1);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+////////////////////////////////////////////////////////
+// Same but for arrays
+PLUSPLUS IDENTIFIER  OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET {
+  expr_autocast(false, $4);
+  expr_ensureLit($4);
+  $$ = incArray($2, $4->val.bcode, true, false);
+  free($2);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+IDENTIFIER  OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET PLUSPLUS {
+  expr_autocast(false, $3);
+  expr_ensureLit($3);
+  $$ = incArray($1, $3->val.bcode, true, true);
+  free($1);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+MINUSMINUS IDENTIFIER OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET {
+  expr_autocast(false, $4);
+  expr_ensureLit($4);
+  $$ = incArray($2, $4->val.bcode, false, false);
+  free($2);
+  if(NULL == $$) {
+    YYABORT;
+  }
+}
+|
+IDENTIFIER OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET MINUSMINUS {
+  expr_autocast(false, $3);
+  expr_ensureLit($3);
+  $$ = incArray($1, $3->val.bcode, false, true);
   free($1);
   if(NULL == $$) {
     YYABORT;

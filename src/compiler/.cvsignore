@@ -1,7 +1,0 @@
-compsl.tab.c
-compsl.tab.h
-lex.yy.c
-*.o
-*.d
-*.dep
-compsl.output

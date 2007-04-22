@@ -9,10 +9,6 @@
 			<name>org.eclipse.cdt.make.core.makeBuilder</name>
 			<arguments>
 				<dictionary>
-					<key>org.eclipse.cdt.make.core.build.arguments</key>
-					<value>-e</value>
-				</dictionary>
-				<dictionary>
 					<key>org.eclipse.cdt.core.errorOutputParser</key>
 					<value>org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;</value>
 				</dictionary>
@@ -57,8 +53,8 @@
 					<value>make</value>
 				</dictionary>
 				<dictionary>
-					<key>org.eclipse.cdt.make.core.build.target.clean</key>
-					<value>clean</value>
+					<key>org.eclipse.cdt.make.core.useDefaultBuildCmd</key>
+					<value>true</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.enableCleanBuild</key>

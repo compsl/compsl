@@ -145,6 +145,11 @@ COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char
 	
 	//done with tmp so that name can be delcared const char
 	tmp = malloc((strlen(name) + 1) * sizeof(char));
+	if(tmp == NULL)
+	{
+		vm->errorno = COMPSL_NOMEM;
+		return false;
+	}
 	strcpy(tmp,name);
 	vm->natives[vm->ncnt].name = tmp;
 	
@@ -154,6 +159,12 @@ COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char
 	// parse params here.
 	
 	tmp = malloc((strlen(params) + 1)* sizeof(char));
+	if(tmp == NULL)
+	{
+		free(vm->natives[vm->ncnt].name = tmp);
+		vm->errorno = COMPSL_NOMEM;
+		return false;
+	}
 	strcpy(tmp,params);
 	char * tok = strtok(tmp," ,");
 	int tokCount = 0;

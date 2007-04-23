@@ -37,7 +37,7 @@ extern VM *cvm;
 extern compart *ccompart;
 int goparse(const char *fn, compart *com);
 
-int fileCompile(const char *filename , VM* vm, compart* out) {
+int fileCompile(const char *filename ,compart* out) {
 	FILE* input = fopen(filename, "r");
 	int ret; 
 	
@@ -52,7 +52,7 @@ int fileCompile(const char *filename , VM* vm, compart* out) {
 	fclose(input);
 	return ret;
 }
-int stringCompile(const char *code, VM* vm, compart* out) {
+int stringCompile(const char *code, compart* out) {
 	yy_scan_string(code);
 	return goparse("STRING", out);
 }  

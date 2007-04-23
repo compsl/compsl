@@ -37,7 +37,7 @@ int main()
 	  printf("File %s: ",files[i]);
 	  
 	  com[i] = createComp(veem);
-	  ret = fileCompile(files[i], veem, com[i]);
+	  ret = fileCompile(files[i], com[i]);
 	  if(ret==0){
 	    printf("\tCompile: OK, Run: ");
 	    runCubbyhole(com[i], 0); 

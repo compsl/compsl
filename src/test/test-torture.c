@@ -31,8 +31,8 @@ int main()
 	
 	//TODO: add variables to compartments here
 	int32_t *x = com_addInt(com1,"x");
-	compret1 = fileCompile("src/test/torture.csl", vm, com1);
-	compret2 = stringCompile(test2, vm, com2);
+	compret1 = fileCompile("src/test/torture.csl", com1);
+	compret2 = stringCompile(test2, com2);
 	if(compret1 != 0 || compret2 != 0) {
 		fputs("Bad compsl!",stderr);
 		exit(1);

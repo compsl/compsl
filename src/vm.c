@@ -161,7 +161,7 @@ COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char
 	tmp = malloc((strlen(params) + 1)* sizeof(char));
 	if(tmp == NULL)
 	{
-		free(vm->natives[vm->ncnt].name = tmp);
+		free((void *)(vm->natives[vm->ncnt].name));
 		vm->errorno = COMPSL_NOMEM;
 		return false;
 	}

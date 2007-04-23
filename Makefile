@@ -26,8 +26,8 @@ endif
 BISON   		= bison
 FLEX    		= flex
 INSTALL 		= install
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA 	= ${INSTALL} -m 644
+INSTALL_PROGRAM = $(INSTALL) -v
+INSTALL_DATA 	= ${INSTALL} -v -m 644
 LDCONFIG		= ldconfig
 RANLIB			= ranlib
 DOXYGEN			= doxygen
@@ -223,7 +223,7 @@ DOXYFILE = compsl.doxyfile
 
 all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
-install: all
+install: all docs
 	$(INSTALL) -d $(libdir)
 	$(INSTALL) -d $(includedir)
 	$(INSTALL) -m 755 $(STATIC_LIB_OUT) $(libdir)/$(notdir $(STATIC_LIB_OUT))
@@ -247,6 +247,8 @@ clean:
 
 docs: $(DOXYFILE)
 	$(DOXYGEN) $(DOXYFILE)
+	make -C doc/latex
+	mv doc/latex/refman.pdf doc/compsl.pdf
 
 help: 
 	@echo "Makefile for CompSL"
@@ -260,7 +262,7 @@ package: clean
 	rm -f compsl-${COMPSL_VERSION}.tar.bz2
 	tar --exclude "*/.svn*" --exclude "*/.settings*" \
 		--exclude "*/.cvsignore" --exclude "*/.*project*" \
-		--exclude "*~" \
+		--exclude "*~" --exclude "*/latex*"\
 		--exclude "*/compsl-${COMPSL_VERSION}/compsl-${COMPSL_VERSION}"\
 		--transform 's,^,compsl-${COMPSL_VERSION}/,'\
 		-cjvf compsl-${COMPSL_VERSION}.tar.bz2 *

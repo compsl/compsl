@@ -790,7 +790,7 @@ COMPACT_LATEX = NO
 # by the printer. Possible values are: a4, a4wide, letter, legal and 
 # executive. If left blank a4wide will be used.
 
-PAPER_TYPE = a4wide
+PAPER_TYPE = letter
 
 # The EXTRA_PACKAGES tag can be to specify one or more names of LaTeX 
 # packages that should be included in the LaTeX output.
@@ -822,7 +822,7 @@ USE_PDFLATEX = YES
 # running if errors occur, instead of asking the user for help. 
 # This option is also used when generating formulas in HTML.
 
-LATEX_BATCHMODE = NO
+LATEX_BATCHMODE = YES
 
 # If LATEX_HIDE_INDICES is set to YES then doxygen will not 
 # include the index chapters (such as File Index, Compound Index, etc.) 
@@ -879,7 +879,7 @@ RTF_EXTENSIONS_FILE =
 # If the GENERATE_MAN tag is set to YES (the default) Doxygen will 
 # generate man pages
 
-GENERATE_MAN = YES
+GENERATE_MAN = NO
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put. 
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 

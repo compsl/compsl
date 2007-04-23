@@ -250,7 +250,7 @@ docs: $(DOXYFILE)
 
 help: 
 	@echo "Makefile for CompSL"
-	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic, package"
+	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic, package, docs"
 	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
 
 static: $(STATIC_LIB_OUT)

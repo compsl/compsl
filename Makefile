@@ -30,6 +30,7 @@ INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA 	= ${INSTALL} -m 644
 LDCONFIG		= ldconfig
 RANLIB			= ranlib
+DOXYGEN			= doxygen
 
 NORMAL_INSTALL = :
 PRE_INSTALL = :
@@ -211,7 +212,9 @@ else
 	DYN_LIB_OUT := bin/$(LIBNAME).so.$(COMPSL_VERSION)
 endif
 
-.PHONY: test cleantest all clean
+DOXYFILE = compsl.doxyfile
+
+.PHONY: test cleantest all clean docs
 
 
 ################################
@@ -240,6 +243,10 @@ clean:
 		 $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*)  \
 		 $(DERIVED_FILES) $(CMPATH)/compsl.output bin/dumper*      \
 		 $(EXPORTS) $(DEFFILE) $(LIBFILE) $(IMPLIB)
+	-rm -rf	doc/html doc/latex doc/man
+
+docs: $(DOXYFILE)
+	$(DOXYGEN) $(DOXYFILE)
 
 help: 
 	@echo "Makefile for CompSL"

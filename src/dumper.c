@@ -90,7 +90,7 @@ int main()
 		exit(1);
 	}
 	
-	compret = stringCompile(src, vm, com);
+	compret = stringCompile(src, com);
 	
 	int16_t cubbyid = getCubbyID(com,"foo");
 	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }

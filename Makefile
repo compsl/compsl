@@ -14,7 +14,7 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-COMPSL_VERSION := 0.1.1
+COMPSL_VERSION := 0.1.2
 
 .SUFFIXES:
 #.SUFFIXES: .c .o .h .gch .dep

@@ -25,6 +25,7 @@ endif
 
 BISON   		= bison
 FLEX    		= flex
+LIBTOOL         = libtool
 INSTALL 		= install
 INSTALL_PROGRAM = $(INSTALL) -v
 INSTALL_DATA 	= ${INSTALL} -v -m 644
@@ -197,7 +198,7 @@ TESTOBJS := $(TESTSRCS:.c=.o)
 OTHERSRC := src/dumper.c
 OTHEROBJ := $(OTHERSRC:.c=.o)
 
-DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep)
+DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep) $(TESTSRCS:.c=.dep)
 
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 

@@ -94,13 +94,25 @@ var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 bool var_testEqi(var* a, var* b) {
   if(a->size!=b->size) return false;
 
-  // TODO: test array equality
-  
-  return (a->v.i==b->v.i);
+  if(a->size>0) {
+    for(int i=0;i<a->size;i++)
+      if(a->p[i].i != b->p[i].i) 
+	return false;
+    return true;
+
+  } else 
+    return (a->v.i==b->v.i);
 }
 bool var_testEqf(var* a, var* b) {
   if(a->size!=b->size) return false;
 
-  // TODO: test array equality
-  return (fabs(a->v.f-b->v.f) < FLT_EPSILON);
+  if(a->size>0) {
+    for(int i=0;i<a->size;i++) {
+      if(fabs(a->p[i].f - b->p[i].f)>= FLT_EPSILON) 
+	return false;
+    }
+    return true;
+  } else 
+    return (fabs(a->v.f-b->v.f) < FLT_EPSILON);
+  
 }

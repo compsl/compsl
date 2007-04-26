@@ -176,10 +176,10 @@ typedef struct VAR_TABLE_T
 
 /**
  * the type of functions that the compsl code can call, 
- * takes an array of vars, represent parameters in (left to right)? order
+ * takes an array of vars, represent parameters in left to right order
  */
 typedef intfloat (*compsl_nat)(var *);
-// TODO: above comment may be wrong about order
+
 
 /**
  * looks after one native function, holds pointer to function and

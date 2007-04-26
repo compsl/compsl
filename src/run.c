@@ -343,7 +343,6 @@ static const int jmptbl[] =
  		lvs[pc->a1].v = *sp;
 		goto TOP;
  	APOP:
- 		//TODO: test this
  		sp -=2;
  		if(lvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0) {
  			lvs[pc->a1].p[(sp+1)->i] = *(sp);
@@ -359,7 +358,7 @@ static const int jmptbl[] =
  	DPOP:
  		sp--;
  		goto TOP;
- 	//SWAP://TODO: should this be an addressed thing? (ie: can swap an arbitrary pair of stack elements)
+ 	//SWAP:
  	//	tmp = *(sp - 1);
  	///	*(sp - 1) = *(sp - 2);
  	//	*(sp - 2) = tmp;
@@ -544,7 +543,6 @@ static const int jmptbl[] =
  		gvs[pc->a1].v = *sp;
 		goto TOP;
  	GAPP:
- 		//TODO: test this
  		sp -=2;
  		if(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0)
  		{

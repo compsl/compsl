@@ -102,12 +102,18 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 		{ // builtin
 			int j;
 			for(j = 0; j < builtins_len && builtins[j].code != code[i].code; j++);
-			sp -= builtins[j].ac; sp++;
+			sp -= builtins[j].ac; 
+			if(sp < 0) {
+				badStack = true;
+				fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", 
+					i, lineNo, sp);
+			}
+			sp++;
 			
 		}
 		else if(code[i].code == BC_JMP)
 		{ // gotta follow it!
-			//i += code[i].sa -1;
+			i += code[i].sa -1;
 			return sp;
 		}
 		else if(code[i].code == BC_END || code[i].code == BC_DBG || code[i].code == BC_HLT)

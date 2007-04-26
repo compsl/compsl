@@ -66,15 +66,16 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 			}
 			
 			sp -= vm->natives[code[i].a1].numParam;
-			if(sp <0) return sp;
+			if(sp <0) break;
 			sp++;
-			//return -1; // we will just not handle this case...
 		}
 		else if(BC_ABS <= code[i].code && code[i].code <= BC_HYPOT)
 		{ // builtin
 			int j;
 			for(j = 0; j < builtins_len && builtins[j].code != code[i].code; j++);
-			sp -= builtins[j].ac; sp++;
+			sp -= builtins[j].ac; 
+			if(sp <0) break;
+			sp++;
 			
 		}
 		else if(code[i].code == BC_JMP)
@@ -128,9 +129,16 @@ bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 			for(int j = i; j < codelen; j++)
 			{
 				if(code[j].code == BC_CALL || (code[j].code >= BC_FLIN && code[j].code <= BC_FDEC)) break;
-				if(code[j].code == BC_POP && stackpos(&code[i],j - i + 1,vm,com) == 0)
+				else if(code[j].code == BC_POP && stackpos(&code[i],j - i,vm,com) == 1)
 				{
 					code[j].code = BC_STO;
+					removeBytecode(code,i,codelen);
+					i--;
+					break;
+				}
+				else if(code[j].code == BC_GPOP && stackpos(&code[i],j - i,vm,com) == 1)
+				{
+					code[j].code = BC_GSTO;
 					removeBytecode(code,i,codelen);
 					i--;
 					break;

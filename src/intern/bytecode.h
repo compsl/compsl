@@ -85,7 +85,9 @@ COMPSL_INTERN typedef enum  {
 	BC_JMN,		//if top of stack is non-zero, jump
 	BC_FLIN,	//cast float to int (top of stack)
 	BC_INFL, 	//cast int to float (top of stack)
-	BC_SAVE,	//save top of stack to temp register, no pop
+	BC_SAVE,	//save top of stack to temp register without moving stack pointer
+	BC_STO,		//save top of stack to local variable without moving stack pointer
+	BC_GSTO,	//save top of stack to global variable without moving stack pointer
 	BC_INC,		//increment top of stack
 	BC_DEC,		//decrement top of stack
 	BC_FINC,		//increment top of stack

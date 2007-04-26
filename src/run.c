@@ -114,6 +114,8 @@ static const char *tractbl[] =
  	"FLIN", 
  	"INFL",
  	"SAVE",
+ 	"STO",
+ 	"GSTO",
  	"INC",
 	"DEC",
  	"FINC",
@@ -238,6 +240,8 @@ static const int jmptbl[] =
  	&&FLIN - &&NOOP,
  	&&INFL - &&NOOP,
  	&&SAVE - &&NOOP,
+ 	&&STO - &&NOOP,
+ 	&&GSTO - &&NOOP,
  	&&INC - &&NOOP,
  	&&DEC - &&NOOP,
  	&&FINC - &&NOOP,
@@ -355,6 +359,12 @@ static const int jmptbl[] =
  	SAVE:
  		temp = *(sp - 1);
  		goto TOP;
+ 	STO:
+ 		lvs[pc->a1].v = *(sp-1);
+		goto TOP;
+ 	GSTO:
+ 		gvs[pc->a1].v = *(sp-1);
+		goto TOP;
  	PSHT:
  		*sp = temp;
  		sp++;

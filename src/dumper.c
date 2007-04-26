@@ -78,7 +78,7 @@ char *src2=
 "declare {int a,b,c,d; int stat; float xx;}\n\
 cubby foo {\n\
 	test_reset();\n\
-        a=1;\n\
+        b=c=d=a=1;\n\
         testeqi(1,a++);\n\
         testeqi(2,a);\n\
         testeqi(3,++a);\n\
@@ -110,8 +110,6 @@ int main()
 	compret = stringCompile(src2,com2);
 	int16_t cubbyid2 = getCubbyID(com2,"foo");
 	dumpBytecode(com2,cubbyid2);
-	runCubbyhole(com2,cubbyid2);
-	return 0;
 	
 	compret = stringCompile(src, com);
 	

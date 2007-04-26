@@ -80,12 +80,12 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 		}
 		else if(code[i].code == BC_JMP)
 		{ // gotta follow it!
-			//i += code[i].sa -1;
-			return sp;
+			i += code[i].sa -1;
+			break;
 		}
 		else if(code[i].code == BC_END || code[i].code == BC_DBG || code[i].code == BC_HLT)
 		{
-			return sp;
+			break;
 		}
 		else if(BC_NOOP > code[i].code || code[i].code > BC_DBG)
 		{

@@ -194,6 +194,8 @@ expression *incArray(const char *name, bytecode *incArray, bool plus, bool post)
 
   if(ex == NULL || bc == NULL) internalCompileError("Out of Memory");
 
+  // Push the value onto the stack
+  // TODO: push array onto stack 
   cpos=0;
   if(!var.local) 
     bc[cpos].code = BC_GPSH;
@@ -215,7 +217,7 @@ expression *incArray(const char *name, bytecode *incArray, bool plus, bool post)
   if(!post)
     bc[cpos++].code = BC_DUP;
 
-
+  // Pop the value back into the array if relevant 
   if(!var.local)
     bc[cpos].code = BC_GPOP;
   else

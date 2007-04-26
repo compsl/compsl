@@ -38,6 +38,13 @@
 #error "gotta have gcc!"
 #endif
 
+#ifdef DEBUG
+#define STOPEXEC goto DBG
+#else
+#define STOPEXEC goto HLT
+#endif
+
+
 #define VM_FLOAT_EPSILON FLT_EPSILON
 
 double genrand_real1(void);
@@ -299,12 +306,8 @@ static const int jmptbl[] =
  				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
  				pc->a1, com->vt.symbols[pc->a1].name, lvs[pc->a1].size, (sp - 1)->i);
  			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
-#ifdef DEBUG
-				goto DBG;
-#else
- 				goto HLT;
-#endif
- 			
+
+			STOPEXEC; 			
  		}
  		goto TOP;
  	CPUSH:
@@ -326,11 +329,8 @@ static const int jmptbl[] =
  			fprintf(stderr, 
  				"ERROR: Index out of bounds! (Local array) \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i\n", 
  				com->vt.symbols[pc->a1].name, pc->a1, lvs[pc->a1].size, (sp+1)->i);
-#ifdef DEBUG
- 				goto DBG;
-#else
- 				goto HLT;
-#endif
+
+			STOPEXEC;
  		}
  		goto TOP;
  	DPOP:
@@ -494,11 +494,8 @@ static const int jmptbl[] =
  				"ERROR: Index out of bounds! (global array)\n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i", 
  				com->vt.symbols[pc->a1].name, pc->a1, gvs[pc->a1].size, (sp - 1)->i);
  			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
-#ifdef DEBUG
-				goto DBG;
-#else
- 				goto HLT;
-#endif
+
+			STOPEXEC;
  			
  		}
  		goto TOP;
@@ -518,11 +515,8 @@ static const int jmptbl[] =
  			fprintf(stderr, 
  				"ERROR: Index out of bounds! \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i", 
  				com->vt.symbols[pc->a1].name, pc->a1, gvs[pc->a1].size, (sp+1)->i);
-#ifdef DEBUG
- 				goto DBG;
-#else
- 				goto HLT;
-#endif
+
+			STOPEXEC;
  		}
  		goto TOP;
  		

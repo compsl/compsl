@@ -222,7 +222,7 @@ int main() {
    // print results
    printf ("\n  test     clock cycles");
    for (i = 0; i < NUMTESTS; i++) {
-      printf ("\n%6i  %llu", i+1, clocklist[i]);
+      printf ("\n%6i  %14llu", i+1, clocklist[i]);
    }
 
    printf ("\n");

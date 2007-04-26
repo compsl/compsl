@@ -170,13 +170,14 @@ expression *incVar(const char *name, bool plus, bool post) {
   return incArray(name, NULL, plus, post);
 }
 
-expression *incArray(const char *name, bytecode *incArray, bool plus, bool post) {
-
-  // TODO: Implement the array case
-
+expression *incArray(const char *name, bytecode *arrayIndex, bool plus, bool post) {
+  expression *ex = malloc(sizeof(expression));
+  bytecode *bc;
   symbolinfo var = searchSym(name,ccompart);
-  int cpos;
-  const int len = 5;
+  int cpos = 0;
+  int len = 5; // Basic length for variable increment
+
+  if(ex == NULL) internalCompileError("Out of Memory");
 
   if(var.id<0) {
     sprintf(sprt,"Symbol \"%s\" not resolved",name);
@@ -189,41 +190,84 @@ expression *incArray(const char *name, bytecode *incArray, bool plus, bool post)
     compileError(sprt);
     return NULL;
   }
-  expression *ex = malloc(sizeof(expression));
-  bytecode *bc = calloc(len,sizeof(bytecode));
 
-  if(ex == NULL || bc == NULL) internalCompileError("Out of Memory");
 
   // Push the value onto the stack
-  // TODO: push array onto stack 
-  cpos=0;
-  if(!var.local) 
-    bc[cpos].code = BC_GPSH;
-  else 
-    bc[cpos].code = BC_PUSH;
-  bc[cpos].a1 = var.id;
-  cpos++;
+  if (var.array && arrayIndex!=NULL) {
+    int arLen = bc_len(arrayIndex);
+    len+=arLen+2;
+    bc = realloc(arrayIndex, len*sizeof(bytecode));
+    if(bc == NULL) internalCompileError("Out of Memory");
+    cpos+=arLen;
 
-  if(post)
-    bc[cpos++].code = BC_DUP;
+    bc[cpos++].code = BC_SAVE;
+
+    if(!var.local) 
+      bc[cpos].code = BC_GAPS;
+    else 
+      bc[cpos].code = BC_APUSH;
+
+    bc[cpos].a1 = var.id;
+    cpos++;
+
+  } else if(!var.array && arrayIndex==NULL) {
+    bc = calloc(len,sizeof(bytecode));
+    if(bc == NULL) internalCompileError("Out of Memory");
+
+    if(!var.local) 
+      bc[cpos].code = BC_GPSH;
+    else 
+      bc[cpos].code = BC_PUSH;
+    bc[cpos].a1 = var.id;
+    cpos++;
+  } else {
+    sprintf(sprt,"Symbol \"%s\" used in wrong array context", name);
+    compileError(sprt);
+    return NULL;
+  }
+
 
   // Increment or decrement the top of the stack
-  if(var.isfloat)
-    bc[cpos].code = ((plus)?BC_FINC:BC_FDEC);
-  else
-    bc[cpos].code = ((plus)?BC_INC:BC_DEC);
-  cpos++;
+  {
+    if(post)
+      bc[cpos++].code = BC_DUP;
+    
+    if(var.isfloat)
+      bc[cpos].code = ((plus)?BC_FINC:BC_FDEC);
+    else
+      bc[cpos].code = ((plus)?BC_INC:BC_DEC);
+    cpos++;
+    
+    if(!post)
+      bc[cpos++].code = BC_DUP; 
+  }
 
-  if(!post)
-    bc[cpos++].code = BC_DUP;
+  // Pop back into the var
+  if(var.array && arrayIndex!=NULL) {
+    // Array
 
-  // Pop the value back into the array if relevant 
-  if(!var.local)
-    bc[cpos].code = BC_GPOP;
-  else
-    bc[cpos].code = BC_POP;
-  bc[cpos].a1 = var.id;
-  cpos++;
+    // Push the index
+    bc[cpos++].code=BC_PSHT;
+
+    // Do the assignment
+    if(var.local)
+      bc[cpos].code = BC_APOP;
+    else
+      bc[cpos].code = BC_GAPP;
+    bc[cpos++].a1 = var.id;
+        
+  } else if(!var.array && arrayIndex==NULL) {
+    if(!var.local)
+      bc[cpos].code = BC_GPOP;
+    else
+      bc[cpos].code = BC_POP;
+    bc[cpos].a1 = var.id;
+    cpos++;
+  } else {
+    sprintf(sprt,"Symbol \"%s\" used in wrong array context", name);
+    compileError(sprt);
+    return NULL;
+  }
 
   bc[cpos++].code = BC_NONO;
 

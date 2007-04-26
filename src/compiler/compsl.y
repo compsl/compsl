@@ -321,17 +321,29 @@ expression:
 	}
 |
 	IDENTIFIER OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET assignop expression {
+	  // a[33]+=66
+	  bytecode *arInd1, *arInd2;
 	  expr_autocast(false, $3);
 	  expr_ensureLit($3);
-	  expression *expr = readArray($1, $3->val.bcode);
+	  int indLen = bc_len($3->val.bcode);
+	  arInd1 = realloc($3->val.bcode, (indLen+2)*sizeof(bytecode));
+	  arInd1[indLen].code = BC_SAVE;
+	  arInd1[indLen+1].code = BC_NONO;
+	  arInd2 = calloc(2, sizeof(bytecode));
+	  arInd2[0].code = BC_PSHT;  
+	  arInd2[1].code = BC_NONO;
+	  
+	  // ASSUPTION: arInd1 ends up near the end of expr - so that scratch reg isn't overwritten
+	  expression *expr = readArray($1, arInd1);
 	  if(NULL == expr) 
 	    YYABORT;
 
+	  // ASSUMPTION: expr ends up near the end of expr so the temp register doesn't get overwritten
 	  expr=bin_op($5,expr,$6);
 	  if(NULL == expr) 
 	    YYABORT;
 
-	  $$ = assignArray($1,$3->val.bcode, expr);
+	  $$ = assignArray($1,arInd2, expr);
 	  if(NULL == $$) 
 	    YYABORT;
 	  free($1);
@@ -349,14 +361,7 @@ assignop: PLUSEQ {$$=PLUS;} | MINUSEQ {$$=MINUS;} | MULTEQ {$$=MULT;} | DIVEQ {$
 		
 		
 paramlist:
-		moreparamlist {
-			$$=$1
-		}
-		|
-		{
-			$$= list_new();
-		}
-		;
+		moreparamlist {  $$=$1; } | { $$= list_new(); };
 
 moreparamlist:	
 		expression COMA moreparamlist {
@@ -368,7 +373,6 @@ moreparamlist:
 			list_addToFront(lst,$1);
 			$$=lst;
 		}
-
 		;
 
 cast: 

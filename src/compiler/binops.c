@@ -28,9 +28,15 @@
 #include "compsl.tab.h"
 
 
-// Binary operator helpers for bin_op()
 
-// TODO: more operators in bin_bc_op
+/*
+ * Binary operator helpers for bin_op()
+ * Returns the bytecode corresponding to 'a <op> b'
+ *
+ * Constraint: The +=, *=, ..= operators on arrays use the scratch register to store array indexes
+ * This happens near the end of b -> Caller assumes we won't write the scretch register between b
+ * and the end of the returned bytecode string. 
+ */
 expression* bin_bc_op(int op,expression* a, expression* b) {
   assert((a!=(expression*)0) && (b!=(expression*)0));
   bool isFloat;
@@ -40,6 +46,7 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
   expr_ensureLit(a);
   expr_ensureLit(b);
 
+  // Cast to float if either are floats
   if(!a->isFloat && !b->isFloat) {
     isFloat = false;
   } else {
@@ -141,7 +148,7 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
   return a;
 }
 
-// TODO: more operators in bin_lit_op
+// OPTIMIZE TODO: add more operators in bin_lit_op - would precalculate more stuff at compile time 
 expression* bin_lit_op(int op, expression* a, expression* b) {
   if(!a->isFloat && !b->isFloat) {
     int n1 = a->val.in;

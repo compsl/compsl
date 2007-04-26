@@ -53,10 +53,40 @@ cubbyhole testing
 
         i=0;
         thearray[i++] = 1;
-        i=0;
-        thearray[i++]+= 1;
-        testeqi(1,i);
+        testeqi(1,i);   
         
+        thearray[0]=1;
+        thearray[0]++;
+        testeqi(2,thearray[0]);
+        thearray[0]--;
+        testeqi(1,thearray[0]);
+        ++thearray[0];
+        testeqi(2,thearray[0]);
+        --thearray[0];
+        testeqi(1,thearray[0]);
+
+
+        ar2[0]=43.2;
+        testeqf(43.2,ar2[0]--);
+        ar2[0]=43.2;
+        testeqf(42.2,--ar2[0]);
+        testeqf(42.2,ar2[0]++);
+        testeqf(44.2,++ar2[0]);
+
+
+        i=0;
+        thearray[i]= 27;
+        thearray[i++]+= 1;
+        testeqi(1,i); 
+        testeqi(28,thearray[0] );
+
+        a[5]=10;
+        a[10]=2;
+        a[6]=11;
+        testeqi(13, a[6]+=a[a[5]]);
+        testeqi(13, a[6]);
+        testeqi(a[5]+1, a[6]-=a[a[5]]);
+        testeqi(a[5]+1, a[6]);
 
 	test_summary();
 

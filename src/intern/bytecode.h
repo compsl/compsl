@@ -31,12 +31,14 @@
 COMPSL_INTERN typedef enum  { 
 	BC_NOOP = 0, // do nothing
 	BC_PUSH, 	//push local var
+	BC_PSHT, 	//push temp register
 	BC_APUSH, 	//push element from local array (index on stack)
 	BC_CPUSH, 	//push constant
 	BC_GPSH,	//same as PUSH but for global
 	BC_GAPS, 	//samp as APUSH but for global
 	
 	BC_POP, 	//pop to local var
+	BC_POPT, 	//pop to local temp register
 	BC_APOP,	//pop into local array (index on top of stack, value is next)
 	BC_DPOP, 	//pop and discard value
 	BC_GPOP,	//same as POP but for global
@@ -83,6 +85,7 @@ COMPSL_INTERN typedef enum  {
 	BC_JMN,		//if top of stack is non-zero, jump
 	BC_FLIN,	//cast float to int (top of stack)
 	BC_INFL, 	//cast int to float (top of stack)
+	BC_SAVE,	//save top of stack to temp register, no pop
 	BC_INC,		//increment top of stack
 	BC_DEC,		//decrement top of stack
 	BC_FINC,		//increment top of stack

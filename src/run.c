@@ -55,11 +55,13 @@ static const char *tractbl[] =
 	"NOOP",
 //stack operations with local vars
 	"PUSH",
+	"PSHT",
  	"APUSH",
  	"CPUSH",
  	"GPSH",
  	"GAPS",
- 	"POP", 
+ 	"POP",
+ 	"POPT", 
  	"APOP",
  	"DPOP",
  	"GPOP",
@@ -111,6 +113,7 @@ static const char *tractbl[] =
  //type conversion
  	"FLIN", 
  	"INFL",
+ 	"SAVE",
  	"INC",
 	"DEC",
  	"FINC",
@@ -174,11 +177,13 @@ static const int jmptbl[] =
 	&&NOOP - &&NOOP,
 //stack operations
 	&&PUSH - &&NOOP,
+	&&PSHT - &&NOOP,
  	&&APUSH - &&NOOP,
  	&&CPUSH - &&NOOP,
  	&&GPSH - &&NOOP,
  	&&GAPS - &&NOOP,
  	&&POP - &&NOOP,
+ 	&&POPT - &&NOOP,
  	&&APOP - &&NOOP,
  	&&DPOP - &&NOOP,
  	&&GPOP - &&NOOP,
@@ -232,6 +237,7 @@ static const int jmptbl[] =
  //type conversion
  	&&FLIN - &&NOOP,
  	&&INFL - &&NOOP,
+ 	&&SAVE - &&NOOP,
  	&&INC - &&NOOP,
  	&&DEC - &&NOOP,
  	&&FINC - &&NOOP,
@@ -270,6 +276,7 @@ static const int jmptbl[] =
  	#endif
  
 	intfloat stack[VM_STACK_SIZE];
+	intfloat temp; // temp register
 	intfloat *sp = stack; // stack pointer
 	
 	var *lvs = com->vt.vars;
@@ -344,6 +351,17 @@ static const int jmptbl[] =
  	DUP:
  		*sp = *(sp - 1);
  		sp++;
+ 		goto TOP;
+ 	SAVE:
+ 		temp = *(sp - 1);
+ 		goto TOP;
+ 	PSHT:
+ 		*sp = temp;
+ 		sp++;
+ 		goto TOP;
+ 	POPT:
+ 		sp--;
+ 		temp = *sp;
  		goto TOP;
  	CALL: 
  		for(int i=0; i<natives[pc->a1].numParam; i++)

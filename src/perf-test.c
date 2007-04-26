@@ -110,11 +110,11 @@ const char *csl =
 
 // Read time stamp counter
 // The return value is the internal clock count
-__int64 ReadTSC() {
+int64_t ReadTSC() {
    
    union {
    		int32_t a[2];
-   		__int64 c;
+   		int64_t c;
    }res;                              // store 64 bit result here
    
    #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
@@ -160,8 +160,8 @@ __int64 ReadTSC() {
 #endif   // USE_ALIB
 
 
-void ClockTest (__int64 clocks[]) {
-   __int64 before, overhead;
+void ClockTest (int64_t clocks[]) {
+   int64_t before, overhead;
    int i;
    
    
@@ -201,7 +201,7 @@ void ClockTest (__int64 clocks[]) {
 
 int main() {
    // list of clock counts
-   __int64 clocklist[NUMTESTS];
+   int64_t clocklist[NUMTESTS];
    int i;
    
    	VM *vm=createVM();

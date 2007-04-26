@@ -272,6 +272,9 @@ package: clean
 bin/dumper: src/dumper.o $(OBJECTS)
 	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
 
+bin/perf-test: src/perf-test.o $(OBJECTS)
+	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
+
 cleantest: clean test 
 
 test: $(TEST_EXES)

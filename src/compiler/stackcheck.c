@@ -25,6 +25,7 @@
 #include <stdbool.h>
 
 #include "interncomp.h"
+#include "../intern/gen.h"
 
 
 /* stackcheck: 
@@ -119,6 +120,9 @@ int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 		}
 	}
 	if(badStack)
+	{
+		dumpBytecode2(com,code);
 		internalCompileError("Stack bounds exceeded");
+	}
 	return sp;
 }

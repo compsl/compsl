@@ -23,6 +23,7 @@
 #define GEN_H_
 #include "../extern/compsl.h"
 #include "../intern/vars.h"
+#include "../intern/bytecode.h"
 #include <stdbool.h>
 
 typedef struct
@@ -44,6 +45,10 @@ COMPSL_INTERN symbolinfo searchSym(const char *name, compart *com) __attribute__
 
 #ifdef DEBUG
 void dumpBytecode(compart *com, int id);
+void dumpBytecode2(compart *com, bytecode *pc);
+#else
+#define dumpBytecode(...) 
+#define dumpBytecode2(...)
 #endif
 
 #endif /*GEN_H_*/

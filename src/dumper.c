@@ -74,6 +74,20 @@ const char *src =
 	}\n\
 }";
 
+char *src2=
+"declare {int a,b,c,d; int stat; float xx;}\n\
+cubby foo {\n\
+	test_reset();\n\
+        a=1;\n\
+        testeqi(1,a++);\n\
+        testeqi(2,a);\n\
+        testeqi(3,++a);\n\
+        testeqi(3,a);\n\
+\n\
+        testeqi(3,a--);\n\
+        testeqi(2,a);\n\
+}";
+
 int main()
 {
 	VM *vm=createVM();
@@ -83,12 +97,21 @@ int main()
 	addDebugLibToVm(vm);
 	
 	compart *com=createComp(vm);
+	compart *com2 = createComp(vm);
 	int compret; // return code of compiler
 	if(com == NULL)
 	{
 		fprintf(stderr,"Error initializing compsl");
 		exit(1);
 	}
+	
+	
+	//compret = fileCompile("src/test/decls.csl",com2);
+	compret = stringCompile(src2,com2);
+	int16_t cubbyid2 = getCubbyID(com2,"foo");
+	dumpBytecode(com2,cubbyid2);
+	runCubbyhole(com2,cubbyid2);
+	return 0;
 	
 	compret = stringCompile(src, com);
 	

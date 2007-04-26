@@ -170,6 +170,18 @@ void dumpBytecode(compart *com, int id)
 		pc++;
 	}
 }
+
+void dumpBytecode2(compart *com, bytecode *code)
+{	
+	bytecode *pc= code;
+	while(pc->code != BC_END && pc->code != BC_HLT && pc->code != BC_DBG && pc->code != BC_NONO)
+	{
+		long int tractmp = ((long int)pc - (long int)code)/sizeof(bytecode);
+		printf("%4ld: %5s  sa=%- 8d  a1= %u\n",
+			tractmp,tractbl[pc->code],pc->sa,pc->a1);
+		pc++;
+	}
+}
 #endif
 
 COMPSL_EXPORT void runCubbyhole(compart *com, int id)

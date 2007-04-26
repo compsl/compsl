@@ -66,6 +66,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 			}
 			
 			sp -= vm->natives[code[i].a1].numParam;
+			if(sp <0) return sp;
 			sp++;
 			//return -1; // we will just not handle this case...
 		}
@@ -96,6 +97,12 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 
 bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 {
+	#ifdef DEBUG
+	puts("\nBegining optimize");
+	dumpBytecode2(com,code);
+	puts("Running redundant DPOP remover");
+	#endif
+	
 	for(int i = 0; i < codelen; i++)
 	{
 		if(code[i].code == BC_DPOP)
@@ -109,5 +116,31 @@ bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 					break;
 				}
 	}
+	#ifdef DEBUG
+	dumpBytecode2(com,code);
+	puts("Running POP->STO");
+	#endif
+	
+	for(int i = 0; i < codelen; i++)
+	{
+		if(code[i].code == BC_DUP)
+			// loop backwards and look for a DUP
+			for(int j = i; j < codelen; j++)
+			{
+				if(code[j].code == BC_CALL || (code[j].code >= BC_FLIN && code[j].code <= BC_FDEC)) break;
+				if(code[j].code == BC_POP && stackpos(&code[i],j - i + 1,vm,com) == 0)
+				{
+					code[j].code = BC_STO;
+					removeBytecode(code,i,codelen);
+					i--;
+					break;
+				}
+			}
+	}
+	#ifdef DEBUG
+	dumpBytecode2(com,code);
+	puts("Done Optimize");
+	#endif
+	
 	return code;
 }

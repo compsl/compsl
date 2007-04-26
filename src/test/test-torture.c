@@ -7,10 +7,23 @@
 #include "../extern/compsl.h"
 
 static const char *test2 = 
-"declare { global int foo; int x,y,z;}\
- cubbyhole init { foo = 1; }\
- cubby foo {x=0;while(x<3) x+=1;}\
- cubby bar {x=y=0; z = 1; x = y+z; }";
+"declare \n\
+{ \n\
+   global int foo; \n\
+   int x,y,z;\n\
+}\n\
+ cubbyhole init {\n\
+ 	 foo = 1;\n\
+ }\
+ cubby foo { \n\
+ 	x=0;\n\
+ 	while(x<3)\n\ 
+ 		x+=1;}\n\
+ cubby bar {\n\
+ 	x=y=0;\n\ 
+ 	z = 1;\n\ 
+ 	x = y+z;\n\
+  }";
 
 int main()
 {
@@ -31,7 +44,9 @@ int main()
 	
 	//TODO: add variables to compartments here
 	int32_t *x = com_addInt(com1,"x");
+	puts("Compiling file");
 	compret1 = fileCompile("src/test/torture.csl", com1);
+	puts("Compiling string");
 	compret2 = stringCompile(test2, com2);
 	if(compret1 != 0 || compret2 != 0) {
 		fputs("Bad compsl!",stderr);

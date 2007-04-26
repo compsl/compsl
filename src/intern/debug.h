@@ -43,5 +43,11 @@
 #define COMP_DPRINTF(...) 	
 #endif
 
+#ifdef DEBUG
+#define COMPSL_DPRINTF(...) printf("%24s,%4d:\t",__FILE__,__LINE__); printf(__VA_ARGS__)
+#else 
+#define COMPSL_DPRINTF(...) 	
+#endif
+
 #endif
 

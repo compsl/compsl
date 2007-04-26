@@ -139,12 +139,10 @@ COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name, const char
 		return false;
 	}
 	
-	char *tmp;
-	
 	vm->natives[vm->ncnt].func = func;
 	
 	//done with tmp so that name can be delcared const char
-	tmp = malloc((strlen(name) + 1) * sizeof(char));
+	char *tmp = malloc((strlen(name) + 1) * sizeof(char));
 	if(tmp == NULL)
 	{
 		vm->errorno = COMPSL_NOMEM;

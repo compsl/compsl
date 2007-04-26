@@ -110,11 +110,11 @@ const char *csl =
 
 // Read time stamp counter
 // The return value is the internal clock count
-int64_t ReadTSC() {
+uint64_t ReadTSC() {
    
    union {
-   		int32_t a[2];
-   		int64_t c;
+   		uint32_t a[2];
+   		uint64_t c;
    }res;                              // store 64 bit result here
    
    #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
@@ -160,8 +160,8 @@ int64_t ReadTSC() {
 #endif   // USE_ALIB
 
 
-void ClockTest (int64_t clocks[]) {
-   int64_t before, overhead;
+void ClockTest (uint64_t clocks[]) {
+   uint64_t before, overhead;
    int i;
    
    
@@ -201,7 +201,7 @@ void ClockTest (int64_t clocks[]) {
 
 int main() {
    // list of clock counts
-   int64_t clocklist[NUMTESTS];
+   uint64_t clocklist[NUMTESTS];
    int i;
    
    	VM *vm=createVM();
@@ -222,7 +222,7 @@ int main() {
    // print results
    printf ("\n  test     clock cycles");
    for (i = 0; i < NUMTESTS; i++) {
-      printf ("\n%6i  %f", i+1, (double)(clocklist[i]));
+      printf ("\n%6i  %llu", i+1, clocklist[i]);
    }
 
    printf ("\n");

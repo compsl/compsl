@@ -156,6 +156,7 @@ ifeq ($(OPTIMIZE),1)
 
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
+	CFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
 else
 	CFLAGS += -O0
 endif

@@ -17,11 +17,11 @@ static const char *test2 =
  }\
  cubby foo { \n\
  	x=0;\n\
- 	while(x<3)\n\ 
+ 	while(x<3)\n\
  		x+=1;}\n\
  cubby bar {\n\
- 	x=y=0;\n\ 
- 	z = 1;\n\ 
+ 	x=y=0;\n\
+ 	z = 1;\n\
  	x = y+z;\n\
   }";
 

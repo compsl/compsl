@@ -25,7 +25,7 @@ on x86 platform, 32 or 64 bits.
 // ###################### DEFINE CONSTANTS ######################
 
 // set number of times to run test
-const int NUMTESTS = 20;
+const int NUMTESTS = 100;
 
 compart *com;
 int16_t cubbyid;

@@ -45,6 +45,14 @@
 #endif
 
 
+#define COMPSL_NEXT_INSTRUCTION goto *(&&NOOP + jmptbl[(++pc)->code])
+#ifdef _COMPSL_TRACE
+#define COMPSL_END_INST goto TOP
+#else
+#define COMPSL_END_INST COMPSL_NEXT_INSTRUCTION
+#endif
+
+
 #define VM_FLOAT_EPSILON FLT_EPSILON
 
 double genrand_real1(void);
@@ -311,13 +319,13 @@ static const int jmptbl[] =
 			printf("%4ld: %s\tsa=%- 8d\ta1=%- 8d\tsp=%ld\n",
 				tractmp,tractbl[(pc+1)->code],(pc+1)->sa,(pc+1)->a1,sppos);
 		#endif
-		goto *(&&NOOP + jmptbl[(++pc)->code]); // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
+		COMPSL_NEXT_INSTRUCTION; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
 	NOOP:
-		goto TOP;
+		COMPSL_END_INST;
 	PUSH:
 		*sp = lvs[pc->a1].v;
 		sp++;
-		goto TOP;
+		COMPSL_END_INST;
  	APUSH:
  		if(lvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0)
  		{
@@ -332,16 +340,16 @@ static const int jmptbl[] =
 
 			STOPEXEC; 			
  		}
- 		goto TOP;
+ 		COMPSL_END_INST;
  	CPUSH:
  		*sp = lcs[pc->a1].v;
  		sp++;
-		goto TOP;
+		COMPSL_END_INST;
 
-       	POP:
+    POP:
  		sp--;
  		lvs[pc->a1].v = *sp;
-		goto TOP;
+		COMPSL_END_INST;
  	APOP:
  		sp -=2;
  		if(lvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0) {
@@ -354,36 +362,36 @@ static const int jmptbl[] =
 
 			STOPEXEC;
  		}
- 		goto TOP;
+ 		COMPSL_END_INST;
  	DPOP:
  		sp--;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	//SWAP:
  	//	tmp = *(sp - 1);
  	///	*(sp - 1) = *(sp - 2);
  	//	*(sp - 2) = tmp;
- 	//	goto TOP;
+ 	//	COMPSL_END_INST;
  	DUP:
  		*sp = *(sp - 1);
  		sp++;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	SAVE:
  		temp = *(sp - 1);
- 		goto TOP;
+ 		COMPSL_END_INST;
  	STO:
  		lvs[pc->a1].v = *(sp-1);
-		goto TOP;
+		COMPSL_END_INST;
  	GSTO:
  		gvs[pc->a1].v = *(sp-1);
-		goto TOP;
+		COMPSL_END_INST;
  	PSHT:
  		*sp = temp;
  		sp++;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	POPT:
  		sp--;
  		temp = *sp;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	CALL: 
  		for(int i=0; i<natives[pc->a1].numParam; i++)
  		{
@@ -401,127 +409,127 @@ static const int jmptbl[] =
  		else 
 		  (natives[pc->a1].func)(natives[pc->a1].params);
 		sp++;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	ADD:
  		sp--;
  		(sp - 1)->i = (sp - 1)->i + sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	INC:
  		(sp - 1)->i++;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	FINC:
  		(sp - 1)->f++;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	SUB:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i - sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	DEC:
  		(sp - 1)->i--;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	FDEC:
  		(sp - 1)->f--;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	MUL:
 	 	sp--;
  		(sp - 1)->i = (sp - 1)->i * sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	DIV:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i / sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
 	LE:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i <= sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	LS:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i < sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
 	EQ:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i == sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
 	NE:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i != sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	GR:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i > sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	GE:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i >= sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  		
  	FADD:
 	 	sp--;
  		(sp - 1)->f = (sp - 1)->f + sp->f;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	FSUB:
 	 	sp--;
  		(sp - 1)->f = (sp - 1)->f - sp->f;
- 		goto TOP; 
+ 		COMPSL_END_INST; 
  	FMUL:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f * sp->f;
- 		goto TOP; 
+ 		COMPSL_END_INST; 
  	FDIV:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f / sp->f;
- 		goto TOP; 
+ 		COMPSL_END_INST; 
  	FLE:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f <= sp->f;
- 		goto TOP; 
+ 		COMPSL_END_INST; 
  	FLS:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f < sp->f;
- 		goto TOP;
+ 		COMPSL_END_INST;
 	FEQ:
  		sp--;
  		(sp - 1)->f = fdimf(sp->f, (sp - 1)->f) < VM_FLOAT_EPSILON;
- 		goto TOP;
+ 		COMPSL_END_INST;
 	FNE:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f != sp->f;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	FGR:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f > sp->f;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	FGE:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f >= sp->f;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	JMP:
  		pc += pc->sa - 1; // compensate for pc++ at top
- 		goto TOP;
+ 		COMPSL_END_INST;
  	JMZ:
  		if(!((--sp)->i)) pc += pc->sa - 1; // compensate for pc++ at top
- 		goto TOP;
+ 		COMPSL_END_INST;
  	JMN:
  		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
- 		goto TOP;
+ 		COMPSL_END_INST;
  	FLIN: 
  		(sp-1)->i = (int)((sp-1)->f);
- 		goto TOP;
+ 		COMPSL_END_INST;
  	INFL:
  		(sp-1)->f = (float)((sp-1)->i);
- 		goto TOP;
+ 		COMPSL_END_INST;
  	MOD:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i % sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	FMOD:
  		sp--;	
  		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
- 		goto TOP;
+ 		COMPSL_END_INST;
  	GPSH:
  		*sp = gvs[pc->a1].v;
 		sp++;
-		goto TOP;
+		COMPSL_END_INST;
  	GAPS:
 		if(gvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0)
  		{
@@ -537,11 +545,11 @@ static const int jmptbl[] =
 			STOPEXEC;
  			
  		}
- 		goto TOP;
+ 		COMPSL_END_INST;
  	GPOP:
  		sp--;
  		gvs[pc->a1].v = *sp;
-		goto TOP;
+		COMPSL_END_INST;
  	GAPP:
  		sp -=2;
  		if(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0)
@@ -556,7 +564,7 @@ static const int jmptbl[] =
 
 			STOPEXEC;
  		}
- 		goto TOP;
+ 		COMPSL_END_INST;
  		
  //begin of boolean + bitwise opers
  
@@ -564,116 +572,116 @@ static const int jmptbl[] =
  	AND:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i && sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	OR:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i || sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	NOT:
  		(sp - 1)->i = !((sp - 1)->i);
- 		goto TOP;
+ 		COMPSL_END_INST;
  //bitwise
  	BAND:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i & sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	BOR:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i | sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	BXOR:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i ^ sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	BNOT: 
  		(sp - 1)->i = ~((sp - 1)->i);
- 		goto TOP;
+ 		COMPSL_END_INST;
  //bit shift
  	SFTL:
  		sp--;
  		(sp - 1)->i = (sp - 1)->i << sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
  	SFTR:
  		sp--;
  		(sp - 1)->i = (sp - 1)->i >> sp->i;
- 		goto TOP;
+ 		COMPSL_END_INST;
 	
 //bultins
 	
 	ABS:
 		(sp - 1)->i = abs((sp - 1)->i);
- 		goto TOP;
+ 		COMPSL_END_INST;
 	
 	ABSF:
 		(sp - 1)->f = fabsf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	SIN:
 		(sp - 1)->f = sinf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	COS:
 		(sp - 1)->f = cosf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	TAN:
 		(sp - 1)->f = tanf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	ASIN:
 		(sp - 1)->f = asinf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	ACOS:
 		(sp - 1)->f = acosf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	ATAN:
 		(sp - 1)->f = atanf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	SQRT:
 		(sp - 1)->f = sqrtf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	LN:
 		(sp - 1)->f = logf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	FLOOR:
 		(sp - 1)->f = floorf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	CEIL:
 		(sp - 1)->f = ceilf((sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	RAND:
 		sp->f = (float)(genrand_real1());
 		sp++;
-		goto TOP;
+		COMPSL_END_INST;
 	ATAN2:
 		sp--;
 		(sp - 1)->f = atan2f(sp->f, (sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	POW:
 		sp--;
 		(sp - 1)->f = powf(sp->f, (sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	MIN:
 		sp--;
 		(sp - 1)->i = (sp->i < (sp - 1)->i)?sp->i:(sp - 1)->i;
-		goto TOP;
+		COMPSL_END_INST;
 	MAX:
 		sp--;
 		(sp - 1)->i = (sp->i > (sp - 1)->i)?sp->i:(sp - 1)->i;
-		goto TOP;
+		COMPSL_END_INST;
 	MINF:
 		sp--;
 		(sp - 1)->f = fminf(sp->f, (sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	MAXF:
 		sp--;
 		(sp - 1)->f = fmaxf(sp->f, (sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 	HYPOT:
 		sp--;
 		(sp - 1)->f = hypotf(sp->f, (sp - 1)->f);
-		goto TOP;
+		COMPSL_END_INST;
 //misc	
  	PYES:
  		if(pc->a1) {puts("YES");}
  		else { puts("NO"); }
- 		goto TOP;
+ 		COMPSL_END_INST;
  	NONO:
 		puts("OMG WTF NO!!!");	
 	//icky things	
@@ -708,7 +716,7 @@ static const int jmptbl[] =
  				fprintf(stderr, "\t%X:   %i %f\n",i, (int)(t->v.i), t->v.f);
  	}
 #endif
- 		goto TOP;
+ 		COMPSL_END_INST;
 // 	UNIMP:
 // 	
 // 	panic("unimplemented instruction");

@@ -157,6 +157,20 @@ ifeq ($(OPTIMIZE),1)
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
 	CFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
+	
+	CFLAGS += -fgcse-sm -fgcse-las -fgcse-after-reload
+	CFLAGS += -ftree-vectorize
+	CFLAGS += -ftracer
+	CFLAGS += -fvariable-expansion-in-unroller -fprefetch-loop-arrays
+	CFLAGS += -freorder-blocks-and-partition
+	
+	###################################################
+	# potentially bad optimizations
+	###################################################
+	# from gcc manual
+	# This option is experimental, as not all machine descriptions used by GCC 
+	# model the CPU closely enough to avoid unreliable results from the algorithm.
+	CFLAGS += -fsched2-use-superblocks
 else
 	CFLAGS += -O0
 endif

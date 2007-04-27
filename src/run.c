@@ -295,13 +295,14 @@ static const int jmptbl[] =
  	&&DBG - &&NOOP
 
  };
+ 
  	#ifdef _COMPSL_TRACE
  		long int tractmp,sppos;
  	#endif
  
 	intfloat stack[VM_STACK_SIZE];
 	intfloat temp; // temp register
-	intfloat *sp = stack; // stack pointer
+	register intfloat *sp = stack; // stack pointer
 	
 	var *lvs = com->vt.vars;
 	var *lcs = com->cons;
@@ -309,9 +310,11 @@ static const int jmptbl[] =
 	
 	nativeFN *natives = com->vm->natives;
 	
-	bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
+	register bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
 	
 	TOP: 
+	NOOP:
+	
 		#ifdef _COMPSL_TRACE
 			
 			tractmp = ((long int)(pc+1) - (long int)(com->cubbys[id].code))/sizeof(bytecode);
@@ -319,17 +322,18 @@ static const int jmptbl[] =
 			printf("%4ld: %s\tsa=%- 8d\ta1=%- 8d\tsp=%ld\n",
 				tractmp,tractbl[(pc+1)->code],(pc+1)->sa,(pc+1)->a1,sppos);
 		#endif
+		
 		COMPSL_NEXT_INSTRUCTION; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
-	NOOP:
-		COMPSL_END_INST;
+	
 	PUSH:
 		*sp = lvs[pc->a1].v;
 		sp++;
 		COMPSL_END_INST;
  	APUSH:
- 		if(lvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0)
+ 		if(__builtin_expect(lvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0,1))
  		{
  			*(sp - 1) = lvs[pc->a1].p[(sp - 1)->i];
+ 			COMPSL_END_INST;
  		}
  		else
  		{
@@ -340,7 +344,6 @@ static const int jmptbl[] =
 
 			STOPEXEC; 			
  		}
- 		COMPSL_END_INST;
  	CPUSH:
  		*sp = lcs[pc->a1].v;
  		sp++;
@@ -352,8 +355,10 @@ static const int jmptbl[] =
 		COMPSL_END_INST;
  	APOP:
  		sp -=2;
- 		if(lvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0) {
+ 		if(__builtin_expect(lvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0,1))
+ 		{
  			lvs[pc->a1].p[(sp+1)->i] = *(sp);
+ 			COMPSL_END_INST;
  		}
  		else {
  			fprintf(stderr, 
@@ -362,13 +367,12 @@ static const int jmptbl[] =
 
 			STOPEXEC;
  		}
- 		COMPSL_END_INST;
  	DPOP:
  		sp--;
  		COMPSL_END_INST;
  	//SWAP:
  	//	tmp = *(sp - 1);
- 	///	*(sp - 1) = *(sp - 2);
+ 	//	*(sp - 1) = *(sp - 2);
  	//	*(sp - 2) = tmp;
  	//	COMPSL_END_INST;
  	DUP:
@@ -409,7 +413,9 @@ static const int jmptbl[] =
  		else 
 		  (natives[pc->a1].func)(natives[pc->a1].params);
 		sp++;
+		
  		COMPSL_END_INST;
+ 		
  	ADD:
  		sp--;
  		(sp - 1)->i = (sp - 1)->i + sp->i;
@@ -531,9 +537,10 @@ static const int jmptbl[] =
 		sp++;
 		COMPSL_END_INST;
  	GAPS:
-		if(gvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0)
+		if(__builtin_expect(gvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0,1))
  		{
  			*(sp - 1) = gvs[pc->a1].p[(sp - 1)->i];
+ 			COMPSL_END_INST;
  		}
  		else
  		{
@@ -545,16 +552,18 @@ static const int jmptbl[] =
 			STOPEXEC;
  			
  		}
- 		COMPSL_END_INST;
+ 		
  	GPOP:
  		sp--;
  		gvs[pc->a1].v = *sp;
 		COMPSL_END_INST;
+		
  	GAPP:
  		sp -=2;
- 		if(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0)
+ 		if(__builtin_expect(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0,1))
  		{
  			gvs[pc->a1].p[(sp+1)->i] = *(sp);
+ 			COMPSL_END_INST;
  		}
  		else
  		{
@@ -564,10 +573,7 @@ static const int jmptbl[] =
 
 			STOPEXEC;
  		}
- 		COMPSL_END_INST;
- 		
- //begin of boolean + bitwise opers
- 
+
  //boolean 
  	AND:
  		sp--;	
@@ -682,13 +688,14 @@ static const int jmptbl[] =
  		if(pc->a1) {puts("YES");}
  		else { puts("NO"); }
  		COMPSL_END_INST;
+ 		
  	NONO:
 		puts("OMG WTF NO!!!");	
 	//icky things	
-	
- 	END:
- 	HLT:
- 		return;
+// 	UNIMP:
+// 	
+// 	panic("unimplemented instruction");
+ 	
  	DBG: // dump some state info
 #ifdef DEBUG
  	{
@@ -716,8 +723,9 @@ static const int jmptbl[] =
  				fprintf(stderr, "\t%X:   %i %f\n",i, (int)(t->v.i), t->v.f);
  	}
 #endif
- 		COMPSL_END_INST;
-// 	UNIMP:
-// 	
-// 	panic("unimplemented instruction");
+	END:
+ 	HLT:
+ 	
+ 	
+ 	return;
 }

@@ -160,6 +160,11 @@ else
 	override APPSTATMSG += Compile time bytecode stack bounds checking is OFF\\n
 endif
 
+# note: not needed on x86 apparntly
+ifdef PIC
+	COMPSL_PIC := -fpic
+	override APPSTATMSG += Position independant code generation ON\\n
+endif
 
 ifdef DEBUG
 	# mudflap is some pointer debuging stuff
@@ -211,16 +216,11 @@ else
 	CFLAGS += -O$(OPTIMIZE)
 endif
 
-# note: not needed on x86 apparntly
-ifdef PIC
-	COMPSL_PIC := -fpic
-	override APPSTATMSG += Position independant code generation ON\\n
-endif
-
 # for shared library
 ifndef WINDOWS
 	override CFLAGS += -fvisibility=hidden
 endif
+
 override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
 
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
@@ -241,7 +241,7 @@ endif
 ifdef CPUTYPE
 	ifeq ($(CPUGUESS),1)
 		STATMSG += Guessed CPUTYPE of $(patsubst -march=%,%,$(filter -march% ,$(CPUFLAGS)))\\n
-		STATMSG += \\t adding CPU specific flags $(CPUFLAGS)\\n
+		STATMSG +=    Adding CPU flags $(CPUFLAGS)\\n
 	else
 		STATMSG += Compiling for $(CPUTYPE) with $(CPUFLAGS)\\n
 	endif

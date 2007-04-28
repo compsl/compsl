@@ -378,6 +378,7 @@ test-valgrind: $(TEST_EXES)
 
 statmsg::
 	@echo -ne $(STATMSG)
+	@sleep 5
 
 ################################
 # INTERNAL TARGETS             #

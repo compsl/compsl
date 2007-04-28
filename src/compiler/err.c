@@ -40,7 +40,6 @@ char foo[1024];
 
 void internalCompileError(const char* str) {
   DPRINTF("internal Compile error\n");
-  sprintf(foo,"INTERNAL ERROR: %s\n",str);
-  compileError(foo);	
+  fprintf(stderr,"%s:%i: error: INTERNAL ERROR: %s\n",csl_name,lineNo,str);	
   abort();
 }

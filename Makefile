@@ -222,7 +222,7 @@ else
 endif
 ifdef CPUTYPE
 	ifeq ($(CPUGUESS),1)
-		STATMSG += Guessed CPUTYPE of $(patsubst -march=%,%,$(filter -march% ,$(CPUFLAGS)))) \\n
+		STATMSG += Guessed CPUTYPE of $(patsubst -march=%,%,$(filter -march% ,$(CPUFLAGS))) \\n
 		STATMSG += \\t adding CPU specific flags $(CPUFLAGS) \\n
 	else
 		STATMSG += Compiling for $(CPUTYPE) with $(CPUFLAGS) \\n

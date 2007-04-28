@@ -247,7 +247,7 @@ ifdef CPUTYPE
 	endif
 endif
 ifdef PLATLIBS
-	STATMSG += Platform specifice librarys to link $(PLATLIBS)\\n
+	STATMSG += Platform specifice librarys to link $(subst -lm,lib,$(PLATLIBS))\\n
 endif
 STATMSG += $(APPSTATMSG)\\n
 

@@ -90,7 +90,7 @@
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>test</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="clean" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -102,23 +102,16 @@
 </target>
 <target name="all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
-<buildArguments/>
+<buildArguments>-k -j2</buildArguments>
 <buildTarget>all</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="debug all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="all DEBUG" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG=1</buildArguments>
 <buildTarget>all DEBUG=1 OPTIMIZE=0</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>true</useDefaultCommand>
-</target>
-<target name="debug test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>make</buildCommand>
-<buildArguments>-k DEBUG='1' -j2</buildArguments>
-<buildTarget>test DEBUG=1 OPTIMIZE=0</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="cleantest" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -140,33 +133,33 @@
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>cleantest DEBUG=1 TRACE_INTERP=1 DEBUG_COMP=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
-<target name="compdbg test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<target name="test DEBUG_COMP" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>test DEBUG=1 DEBUG_COMP=1 OPTIMIZE=0</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="test athlon64" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>test SSE=2 CPUTYPE=athlon64</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="dumper" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>bin/dumper DEBUG=1</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="test DEBUG" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>test DEBUG=1</buildTarget>
+<buildTarget>test DEBUG=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
@@ -181,36 +174,36 @@
 <buildCommand>make</buildCommand>
 <buildArguments/>
 <buildTarget>docs</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="dumper No Optimize" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments/>
 <buildTarget>dumper DEBUG=1 OPTIMIZE=0</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="perf-test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments/>
 <buildTarget>bin/perf-test</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="perf-test athlon64" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments/>
 <buildTarget>bin/perf-test SSE=2 CPUTYPE=athlon64</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="perf-test Debug" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments/>
 <buildTarget>bin/perf-test DEBUG=1</buildTarget>
 <stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="help" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
@@ -218,6 +211,13 @@
 <buildTarget>help</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
+</target>
+<target name="all Athlon64" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments>-k -j2</buildArguments>
+<buildTarget>all CPUTYPE=athlon64 MMX=1 SSE2</buildTarget>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
 </target>
 </buildTargets>
 </item>

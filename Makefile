@@ -230,9 +230,9 @@ ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}
 
 STATMSG = Compiling with $(CC) on $(_ARCH)\\n
 ifdef DEBUG
-	STATMSG += Creating a Debug build\\n
+	STATMSG += Making a Debug build\\n
 else
-	STATMSG += Creating a Release build\\n
+	STATMSG += Making a Release build\\n
 endif
 ifeq ($(OPTIMIZE),0)
 	STATMSG += Optimization is OFF\\n

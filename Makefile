@@ -140,7 +140,7 @@ ifdef TRACE_OPTIM
 	CFLAGS += -DCOMPSL_TRACE_OPTIM
 	override APPSTATMSG += Tracing bytecode optimizer is ON\\n
 else
-	override APPSTATMSG += Interpreter execution tracing is OFF\\n
+	override APPSTATMSG += Tracing bytecode optimizer is OFF\\n
 endif
 
 # make the compiler output the line number it's currently compiling 

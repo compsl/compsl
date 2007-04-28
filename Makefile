@@ -410,12 +410,12 @@ statmsg::
 
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
-	@$(CC) -c $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< $(PLATLIBS) -o $@
-	@$(CC) -MM $(ALL_CFLAGS) -fno-gcse -Wno-unused-label src/run.c > src/run.dep
+	@$(CC) -MM $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< > $*.dep
+	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
 %.o: %.c
 	@$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
-	@$(CC) -c $(ALL_CFLAGS) $< -o $@
+	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 
 ifdef WINDOWS
 $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)

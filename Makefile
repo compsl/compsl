@@ -228,11 +228,11 @@ MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
 ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}
 
 
-STATMSG = Compiling with $(CC) on $(_ARCH)\\n
+STATMSG = Compiling with $(CC) on $(_ARCH) for
 ifdef DEBUG
-	STATMSG += Making a Debug build\\n
+	STATMSG += Debugging\\n
 else
-	STATMSG += Making a Release build\\n
+	STATMSG += Release\\n
 endif
 ifeq ($(OPTIMIZE),0)
 	STATMSG += Optimization is OFF\\n

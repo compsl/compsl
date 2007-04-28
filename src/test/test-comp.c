@@ -74,10 +74,10 @@ int main()
 		int ret;
 		printf("File %s: ",err_files[i]);
 		  
-		ecom = createComp(veem);
-		if(evm == NULL) 
+		ecom = createComp(evm);
+		if(ecom  == NULL) 
 		{
-			puts("Error creating VM");
+			puts("Error creating compartment");
 			return 1;
 		}
 	  	ret = fileCompile(err_files[i], ecom);

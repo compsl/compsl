@@ -352,6 +352,7 @@ clean:
 		 $(EXPORTS) $(DEFFILE) $(LIBFILE) $(IMPLIB)                \
 		 bin/perf-test* bin/dumper* 
 	-rm -rf	doc/html doc/latex doc/man
+	@echo
 
 docs: $(DOXYFILE)
 	$(DOXYGEN) $(DOXYFILE)
@@ -402,10 +403,11 @@ test-valgrind: $(TEST_EXES)
 testmsg:
 	@echo -ne "\n\nRUNNING TESTS     \n**************************************\n"
 statmsg:
+	@echo
 	@echo -ne $(STATMSG)
 	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n" | fold -s
 	@sleep 5
-	@echo -ne "\n\nSTARTING OPERATION\n**************************************\n"
+	@echo -ne "\nSTARTING OPERATION\n**************************************\n"
 ################################
 # INTERNAL TARGETS             #
 ################################

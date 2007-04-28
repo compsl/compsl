@@ -32,6 +32,7 @@ int main()
 	
 	const char *err_files[] =
 	{
+		"src/test/missingDec.csl",
 		"src/test/error.csl",
 		NULL
 	};

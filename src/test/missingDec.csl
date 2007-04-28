@@ -1,0 +1,4 @@
+// this file is missing a declare { } block
+cubby foo {
+	a = 1;
+}

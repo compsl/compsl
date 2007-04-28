@@ -65,9 +65,9 @@ int goparse(const char *fn, compart *com) {
 	free(sprt); sprt = NULL;
 	return ret;
 }
-  
-void yyerror(const char *msg) {
-    fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",csl_name,msg,lineNo);
+void yyerror(const char *fn, const char *msg) {
+	compileError(msg);
+    //fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",csl_name,msg,lineNo);
     return; 
 }
 

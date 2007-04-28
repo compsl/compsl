@@ -251,7 +251,7 @@ ifdef PLATLIBS
 	STATMSG += Platform specifice librarys to link $(PLATLIBS)\\n
 endif
 STATMSG += $(APPSTATMSG)\\n
-STATMSG += CFLAGS=${ALL_CFLAGS}\\n
+
 
 
 ################################
@@ -339,6 +339,7 @@ help:
 	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
 	@echo
 	@echo -ne $(STATMSG)
+	@echo -e "CFLAGS=\n$(ALL_CFLAGS)" | fold -s
 
 static: statmsg $(STATIC_LIB_OUT) 
 dynamic: statmsg $(DYN_LIB_OUT) 
@@ -378,6 +379,7 @@ test-valgrind: $(TEST_EXES)
 
 statmsg::
 	@echo -ne $(STATMSG)
+	@echo -e "CFLAGS=\n$(ALL_CFLAGS)" | fold -s
 	@sleep 5
 
 ################################

@@ -103,10 +103,9 @@ else
 		override CPUFLAGS += -march=$(CPUTYPE) 
 	endif
 	ifeq ($(MMX),1)
-		override CPUFLAGS += -mmmx  -DCOMPSL_MMX
+		override CPUFLAGS += -mmmx
 	endif
 	ifdef SSE
-		override CPUFLAGS += -DCOMPSL_SSE
 		ifeq ($(SSE),1)
 			override CPUFLAGS += -msse -mfpmath=sse,387 
 		else

@@ -25,16 +25,14 @@
 
 
 void compileError(const char *str) {
-  fflush(stderr);
-  fflush(stdout);
-  fprintf(comp_out,"%s:%i: error: %s\n",csl_name,lineNo,str);
+	fprintf(comp_out,"%s:%i: error: %s\n",csl_name,lineNo,str);
+	fflush(comp_out);
 }
 
- void compileWarning(const char *str) {
-  fflush(stderr);
-  fflush(stdout);
-  fprintf(comp_out,"%s:%i: warning: %s\n",csl_name,lineNo,str);
- }
+void compileWarning(const char *str) {
+	fprintf(comp_out,"%s:%i: warning: %s\n",csl_name,lineNo,str);
+	fflush(comp_out);
+}
 
 char foo[1024];
 

@@ -125,6 +125,14 @@ ifdef TRACE_INTERP
 	CFLAGS += -D_COMPSL_TRACE
 endif
 
+ifdef TRACE_OPTIM
+	CFLAGS += -DCOMPSL_TRACE_OPTIM
+endif
+
+ifdef TRACE_COMPILE
+	CFLAGS += -DCOMPSL_TRACE_COMPILE
+endif
+
 #allow overrides from command line, but enable by default
 STACK_CHECK = 1
 ifeq ($(STACK_CHECK), 1)
@@ -133,7 +141,11 @@ endif
 
 
 ifdef DEBUG
-	CFLAGS += -ggdb3 -DDEBUG -fmudflap
+	# mudflap is some pointer debuging stuff
+	# disable builtins since we can't set breakpoints on
+	# calls to builtin functions
+	# stack protector checks for stack overruns
+	CFLAGS += -ggdb3 -DDEBUG -fmudflap -fno-builtin -fstack-protector
 	#CFLAGS += -D DEBUG $(DBG_ENVS)
 	OPTIMIZE=0
 else
@@ -150,9 +162,8 @@ ifeq ($(OPTIMIZE),1)
 	CFLAGS += -finline-limit=2000
 	CFLAGS += -frename-registers
 	CFLAGS += -fno-stack-limit
-	#CFLAGS += -fbranch-target-load-optimize -fbranch-target-load-optimize2
-	# -fsched2-use-superblocks
-	#-fmove-all-movables
+	CFLAGS += -funswitch-loops
+	
 
 	# TODO: figure out if we need the -fno-strict-aliasing option.
 	# TODO: make sure none of these breaks the library for linking....
@@ -163,6 +174,10 @@ ifeq ($(OPTIMIZE),1)
 	CFLAGS += -ftracer
 	CFLAGS += -fvariable-expansion-in-unroller -fprefetch-loop-arrays
 	CFLAGS += -freorder-blocks-and-partition
+	
+	CFLAGS += -fbranch-target-load-optimize 
+	#CFLAGS += -fbranch-target-load-optimize2
+	CFLAGS += -floop-optimize2 -fmove-all-movables
 	
 	###################################################
 	# potentially bad optimizations
@@ -258,7 +273,8 @@ clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(STATIC_LIB_OUT) \
 		 $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*)  \
 		 $(DERIVED_FILES) $(CMPATH)/compsl.output bin/dumper*      \
-		 $(EXPORTS) $(DEFFILE) $(LIBFILE) $(IMPLIB)
+		 $(EXPORTS) $(DEFFILE) $(LIBFILE) $(IMPLIB)                \
+		 src/perf-test.o bin/perf-test*
 	-rm -rf	doc/html doc/latex doc/man
 
 docs: $(DOXYFILE)
@@ -284,19 +300,21 @@ package: clean
 		-cjvf compsl-${COMPSL_VERSION}.tar.bz2 *
 
 bin/dumper: src/dumper.o $(OBJECTS)
-	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
+	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
 bin/perf-test: src/perf-test.o $(OBJECTS)
-	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
+	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
 cleantest: clean test 
 
-test: $(TEST_EXES)
-	@for test in $^; do \
-		echo Running $$test; \
-		$$test ; \
-		echo DONE; echo; \
-	done
+#test: $(TEST_EXES)
+#	@for test in $^; do \
+#		echo Running $$test; \
+#		$$test ; \
+#		echo DONE; echo; \
+#	done
+test: $(TEST_EXES) $(addprefix run-,$(notdir $(basename $(TESTSRCS))))
+
 
 test-valgrind: $(TEST_EXES)
 	@for test in $^; do \
@@ -314,16 +332,16 @@ test-valgrind: $(TEST_EXES)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
-	$(CC) -c $(ALL_CFLAGS) -fno-gcse $< $(PLATLIBS) -o $@
-	$(CC) -MM $(ALL_CFLAGS) src/run.c > src/run.dep
+	@$(CC) -c $(ALL_CFLAGS) -fno-gcse $< $(PLATLIBS) -o $@
+	@$(CC) -MM $(ALL_CFLAGS) src/run.c > src/run.dep
 
 %.o: %.c
-	$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
-	$(CC) -c $(ALL_CFLAGS) $< -o $@
+	@$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
+	@$(CC) -c $(ALL_CFLAGS) $< -o $@
 
 ifdef WINDOWS
 $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
-	$(CC) $(ALL_CFLAGS) $(OBJECTS) -shared \
+	@$(CC) $(ALL_CFLAGS) $(OBJECTS) -shared \
 		-Wl,--out-implib,$(IMPLIB)  \
 		-Wl,--output-def,$(DEFFILE) \
 		-Wl,-soname,$(DYN_LIB_OUT)  \
@@ -331,11 +349,11 @@ $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 		-o $(DYN_LIB_OUT)
 else
 $(DYN_LIB_OUT): $(OBJECTS)
-	$(CC) -shared -Wl,-soname,lib$(SHORTLIB).so $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
+	@$(CC) -shared -Wl,-soname,lib$(SHORTLIB).so $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
 endif
 
 $(STATIC_LIB_OUT): $(OBJECTS)
-	ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
+	@ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
 
 ################################
@@ -346,16 +364,20 @@ $(CMPATH)/binops.c: $(CMPATH)/compsl.tab.h
 $(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.tab.c
 
 $(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.y
-	rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
-	$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
+	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
+	@$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
 
 $(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h
-	rm -f $(CMPATH)/lex.yy.c
-	$(FLEX) -o$@ $<
+	@rm -f $(CMPATH)/lex.yy.c
+	@$(FLEX) -o$@ $<
 
 
 ####################################################
 # Testers - assume each test is one sourcefile
 ####################################################
+run-test-%: bin/test-%
+	@$<
+	@echo
+
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
-	$(CC) -MD $< $(OBJECTS) $(PLATLIBS) ${MYCFLAGS} -o $@
+	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@

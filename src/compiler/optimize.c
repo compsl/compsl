@@ -98,7 +98,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 
 bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 {
-	#ifdef DEBUG
+	#ifdef COMPSL_TRACE_OPTIM
 	puts("\nBegining optimize");
 	dumpBytecode2(com,code);
 	puts("Running redundant DPOP remover");
@@ -117,7 +117,7 @@ bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 					break;
 				}
 	}
-	#ifdef DEBUG
+	#ifdef COMPSL_TRACE_OPTIM
 	dumpBytecode2(com,code);
 	puts("Running POP->STO");
 	#endif
@@ -145,7 +145,7 @@ bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 				}
 			}
 	}
-	#ifdef DEBUG
+	#ifdef COMPSL_TRACE_OPTIM
 	dumpBytecode2(com,code);
 	puts("Done Optimize");
 	#endif

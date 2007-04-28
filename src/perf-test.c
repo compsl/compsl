@@ -202,6 +202,7 @@ void ClockTest (uint64_t clocks[]) {
 int main() {
    // list of clock counts
    uint64_t clocklist[NUMTESTS];
+   uint64_t avg = 0;
    int i;
    
    	VM *vm=createVM();
@@ -222,9 +223,11 @@ int main() {
    // print results
    printf ("\n  test     clock cycles");
    for (i = 0; i < NUMTESTS; i++) {
+   	  avg += clocklist[i];
       printf ("\n%6i  %14llu", i+1, clocklist[i]);
    }
+   printf ("\n\nTotal   %14llu", avg);
+   printf (  "\nAverage %14llu\n", avg/NUMTESTS);
 
-   printf ("\n");
    return 0;
 }

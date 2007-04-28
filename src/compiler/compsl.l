@@ -127,7 +127,7 @@ continue	return CONTINUE_KEYWORD;
 \|=			return BITWISE_OREQ;
 \ 		      	;
 \t			;
-\n		{ COMPSL_DPRINTF("%4d\n",lineNo); lineNo++; };
+\n		{ COMPSL_CTRAC_PRNT("%4d\n",lineNo); lineNo++; };
 [0-9]+  	{ yylval.ival = atoi( yytext ); return INT_LITERAL; }
 [0-9]*\.[0-9]*  { yylval.fval = atof(yytext); return FLOAT_LITERAL; }
 [_a-zA-Z0-9]+   {

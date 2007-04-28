@@ -49,5 +49,11 @@
 #define COMPSL_DPRINTF(...) 	
 #endif
 
+#ifdef COMPSL_TRACE_COMPILE
+#define COMPSL_CTRAC_PRNT(...) printf(__VA_ARGS__)
+#else
+#define COMPSL_CTRAC_PRNT(...)
+#endif
+
 #endif
 

@@ -320,7 +320,7 @@ endif
 DOXYFILE = compsl.doxyfile
 
 .PHONY: test cleantest all clean docs install install-strip help package
-.PHONY: test-valgrind statmsg testmsg
+.PHONY: test-valgrind statmsg testmsg test-exes
 #.INTERMEDIATE: 
 .SECONDARY: $(OBJECTS) $(DERIVED_FILES) $(CMPATH)/compsl.output
 .SECONDARY: $(TESTOBJS) $(OTHEROBJ)
@@ -329,7 +329,7 @@ DOXYFILE = compsl.doxyfile
 #TARGETS                       #
 ################################
 
-all: statmsg $(STATIC_LIB_OUT) $(DYN_LIB_OUT) 
+all: statmsg $(STATIC_LIB_OUT) $(DYN_LIB_OUT) ;
 
 install: all docs
 	$(INSTALL) -d $(libdir)
@@ -361,15 +361,16 @@ docs: $(DOXYFILE)
 	mv doc/latex/refman.pdf doc/compsl.pdf
 
 help: 
-	@echo "Makefile for CompSL"
-	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic, package, docs"
+	@echo -e "\nMakefile for CompSL"
+	@echo -ne "***************************************************\n"
+	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic, package,"
+	@echo "           docs, test-exes"
+	@echo
 	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
 	@echo
-	@echo -ne $(STATMSG)
-	@echo -e "CFLAGS\n$(ALL_CFLAGS)" | fold -s
 
-static: statmsg $(STATIC_LIB_OUT) 
-dynamic: statmsg $(DYN_LIB_OUT) 
+static: statmsg $(STATIC_LIB_OUT) ;
+dynamic: statmsg $(DYN_LIB_OUT) ;
 
 package: clean
 	rm -f compsl-${COMPSL_VERSION}.tar.bz2
@@ -386,10 +387,11 @@ bin/dumper: src/dumper.o $(OBJECTS)
 bin/perf-test: src/perf-test.o $(OBJECTS)
 	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
-cleantest: clean test 
+cleantest: clean test ;
 
-test: statmsg $(TEST_EXES) testmsg $(addprefix run-,$(notdir $(basename $(TESTSRCS)))) 
+test: test-exes testmsg $(addprefix run-,$(notdir $(basename $(TESTSRCS)))) ;
 
+test-exes: statmsg $(TEST_EXES) ;
 
 test-valgrind: $(TEST_EXES)
 	@for test in $^; do \

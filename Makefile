@@ -419,10 +419,12 @@ statmsg:
 
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
+	@echo CC $<
 	@$(CC) -MM $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< > src/run.dep
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
 %.o: %.c
+	@echo CC $<
 	@$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 
@@ -452,10 +454,12 @@ $(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.tab.c
 
 $(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.y
 	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
+	@echo BISON $<
 	@$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
 
 $(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h
 	@rm -f $(CMPATH)/lex.yy.c
+	@echo FLEX $<
 	@$(FLEX) -o$@ $<
 
 

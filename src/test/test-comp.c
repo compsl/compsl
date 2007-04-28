@@ -87,15 +87,15 @@ int main()
 		ecom = createComp(evm);
 		if(ecom  == NULL) 
 		{
-			puts("Error creating compartment");
+			printf("Error creating compartment");
 			return 1;
 		}
 	  	ret = fileCompile(err_files[i], ecom);
 	  	if(ret==0){
-	    	puts("\tFAIL");
+	    	printf("\tFAIL\n");
 	    	return 2;
 	  	} else {
-	    	puts("\tPASS");
+	    	printf("\tPASS\n");
 	  	}
 	  	destroyComp(ecom);
 	  	ecom = NULL;

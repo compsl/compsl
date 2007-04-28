@@ -321,8 +321,8 @@ DOXYFILE = compsl.doxyfile
 
 .PHONY: test cleantest all clean docs install install-strip help package
 .PHONY: test-valgrind statmsg testmsg
-.INTERMEDIATE: $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) 
-.SECONDARY: $(DERIVED_FILES) $(CMPATH)/compsl.output
+.INTERMEDIATE: $(TESTOBJS) $(OTHEROBJ) 
+.SECONDARY: $(OBJECTS) $(DERIVED_FILES) $(CMPATH)/compsl.output
 ################################
 #TARGETS                       #
 ################################

@@ -95,7 +95,8 @@ endif
 
 override CPUGUESS=0
 ifeq ($(CPUTYPE),auto)
-	override CPUFLAGS = $(shell ./gcc-arch)
+	override CPUFLAGS = $(shell ./gcc-arch &2>/dev/null)
+	override CPUTYPE = $(shell ./gcc-arch >/dev/null &2>1)
 	override CPUGUESS=1
 else
 	override CPUFLAGS =

@@ -350,8 +350,8 @@ clean:
 	@-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(DEPS) 
 	-rm -f -- $(DYN_LIB_OUT) $(STATIC_LIB_OUT) $(TEST_EXES:=*)
 	-rm -f -- $(DERIVED_FILES) $(CMPATH)/compsl.output
-	-rm -f -- $(DEFFILE) $(LIBFILE) $(IMPLIB)
 	-rm -f -- bin/perf-test* bin/dumper* 
+	-rm -f -- $(DEFFILE) $(LIBFILE) $(IMPLIB)
 	-rm -rf   doc/html doc/latex doc/man
 	@echo
 

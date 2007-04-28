@@ -398,7 +398,7 @@ test-valgrind: $(TEST_EXES)
 
 statmsg::
 	@echo -ne $(STATMSG)
-	@echo -e "CFLAGS\n$(ALL_CFLAGS)" | fold -s
+	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n" | fold -s
 	@sleep 5
 
 ################################

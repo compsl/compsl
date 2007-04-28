@@ -321,8 +321,10 @@ DOXYFILE = compsl.doxyfile
 
 .PHONY: test cleantest all clean docs install install-strip help package
 .PHONY: test-valgrind statmsg testmsg
-.INTERMEDIATE: $(TESTOBJS) $(OTHEROBJ) 
+#.INTERMEDIATE: 
 .SECONDARY: $(OBJECTS) $(DERIVED_FILES) $(CMPATH)/compsl.output
+.SECONDARY: $(TESTOBJS) $(OTHEROBJ)
+
 ################################
 #TARGETS                       #
 ################################
@@ -345,12 +347,12 @@ strip: all
 	strip --strip-unneeded $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
 clean:
-	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(STATIC_LIB_OUT) \
-		 $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*)  \
-		 $(DERIVED_FILES) $(CMPATH)/compsl.output                  \
-		 $(EXPORTS) $(DEFFILE) $(LIBFILE) $(IMPLIB)                \
-		 bin/perf-test* bin/dumper* 
-	-rm -rf	doc/html doc/latex doc/man
+	@-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(DEPS) 
+	-rm -f -- $(DYN_LIB_OUT) $(STATIC_LIB_OUT) $(TEST_EXES:=*)
+	-rm -f -- $(DERIVED_FILES) $(CMPATH)/compsl.output
+	-rm -f -- $(DEFFILE) $(LIBFILE) $(IMPLIB)
+	-rm -f -- bin/perf-test* bin/dumper* 
+	-rm -rf   doc/html doc/latex doc/man
 	@echo
 
 docs: $(DOXYFILE)

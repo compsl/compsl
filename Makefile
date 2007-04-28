@@ -430,6 +430,7 @@ src/run.o: src/run.c
 
 ifdef WINDOWS
 $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
+	@echo LINK $<
 	@$(CC) $(ALL_CFLAGS) $(OBJECTS) -shared \
 		-Wl,--out-implib,$(IMPLIB)  \
 		-Wl,--output-def,$(DEFFILE) \
@@ -438,10 +439,12 @@ $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 		-o $(DYN_LIB_OUT)
 else
 $(DYN_LIB_OUT): $(OBJECTS)
+	@echo LINK $<
 	@$(CC) -shared -Wl,-soname,lib$(SHORTLIB).so $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
 endif
 
 $(STATIC_LIB_OUT): $(OBJECTS)
+	@echo AR $<
 	@ar rcs $(STATIC_LIB_OUT) $(OBJECTS)
 
 
@@ -471,4 +474,5 @@ run-test-%: bin/test-%
 	@echo
 
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
+	@echo LINK $<
 	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@

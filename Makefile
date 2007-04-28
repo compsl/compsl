@@ -203,7 +203,7 @@ ifndef WINDOWS
 endif
 override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
 
-MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL
+MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
 ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}
 
 
@@ -335,8 +335,8 @@ test-valgrind: $(TEST_EXES)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c
-	@$(CC) -c $(ALL_CFLAGS) -fno-gcse $< $(PLATLIBS) -o $@
-	@$(CC) -MM $(ALL_CFLAGS) src/run.c > src/run.dep
+	@$(CC) -c $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< $(PLATLIBS) -o $@
+	@$(CC) -MM $(ALL_CFLAGS) -fno-gcse -Wno-unused-label src/run.c > src/run.dep
 
 %.o: %.c
 	@$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep

@@ -6,6 +6,14 @@
 // For DPRINTF
 #include "../intern/debug.h"
 #include "../compiler/node.h"
+#include "../compiler/interncomp.h"
+
+#if defined(WIN32) || defined(DJGPP)
+#define BIT_BUCKET "NUL"
+#else
+#define BIT_BUCKET "/dev/null"
+#endif
+
 
 int main()
 {
@@ -61,6 +69,7 @@ int main()
 	destroyVM(veem);
 	
 	puts("Begging error testing");
+	comp_out=fopen(BIT_BUCKET,"w");
 	
 	VM *evm = createVM();
 	compart *ecom=NULL;

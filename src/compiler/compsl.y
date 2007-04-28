@@ -21,7 +21,7 @@
 
 
 
-%parse-param { char const *file_name };
+//%parse-param { char const *file_name };
 %initial-action
 {	
 	//printf("Parsing file: %s",file_name);
@@ -59,15 +59,15 @@ int goparse(const char *fn, compart *com) {
 	ccompart = com;
 	
 	sprt=malloc(1024 * sizeof(char));
-	ret = yyparse(fn);
+	ret = yyparse();
 	DPRINTF(">> DONE PARSE\n\n");
 	
 	free(sprt); sprt = NULL;
 	return ret;
 }
   
-void yyerror(const char *fn, const char *msg) {
-    fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",fn,msg,lineNo);
+void yyerror(const char *msg) {
+    fprintf(stderr,"> In file \"%s\"\n  Error: \"%s\"\n  Line Num: %i\n",csl_name,msg,lineNo);
     return; 
 }
 

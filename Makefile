@@ -401,9 +401,9 @@ test-valgrind: $(TEST_EXES)
 # Message targets              #
 ################################
 testmsg:
-	@echo -ne "\n\nRUNNING TESTS     \n**************************************\n"
+	@echo -ne "\n\nRUNNING TESTS   \n**************************************\n"
 statmsg:
-	@echo
+	@echo -ne "\nSETTINGS          \n**************************************\n"
 	@echo -ne $(STATMSG)
 	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n" | fold -s
 	@sleep 5

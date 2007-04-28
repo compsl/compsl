@@ -215,7 +215,7 @@
 <target name="all Athlon64" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
-<buildTarget>all CPUTYPE=athlon64 MMX=1 SSE2</buildTarget>
+<buildTarget>all CPUTYPE=athlon64 MMX=1 SSE=2</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

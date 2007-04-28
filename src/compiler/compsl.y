@@ -53,6 +53,8 @@ int goparse(const char *fn, compart *com) {
 	csl_name=fn;
 	lineNo=1;
 	
+	if(comp_out == NULL) comp_out = stdout;
+	
 	DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);
 	ccompart = com;
 	

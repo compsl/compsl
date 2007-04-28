@@ -26,7 +26,14 @@ int main()
 		"src/test/flow.csl",
 		"src/test/mincrash.csl",
 		"src/test/comparison.csl",
-		"src/test/arrays.csl"
+		"src/test/arrays.csl",
+		NULL
+	};
+	
+	const char *err_files[] =
+	{
+		"src/test/error.csl",
+		NULL
 	};
 	
 	VM *veem = createVM();
@@ -34,7 +41,7 @@ int main()
 	addPrintLibToVm(veem);
 	addDebugLibToVm(veem);
 	
-	for(int i=0;i<NUM_FILES;i++) {
+	for(int i=0;files[i] != NULL;i++) {
 	  int ret;
 	  printf("File %s: ",files[i]);
 	  
@@ -50,8 +57,41 @@ int main()
 	  }
 	  destroyComp(com[i]);
 	}
-	
 	destroyVM(veem);
+	
+	puts("Begging error testing");
+	
+	VM *evm = createVM();
+	compart *ecom=NULL;
+	
+	if(evm == NULL) 
+	{
+		puts("Error creating VM");
+		return 1;
+	}
+	
+	for(int i=0;err_files[i] != NULL;i++) {
+		int ret;
+		printf("File %s: ",err_files[i]);
+		  
+		ecom = createComp(veem);
+		if(evm == NULL) 
+		{
+			puts("Error creating VM");
+			return 1;
+		}
+	  	ret = fileCompile(err_files[i], ecom);
+	  	if(ret==0){
+	    	puts("\tFAIL");
+	    	return 2;
+	  	} else {
+	    	puts("\tPASS");
+	  	}
+	  	destroyComp(ecom);
+	  	ecom = NULL;
+	}
+	
+	
 	
 	return 0;
 }

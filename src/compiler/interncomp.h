@@ -23,6 +23,8 @@
 #ifndef INTERNCOMP_H_
 #define INTERNCOMP_H_
 
+#include <stdio.h>
+
 #include "node.h"
 #include "../extern/compsl.h"
 #include "../intern/bytecode.h"
@@ -35,6 +37,8 @@
 #define CONTINUE_NOOP_IDEN 89
 #define BREAK_NOOP_IDEN 90
 
+//where the compiler outputs error messages
+FILE *comp_out;
 
 // Compiler is not reentrant
 // TODO: Make compiler reentrant

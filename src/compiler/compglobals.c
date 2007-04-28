@@ -21,6 +21,10 @@
 
 #include "../extern/compsl.h"
 
+#include <stdio.h>
+
+FILE *comp_out = NULL;
+
 char *csl_name;
 compart *ccompart;
 char *sprt;

@@ -1,0 +1,6 @@
+declare { }
+
+cubby foo
+{
+	a=b;
+}

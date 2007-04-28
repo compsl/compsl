@@ -32,7 +32,7 @@ extern "C" {
  * return true on success, false otherwise
  */
 COMPSL_INTERN int com_addCubby(compart *, void *code, const char *name);
-COMPSL_INTERN void com_prStats(compart *);
+COMPSL_LOCAL void com_prStats(compart *);
 COMPSL_INTERN int16_t com_addConst(compart *com, intfloat val);
 
 #ifdef __cplusplus

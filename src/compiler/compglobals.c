@@ -21,6 +21,7 @@
 
 #include "../extern/compsl.h"
 
+char *csl_name;
 compart *ccompart;
 char *sprt;
 int lineNo;

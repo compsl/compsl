@@ -23,22 +23,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 void compileError(const char *str) {
   fflush(stderr);
   fflush(stdout);
-  fprintf(stderr,"Compile error: %s\n",str);
+  fprintf(stderr,"%s:%i: error: %s\n",lineNo,csl_name,str);
 }
 
  void compileWarning(const char *str) {
   fflush(stderr);
   fflush(stdout);
-  fprintf(stderr,"Compile warning: %s\n",str);
+  fprintf(stderr,"%s:%i: warning: %s\n",lineNo,csl_name,str);
  }
 
 char foo[1024];
 
 void internalCompileError(const char* str) {
-	DPRINTF("internal Compile error\n");
+  DPRINTF("internal Compile error\n");
   sprintf(foo,"INTERNAL ERROR: %s\n",str);
   compileError(foo);	
   abort();

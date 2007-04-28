@@ -41,7 +41,7 @@
 // Step to make reentrants: 
 //   - Find out how to store dynamic vars
 //   - Store the three vars below in those vars
-
+extern char *csl_name;
 extern compart *ccompart;
 extern char *sprt;
 extern int lineNo;

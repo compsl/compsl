@@ -50,6 +50,7 @@ extern FILE *yyin;
   
 int goparse(const char *fn, compart *com) {
 	int ret;
+	csl_name=fn
 	lineNo=1;
 	
 	DPRINTF("\n\n>> STARTING PARSE - %s\n",fn);

@@ -119,34 +119,46 @@ CFLAGS += $(CPUFLAGS)
 
 CFLAGS += -mno-ieee-fp
 
+override APPSTATMSG=
+
 ifdef DEBUG_COMP
 	CFLAGS += -DDEBUG_COMP
+	override APPSTATMSG += Compiler Debug messages are ON\\n
+else
+	override APPSTATMSG += Compiler Debug messages are OFF\\n
 endif
 
 ifdef TRACE_INTERP
 	CFLAGS += -D_COMPSL_TRACE
+	override APPSTATMSG += Interpreter execution tracing is ON\\n
+else
+	override APPSTATMSG += Interpreter execution tracing is OFF\\n
 endif
-
-override APPSTATMSG=
 
 #cause the optimizer to output code dumps as it runs each stage
 ifdef TRACE_OPTIM
 	CFLAGS += -DCOMPSL_TRACE_OPTIM
-	override APPSTATMSG += Tracing bytecode optimizer enabled \\n
+	override APPSTATMSG += Tracing bytecode optimizer is ON\\n
+else
+	override APPSTATMSG += Interpreter execution tracing is OFF\\n
 endif
 
-#make the compiler output the line number it's currently compiling 
-#to stdout
+# make the compiler output the line number it's currently compiling 
+# to stdout
 ifdef TRACE_COMPILE
 	CFLAGS += -DCOMPSL_TRACE_COMPILE
-	override APPSTATMSG += Tracing compile enabled \\n
+	override APPSTATMSG += Tracing compile is ON\\n
+else
+	override APPSTATMSG += Tracing compile is OFF\\n
 endif
 
 #allow overrides from command line, but enable by default
 STACK_CHECK = 1
 ifeq ($(STACK_CHECK), 1)
 	CFLAGS += -DCOMP_STACKCHECK
-	override APPSTATMSG += Compile time bytecode stack bounds checking enabled \\n
+	override APPSTATMSG += Compile time bytecode stack bounds checking is ON\\n
+else
+	override APPSTATMSG += Compile time bytecode stack bounds checking is OFF\\n
 endif
 
 
@@ -161,10 +173,10 @@ ifdef DEBUG
 else
 	#for asserts
 overide CFLAGS += -DNDEBUG
-	OPTIMIZE=1
+	OPTIMIZE=FULL
 endif
 
-ifeq ($(OPTIMIZE),1)
+ifeq ($(OPTIMIZE),FULL)
 	CFLAGS += -O3 -fdata-sections -ffunction-sections -frename-registers
 	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
 	CFLAGS += -fsched-spec-load -maccumulate-outgoing-args
@@ -197,11 +209,13 @@ ifeq ($(OPTIMIZE),1)
 	# model the CPU closely enough to avoid unreliable results from the algorithm.
 	CFLAGS += -fsched2-use-superblocks
 else
-	CFLAGS += -O0
+	CFLAGS += -O$(OPTIMIZE)
 endif
 
+# note: not needed on x86 apparntly
 ifdef PIC
 	COMPSL_PIC := -fpic
+	override APPSTATMSG += Position independant code generation ON\\n
 endif
 
 # for shared library
@@ -214,25 +228,30 @@ MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
 ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}
 
 
-STATMSG = Compiling with ${CC} \\n
-ifeq ($(OPTIMIZE),1)
-	STATMSG += Optimization is ON \\n
+STATMSG = Compiling with $(CC) on $(_ARCH)\\n
+ifdef DEBUG
+	STATMSG += Creating a Debug build\\n
 else
-	STATMSG += Optimization is OFF \\n
+	STATMSG += Creating a Release build\\n
+endif
+ifeq ($(OPTIMIZE),0)
+	STATMSG += Optimization is OFF\\n
+else
+	STATMSG += Optimization is ON at $(OPTIMIZE)\\n
 endif
 ifdef CPUTYPE
 	ifeq ($(CPUGUESS),1)
-		STATMSG += Guessed CPUTYPE of $(patsubst -march=%,%,$(filter -march% ,$(CPUFLAGS))) \\n
-		STATMSG += \\t adding CPU specific flags $(CPUFLAGS) \\n
+		STATMSG += Guessed CPUTYPE of $(patsubst -march=%,%,$(filter -march% ,$(CPUFLAGS)))\\n
+		STATMSG += \\t adding CPU specific flags $(CPUFLAGS)\\n
 	else
-		STATMSG += Compiling for $(CPUTYPE) with $(CPUFLAGS) \\n
+		STATMSG += Compiling for $(CPUTYPE) with $(CPUFLAGS)\\n
 	endif
 endif
-ifdef DEBUG
-	STATMSG += Creating a Debug build \\n
+ifdef PLATLIBS
+	STATMSG += Platform specifice librarys to link $(PLATLIBS)\\n
 endif
 STATMSG += $(APPSTATMSG)\\n
-STATMSG += CFLAGS=${ALL_CFLAGS} \\n
+STATMSG += CFLAGS=${ALL_CFLAGS}\\n
 
 
 ################################
@@ -357,7 +376,7 @@ test-valgrind: $(TEST_EXES)
 		echo DONE; \
 	done
 
-statmsg:
+statmsg::
 	@echo -ne $(STATMSG)
 
 ################################

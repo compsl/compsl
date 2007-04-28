@@ -68,6 +68,7 @@ manext = .1
 ################################
 # FLAGS                        #
 ################################
+
 ifndef _ARCH
 	_ARCH := $(strip $(shell uname -s))
 	export _ARCH
@@ -92,28 +93,28 @@ else
 	CPUTYPE := auto
 endif
 
+override CPUGUESS=0
 ifeq ($(CPUTYPE),auto)
-		override CPUFLAGS := $(shell ./gcc-arch)
-		#ifeq ($(findstring sse,$(CPUFLAGS)),sse)
-		#	override CPUFLAGS += -mfpmath=sse,387
-		#endif
-		CFLAGS += $(CPUFLAGS)
+	override CPUFLAGS = $(shell ./gcc-arch)
+	override CPUGUESS=1
 else
+	override CPUFLAGS =
 	ifdef CPUTYPE
-		CFLAGS += -march=$(CPUTYPE) 
+		override CPUFLAGS += -march=$(CPUTYPE) 
 	endif
 	ifeq ($(MMX),1)
-		CFLAGS += -mmmx  -DCOMPSL_MMX
+		override CPUFLAGS += -mmmx  -DCOMPSL_MMX
 	endif
 	ifdef SSE
-		CFLAGS += -DCOMPSL_SSE
+		override CPUFLAGS += -DCOMPSL_SSE
 		ifeq ($(SSE),1)
-			CFLAGS += -msse -mfpmath=sse,387 
+			override CPUFLAGS += -msse -mfpmath=sse,387 
 		else
-			CFLAGS += -msse${SSE} -mfpmath=sse,387
+			override CPUFLAGS += -msse${SSE} -mfpmath=sse,387
 		endif
 	endif
 endif
+CFLAGS += $(CPUFLAGS)
 
 CFLAGS += -mno-ieee-fp
 
@@ -125,21 +126,26 @@ ifdef TRACE_INTERP
 	CFLAGS += -D_COMPSL_TRACE
 endif
 
+override APPSTATMSG=
+
 #cause the optimizer to output code dumps as it runs each stage
 ifdef TRACE_OPTIM
 	CFLAGS += -DCOMPSL_TRACE_OPTIM
+	override APPSTATMSG += Tracing bytecode optimizer enabled \\n
 endif
 
 #make the compiler output the line number it's currently compiling 
 #to stdout
 ifdef TRACE_COMPILE
 	CFLAGS += -DCOMPSL_TRACE_COMPILE
+	override APPSTATMSG += Tracing compile enabled \\n
 endif
 
 #allow overrides from command line, but enable by default
 STACK_CHECK = 1
 ifeq ($(STACK_CHECK), 1)
 	CFLAGS += -DCOMP_STACKCHECK
+	override APPSTATMSG += Compile time bytecode stack bounds checking enabled \\n
 endif
 
 
@@ -207,6 +213,27 @@ MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
 ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}
 
 
+STATMSG = Compiling with ${CC} \\n
+ifeq ($(OPTIMIZE),1)
+	STATMSG += Optimization is ON \\n
+else
+	STATMSG += Optimization is OFF \\n
+endif
+ifdef CPUTYPE
+	ifeq ($(CPUGUESS),1)
+		STATMSG += Guessed CPUTYPE of $(CPUTYPE) \\n
+		STATMSG += \\t adding CPU specific flags $(CPUFLAGS) \\n
+	else
+		STATMSG += Compiling for $(CPUTYPE) with $(CPUFLAGS) \\n
+	endif
+endif
+ifdef DEBUG
+	STATMSG += Creating a Debug build \\n
+endif
+STATMSG += $(APPSTATMSG)\\n
+STATMSG += CFLAGS=${ALL_CFLAGS} \\n
+
+
 ################################
 # FILES                        #
 ################################
@@ -228,7 +255,7 @@ OBJECTS := $(SOURCES:.c=.o)
 TESTSRCS := $(addprefix src/test/,test-interp.c test-intern.c test-api.c test-comp.c test-torture.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
 
-OTHERSRC := src/dumper.c
+OTHERSRC := src/dumper.c src/perf-test.c
 OTHEROBJ := $(OTHERSRC:.c=.o)
 
 DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep) $(TESTSRCS:.c=.dep)
@@ -248,14 +275,15 @@ endif
 
 DOXYFILE = compsl.doxyfile
 
-.PHONY: test cleantest all clean docs
-
-
+.PHONY: test cleantest all clean docs install install-strip help package
+.PHONY: test-valgrind statmsg
+.INTERMEDIATE: $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) 
+.SECONDARY: $(DERIVED_FILES) $(CMPATH)/compsl.output
 ################################
 #TARGETS                       #
 ################################
 
-all: $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
+all: statmsg $(STATIC_LIB_OUT) $(DYN_LIB_OUT) 
 
 install: all docs
 	$(INSTALL) -d $(libdir)
@@ -275,9 +303,9 @@ strip: all
 clean:
 	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(STATIC_LIB_OUT) \
 		 $(DYN_LIB_OUT) $(CMPRL_TEST_EXE) $(DEPS) $(TEST_EXES:=*)  \
-		 $(DERIVED_FILES) $(CMPATH)/compsl.output bin/dumper*      \
+		 $(DERIVED_FILES) $(CMPATH)/compsl.output                  \
 		 $(EXPORTS) $(DEFFILE) $(LIBFILE) $(IMPLIB)                \
-		 src/perf-test.o bin/perf-test*
+		 bin/perf-test* bin/dumper* 
 	-rm -rf	doc/html doc/latex doc/man
 
 docs: $(DOXYFILE)
@@ -289,9 +317,11 @@ help:
 	@echo "Makefile for CompSL"
 	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic, package, docs"
 	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
+	@echo
+	@echo -ne $(STATMSG)
 
-static: $(STATIC_LIB_OUT)
-dynamic: $(DYN_LIB_OUT)
+static: statmsg $(STATIC_LIB_OUT) 
+dynamic: statmsg $(DYN_LIB_OUT) 
 
 package: clean
 	rm -f compsl-${COMPSL_VERSION}.tar.bz2
@@ -316,7 +346,7 @@ cleantest: clean test
 #		$$test ; \
 #		echo DONE; echo; \
 #	done
-test: $(TEST_EXES) $(addprefix run-,$(notdir $(basename $(TESTSRCS))))
+test: statmsg $(TEST_EXES) $(addprefix run-,$(notdir $(basename $(TESTSRCS)))) 
 
 
 test-valgrind: $(TEST_EXES)
@@ -325,6 +355,9 @@ test-valgrind: $(TEST_EXES)
 		valgrind $$test ; \
 		echo DONE; \
 	done
+
+statmsg:
+	@echo -ne $(STATMSG)
 
 ################################
 # INTERNAL TARGETS             #

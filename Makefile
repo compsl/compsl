@@ -249,9 +249,35 @@ endif
 ifdef PLATLIBS
 	STATMSG += Platform specifice librarys to link $(patsubst -l%,lib%,$(PLATLIBS))\\n
 endif
-STATMSG += $(APPSTATMSG)\\n
+STATMSG += $(APPSTATMSG)
 
+STATMSG += \\nTools\\n
 
+STATMSG +=BISON           = $(BISON)\\n
+STATMSG +=FLEX            = $(FLEX)\\n
+STATMSG +=LIBTOOL         = $(LIBTOOL)\\n
+STATMSG +=INSTALL         = $(INSTALL)\\n
+STATMSG +=INSTALL_PROGRAM = $(INSTALL_PROGRAM)\\n
+STATMSG +=INSTALL_DATA    = $(INSTALL_DATA)\\n
+STATMSG +=LDCONFIG        = $(LDCONFIG)\\n
+STATMSG +=RANLIB          = $(RANLIB)\\n
+STATMSG +=DOXYGEN         = $(DOXYGEN)\\n
+
+STATMSG +=\\nDirectories\\n
+STATMSG +=prefix      = $(prefix)\\n
+STATMSG +=exec_prefix = $(prefix)\\n
+STATMSG +=bindir      = $(bindir)\\n
+STATMSG +=libexecdir  = $(libexecdir)\\n
+STATMSG +=datarootdir = $(datarootdir)\\n
+STATMSG +=datadir     = $(datadir)\\n
+STATMSG +=sysconfdir  = $(sysconfdir)\\n
+STATMSG +=includedir  = $(includedir)\\n
+STATMSG +=docdir      = $(docdir)\\n
+STATMSG +=htmldir     = $(htmldir)\\n
+STATMSG +=libdir      = $(libdir)\\n
+STATMSG +=mandir      = $(mandir)\\n
+
+STATMSG +=\\n
 
 ################################
 # FILES                        #

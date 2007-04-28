@@ -96,7 +96,6 @@ endif
 override CPUGUESS=0
 ifeq ($(CPUTYPE),auto)
 	override CPUFLAGS = $(shell ./gcc-arch &2>/dev/null)
-	override CPUTYPE = $(shell ./gcc-arch >/dev/null)
 	override CPUGUESS=1
 else
 	override CPUFLAGS =
@@ -339,7 +338,7 @@ help:
 	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
 	@echo
 	@echo -ne $(STATMSG)
-	@echo -e "CFLAGS=\n$(ALL_CFLAGS)" | fold -s
+	@echo -e "CFLAGS\n$(ALL_CFLAGS)" | fold -s
 
 static: statmsg $(STATIC_LIB_OUT) 
 dynamic: statmsg $(DYN_LIB_OUT) 
@@ -361,12 +360,6 @@ bin/perf-test: src/perf-test.o $(OBJECTS)
 
 cleantest: clean test 
 
-#test: $(TEST_EXES)
-#	@for test in $^; do \
-#		echo Running $$test; \
-#		$$test ; \
-#		echo DONE; echo; \
-#	done
 test: statmsg $(TEST_EXES) $(addprefix run-,$(notdir $(basename $(TESTSRCS)))) 
 
 
@@ -379,7 +372,7 @@ test-valgrind: $(TEST_EXES)
 
 statmsg::
 	@echo -ne $(STATMSG)
-	@echo -e "CFLAGS=\n$(ALL_CFLAGS)" | fold -s
+	@echo -e "CFLAGS\n$(ALL_CFLAGS)" | fold -s
 	@sleep 5
 
 ################################

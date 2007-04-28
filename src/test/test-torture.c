@@ -27,6 +27,8 @@ static const char *test2 =
 
 int main()
 {
+	puts("Running Torture Test");
+	
 	VM *vm=createVM();
 	if(vm == NULL) { fprintf(stderr,"Error initializing compsl"); exit(1);}
 	

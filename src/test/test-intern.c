@@ -9,6 +9,8 @@
 
 int main()
 {
+	puts("Running internal tests");
+	
 	int ret = 0;
     
 	{	//varTable tests 

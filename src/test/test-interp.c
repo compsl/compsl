@@ -13,13 +13,14 @@ intfloat callTester(var *args); // function called to test CALL bytecode
 
 int main()
 {
+	puts("Running interpreter tests");
+	
 	VM *vm = createVM();
 	compart *com = createComp(vm);
 	bool ret = 0;
 	
 	
 	//Tests
-	printf("Running interpreter tests\n");
 	{ // PUSH,POP
 		bytecode code[] = 
 		{ 

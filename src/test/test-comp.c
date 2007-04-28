@@ -9,6 +9,8 @@
 
 int main()
 {
+	puts("Running Compiler Tests");
+	
 	const int NUM_FILES=12;
 	
 	const char * files[] = 

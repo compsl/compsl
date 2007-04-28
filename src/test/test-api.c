@@ -5,6 +5,8 @@
 
 int main()
 {
+	puts("Running API tests");
+	
     int ret = 0;
     
     VM *vm = createVM();

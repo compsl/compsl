@@ -321,7 +321,7 @@ endif
 DOXYFILE = compsl.doxyfile
 
 .PHONY: test cleantest all clean docs install install-strip help package
-.PHONY: test-valgrind statmsg
+.PHONY: test-valgrind statmsg testmsg
 .INTERMEDIATE: $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) 
 .SECONDARY: $(DERIVED_FILES) $(CMPATH)/compsl.output
 ################################
@@ -386,7 +386,7 @@ bin/perf-test: src/perf-test.o $(OBJECTS)
 
 cleantest: clean test 
 
-test: statmsg $(TEST_EXES) $(addprefix run-,$(notdir $(basename $(TESTSRCS)))) 
+test: statmsg $(TEST_EXES) testmsg $(addprefix run-,$(notdir $(basename $(TESTSRCS)))) 
 
 
 test-valgrind: $(TEST_EXES)
@@ -396,11 +396,16 @@ test-valgrind: $(TEST_EXES)
 		echo DONE; \
 	done
 
-statmsg::
+################################
+# Message targets              #
+################################
+testmsg:
+	@echo -ne "\n\nBEGINING TESTS\n\n"
+statmsg:
 	@echo -ne $(STATMSG)
 	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n" | fold -s
 	@sleep 5
-
+	@echo -ne "\n\nBEGINING OPERATION\n\n"
 ################################
 # INTERNAL TARGETS             #
 ################################

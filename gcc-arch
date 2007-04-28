@@ -246,5 +246,4 @@ if echo "$flags" | grep -E -q "(sse3|pni)"; then
 fi
 
 echo "$m32$_CFLAGS"
-echo "$arch" >&2
 

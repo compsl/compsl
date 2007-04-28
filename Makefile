@@ -125,10 +125,13 @@ ifdef TRACE_INTERP
 	CFLAGS += -D_COMPSL_TRACE
 endif
 
+#cause the optimizer to output code dumps as it runs each stage
 ifdef TRACE_OPTIM
 	CFLAGS += -DCOMPSL_TRACE_OPTIM
 endif
 
+#make the compiler output the line number it's currently compiling 
+#to stdout
 ifdef TRACE_COMPILE
 	CFLAGS += -DCOMPSL_TRACE_COMPILE
 endif

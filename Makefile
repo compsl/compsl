@@ -400,12 +400,12 @@ test-valgrind: $(TEST_EXES)
 # Message targets              #
 ################################
 testmsg:
-	@echo -ne "\n\nBEGINING TESTS\n\n"
+	@echo -ne "\n\nRUNNING TESTS     \n**************************************\n"
 statmsg:
 	@echo -ne $(STATMSG)
 	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n" | fold -s
 	@sleep 5
-	@echo -ne "\n\nBEGINING OPERATION\n\n"
+	@echo -ne "\n\nSTARTING OPERATION\n**************************************\n"
 ################################
 # INTERNAL TARGETS             #
 ################################

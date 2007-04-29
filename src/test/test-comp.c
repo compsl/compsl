@@ -68,7 +68,7 @@ int main()
 	}
 	destroyVM(veem);
 	
-	puts("Begging error testing");
+	puts("Beggining error testing");
 	comp_out=fopen(BIT_BUCKET,"w");
 	
 	VM *evm = createVM();

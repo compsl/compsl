@@ -228,7 +228,8 @@ MYCFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(MYCFLAGS))
 ALL_CFLAGS := ${CFLAGS} $(MYCFLAGS) ${COMPSL_PIC}
 
 
-STATMSG = Compiling with $(CC) on $(_ARCH) for
+STATMSG  = Compiling with $(CC) version $(shell gcc -dumpversion)
+STATMSG += targeting $(shell gcc -dumpmachine) on $(_ARCH) for
 ifdef DEBUG
 	STATMSG += Debugging\\n
 else

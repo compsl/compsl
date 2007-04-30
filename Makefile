@@ -23,263 +23,13 @@ ifeq ($(origin CC),default)
 CC      		= gcc
 endif
 
-BISON   		= bison
-FLEX    		= flex
-LIBTOOL         = libtool
-INSTALL 		= install
-INSTALL_PROGRAM = $(INSTALL) -v
-INSTALL_DATA 	= ${INSTALL} -v -m 644
-LDCONFIG		= ldconfig
-RANLIB			= ranlib
-DOXYGEN			= doxygen
-
-NORMAL_INSTALL = :
-PRE_INSTALL = :
-POST_INSTALL = :
-NORMAL_UNINSTALL = :
-PRE_UNINSTALL = :
-POST_UNINSTALL = :
-
-prefix = /usr/local
-exec_prefix = $(prefix)
-bindir = $(exec_prefix)/bin
-#libexecdir for programs run by this package and plugins and such
-#should put that sort of thing in $(libexecdir)/<packagename>
-libexecdir = $(exec_prefix)/libexec
-datarootdir = $(prefix)/share
-datadir = $(datarootdir)
-sysconfdir = $(prefix)/etc
-includedir = $(prefix)/include
-docdir = $(datarootdir)/doc/compsl
-htmldir = $(docdir)
-libdir = $(exec_prefix)/lib
-mandir = $(datarootdir)/man
-man1dir = $(mandir)/man1
-man2dir = $(mandir)/man2
-man3dir = $(mandir)/man3
-man4dir = $(mandir)/man4
-man5dir = $(mandir)/man5
-man6dir = $(mandir)/man6
-man7dir = $(mandir)/man7
-man8dir = $(mandir)/man8
-manext = .1
-
-
-################################
-# FLAGS                        #
-################################
-
 ifndef _ARCH
 	_ARCH := $(strip $(shell uname -s))
 	export _ARCH
 endif
 
-ifeq ($(_ARCH),Linux)
-	PLATLIBS := -lm 
-endif
+-include config.mak
 
-CFLAGS  = -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
-CFLAGS += -Wnonnull
-#CFLAGS += -Wunreachable-code
-
-CFLAGS += -fsingle-precision-constant -ffast-math -fno-math-errno 
-CFLAGS += -ffinite-math-only -fno-trapping-math 
-
-CFLAGS += -funit-at-a-time -funroll-loops -funswitch-loops
-
-ifeq ($(findstring MINGW,$(_ARCH)),MINGW)
-	override WINDOWS := 1
-else
-	CPUTYPE := auto
-endif
-
-override CPUGUESS=0
-ifeq ($(CPUTYPE),auto)
-	override CPUFLAGS = $(shell ./gcc-arch &2>/dev/null)
-	override CPUGUESS=1
-else
-	override CPUFLAGS =
-	ifdef CPUTYPE
-		override CPUFLAGS += -march=$(CPUTYPE) 
-	endif
-	ifeq ($(MMX),1)
-		override CPUFLAGS += -mmmx
-	endif
-	ifdef SSE
-		ifeq ($(SSE),1)
-			override CPUFLAGS += -msse -mfpmath=sse,387 
-		else
-			override CPUFLAGS += -msse${SSE} -mfpmath=sse,387
-		endif
-	endif
-endif
-CFLAGS += $(CPUFLAGS)
-
-CFLAGS += -mno-ieee-fp
-
-override APPSTATMSG=
-
-ifdef DEBUG_COMP
-	CFLAGS += -DDEBUG_COMP
-	override APPSTATMSG += Compiler Debug messages are ON\\n
-else
-	override APPSTATMSG += Compiler Debug messages are OFF\\n
-endif
-
-ifdef TRACE_INTERP
-	CFLAGS += -D_COMPSL_TRACE
-	override APPSTATMSG += Interpreter execution tracing is ON\\n
-else
-	override APPSTATMSG += Interpreter execution tracing is OFF\\n
-endif
-
-#cause the optimizer to output code dumps as it runs each stage
-ifdef TRACE_OPTIM
-	CFLAGS += -DCOMPSL_TRACE_OPTIM
-	override APPSTATMSG += Tracing bytecode optimizer is ON\\n
-else
-	override APPSTATMSG += Tracing bytecode optimizer is OFF\\n
-endif
-
-# make the compiler output the line number it's currently compiling 
-# to stdout
-ifdef TRACE_COMPILE
-	CFLAGS += -DCOMPSL_TRACE_COMPILE
-	override APPSTATMSG += Tracing compile is ON\\n
-else
-	override APPSTATMSG += Tracing compile is OFF\\n
-endif
-
-#allow overrides from command line, but enable by default
-STACK_CHECK = 1
-ifeq ($(STACK_CHECK), 1)
-	CFLAGS += -DCOMP_STACKCHECK
-	override APPSTATMSG += Compile time bytecode stack bounds checking is ON\\n
-else
-	override APPSTATMSG += Compile time bytecode stack bounds checking is OFF\\n
-endif
-
-# note: not needed on x86 apparntly
-ifdef PIC
-	COMPSL_PIC := -fpic
-	override APPSTATMSG += Position independant code generation ON\\n
-endif
-
-ifdef DEBUG
-	# mudflap is some pointer debuging stuff
-	# disable builtins since we can't set breakpoints on
-	# calls to builtin functions
-	# stack protector checks for stack overruns
-	CFLAGS += -ggdb3 -DDEBUG -fmudflap -fno-builtin -fstack-protector
-	#CFLAGS += -D DEBUG $(DBG_ENVS)
-	OPTIMIZE=0
-else
-	#for asserts
-overide CFLAGS += -DNDEBUG
-	OPTIMIZE=FULL
-endif
-
-ifeq ($(OPTIMIZE),FULL)
-	CFLAGS += -O3 -fdata-sections -ffunction-sections -frename-registers
-	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
-	CFLAGS += -fsched-spec-load -maccumulate-outgoing-args
-	CFLAGS += -minline-all-stringops -fomit-frame-pointer
-	CFLAGS += -finline-limit=2000
-	CFLAGS += -frename-registers
-	CFLAGS += -fno-stack-limit
-	CFLAGS += -funswitch-loops
-	
-
-	# TODO: figure out if we need the -fno-strict-aliasing option.
-	# TODO: make sure none of these breaks the library for linking....
-	CFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
-	
-	CFLAGS += -fgcse-sm -fgcse-las -fgcse-after-reload
-	CFLAGS += -ftree-vectorize
-	CFLAGS += -ftracer
-	CFLAGS += -fvariable-expansion-in-unroller
-	#CFLAGS += -fprefetch-loop-arrays
-	CFLAGS += -freorder-blocks-and-partition
-	
-	CFLAGS += -fbranch-target-load-optimize 
-	#CFLAGS += -fbranch-target-load-optimize2
-	CFLAGS += -floop-optimize2 -fmove-all-movables
-	
-	###################################################
-	# potentially bad optimizations
-	###################################################
-	# from gcc manual
-	# This option is experimental, as not all machine descriptions used by GCC 
-	# model the CPU closely enough to avoid unreliable results from the algorithm.
-	CFLAGS += -fsched2-use-superblocks
-else
-	CFLAGS += -O$(OPTIMIZE)
-endif
-
-# for shared library
-ifndef WINDOWS
-	override CFLAGS += -fvisibility=hidden
-endif
-
-override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
-
-MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
-MYCFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(MYCFLAGS))
-ALL_CFLAGS := ${CFLAGS} $(MYCFLAGS) ${COMPSL_PIC}
-
-
-STATMSG  = Compiling with $(CC) version $(shell gcc -dumpversion)
-STATMSG += targeting $(shell gcc -dumpmachine) on $(_ARCH) for
-ifdef DEBUG
-	STATMSG += Debugging\\n
-else
-	STATMSG += Release\\n
-endif
-ifeq ($(OPTIMIZE),0)
-	STATMSG += Optimization is OFF\\n
-else
-	STATMSG += Optimization is ON at $(OPTIMIZE)\\n
-endif
-ifdef CPUTYPE
-	ifeq ($(CPUGUESS),1)
-		STATMSG += Guessed CPUTYPE of $(patsubst -march=%,%,$(filter -march% ,$(CPUFLAGS)))\\n
-		STATMSG +=    Adding CPU flags $(CPUFLAGS)\\n
-	else
-		STATMSG += Compiling for $(CPUTYPE) with $(CPUFLAGS)\\n
-	endif
-endif
-ifdef PLATLIBS
-	STATMSG += Platform specifice librarys to link $(patsubst -l%,lib%,$(PLATLIBS))\\n
-endif
-STATMSG += $(APPSTATMSG)
-
-STATMSG += \\nTools\\n
-
-STATMSG +=BISON           = $(BISON)\\n
-STATMSG +=FLEX            = $(FLEX)\\n
-STATMSG +=LIBTOOL         = $(LIBTOOL)\\n
-STATMSG +=INSTALL         = $(INSTALL)\\n
-STATMSG +=INSTALL_PROGRAM = $(INSTALL_PROGRAM)\\n
-STATMSG +=INSTALL_DATA    = $(INSTALL_DATA)\\n
-STATMSG +=LDCONFIG        = $(LDCONFIG)\\n
-STATMSG +=RANLIB          = $(RANLIB)\\n
-STATMSG +=DOXYGEN         = $(DOXYGEN)\\n
-
-STATMSG +=\\nDirectories\\n
-STATMSG +=prefix      = $(prefix)\\n
-STATMSG +=exec_prefix = $(prefix)\\n
-STATMSG +=bindir      = $(bindir)\\n
-STATMSG +=libexecdir  = $(libexecdir)\\n
-STATMSG +=datarootdir = $(datarootdir)\\n
-STATMSG +=datadir     = $(datadir)\\n
-STATMSG +=sysconfdir  = $(sysconfdir)\\n
-STATMSG +=includedir  = $(includedir)\\n
-STATMSG +=docdir      = $(docdir)\\n
-STATMSG +=htmldir     = $(htmldir)\\n
-STATMSG +=libdir      = $(libdir)\\n
-STATMSG +=mandir      = $(mandir)\\n
-
-STATMSG +=\\n
 
 ################################
 # FILES                        #
@@ -425,12 +175,12 @@ statmsg:
 -include $(DEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
-src/run.o: src/run.c
+src/run.o: src/run.c config.mak
 	@echo CC $<
 	@$(CC) -MM $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< > src/run.dep
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
-%.o: %.c
+%.o: %.c config.mak
 	@echo CC $<
 	@$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
@@ -484,3 +234,7 @@ run-test-%: bin/test-%
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	@echo LINK $@
 	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
+
+####################################################
+config.mak: configure
+	@./configure

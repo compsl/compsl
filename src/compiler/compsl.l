@@ -36,6 +36,7 @@
 extern VM *cvm;
 extern compart *ccompart;
 int goparse(const char *fn, compart *com);
+static void yyunput (int c,char *buf_ptr  ) __attribute__ ((unused));
 
 int fileCompile(const char *filename ,compart* out) {
 	FILE* input = fopen(filename, "r");
@@ -58,7 +59,7 @@ int stringCompile(const char *code, compart* out) {
 }  
 
 %}
-
+%option noyywrap
 %%
 
 \/\/.*\n		{}; /*comment*/

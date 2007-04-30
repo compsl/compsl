@@ -25,7 +25,7 @@
 
 FILE *comp_out = NULL;
 
-char *csl_name;
+const char *csl_name;
 compart *ccompart;
 char *sprt;
 int lineNo;

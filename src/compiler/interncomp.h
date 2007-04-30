@@ -37,6 +37,10 @@
 #define CONTINUE_NOOP_IDEN 89
 #define BREAK_NOOP_IDEN 90
 
+int yylex( void );
+int yyparse(void);
+
+
 //where the compiler outputs error messages
 extern FILE *comp_out;
 
@@ -45,7 +49,7 @@ extern FILE *comp_out;
 // Step to make reentrants: 
 //   - Find out how to store dynamic vars
 //   - Store the three vars below in those vars
-extern char *csl_name;
+extern const char *csl_name;
 extern compart *ccompart;
 extern char *sprt;
 extern int lineNo;

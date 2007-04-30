@@ -177,12 +177,12 @@ statmsg:
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/run.o: src/run.c config.mak
 	@echo CC $<
-	@$(CC) -MM $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< > src/run.dep
+	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< > src/run.dep
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
 %.o: %.c config.mak
 	@echo CC $<
-	@$(CC) -MM $(ALL_CFLAGS) $*.c > $*.dep
+	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $*.c > $*.dep
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 
 ifdef WINDOWS

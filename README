@@ -1,0 +1,94 @@
+
+README
+======
+
+Welcome to CompSL. A simple, pretty fast bytecode interpreted scripting language.
+
+Copyright Thomas Jones and John Peberdy. Licensed under GPL. See LICENSE.
+Current homepage: http://peberdy.ca/jp/projects/compsl.html
+
+Thomas   -- spudd86 ---------
+         ----  at -----------
+         ------- gmail ------
+         ---------- dot com -
+
+John     -- john ------------
+         ---- at ------------
+         ------ peberdy -----
+         --------- dot ca ---
+
+Please let us know if you find this code useful!
+
+
+For help with the makefile type:
+$ make help  
+
+The API is specified in src/extern/compsl.h
+
+The scripting language is C like. Files are known as "compartments" and are made 
+up of "cubbyholes". A declare cubby is required in each compartment and it specifies 
+variables, either vars local to the compartment or global ones. A virtual machine 
+("VM") has zero or more compartments. There are currently no internal function calls
+implemented, however CSL code can call "user functions", which call C code.
+ - See src/test/*.csl for examples of CSL language. 
+ - See src/test/test-(comp|torture).c for simple examples of API usage.
+
+
+API Walkthrough
+===============
+
+1. Initialize the virtual machine
+        VM *vm=createVM();
+
+2. If desired add functions to the VM
+	addPrintLibToVm(vm);
+	addDebugLibToVm(vm);
+   or
+        addFunc(vm, &some_c_function, "cslVisibleName", "float",false,true));
+   (see compsl.h for more details)
+
+3. If desired specify global variables, then *fooVar will contain the updated
+   value of the CSL variable "foo" after each run. 
+        float *fooVar = vm_addFloat(vm,"foo");
+
+4. Instantiate some compartments
+	compart *com1=createComp(vm);
+	compart *com2=createComp(vm);
+
+5. If desired add some local variables to each compartment, Similar to globals
+	int32_t *x = com_addInt(com1,"x");
+
+6. For each compartment compile a CSL file.
+        char * cslString = "..";
+	ret1 = fileCompile("src/cslFile.csl", com1);
+	ret2 = stringCompile(cslString, com2);
+
+7. Run some cubbyholes
+	cubbyid = getCubbyID(com1,"init");
+	runCubbyhole(com1, cubbyid);
+	
+	cubbyid = getCubbyID(com2,"init");
+	runCubbyhole(com2, cubbyid);
+
+	cubbyid = getCubbyID(com1,"run");
+        while(*x!=42)
+        	runCubbyhole(com1, cubbyid);
+	
+8. Clean up
+ 	destroyComp(com1);
+ 	destroyComp(com2);
+        destroyVM(vm);   
+
+
+
+Notes
+=====
+
+- You can redeclare globals in different compartments as many times as you like 
+  without warning. Actually any variable you can declare multiple times.
+- Steps 2 through 6 inclusive can be in any order as long as step 4 is 
+  before steps 5 and 6. 
+- Lots of math functions are implemented as their own bytecode for 
+  efficiency. See src/intern/builtins.h for a list of functions
+- The interpreter is not bulletproof, hence its recommended that you do not
+  use the interpreter by itself

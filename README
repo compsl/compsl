@@ -88,7 +88,28 @@ Notes
   without warning. Actually any variable you can declare multiple times.
 - Steps 2 through 6 inclusive can be in any order as long as step 4 is 
   before steps 5 and 6. 
-- Lots of math functions are implemented as their own bytecode for 
-  efficiency. See src/intern/builtins.h for a list of functions
 - The interpreter is not bulletproof, hence its recommended that you do not
   use the interpreter by itself
+- Lots of math functions are implemented as their own bytecode here is a list:
+	abs
+	absf
+	sin
+	cos
+	tan
+	asin
+	acos
+	atan
+	sqrt
+	ln
+	floor
+	ceil
+	rand - random number between 0 and 1 (floating point)
+	atan2
+	pow
+	min
+	max
+	minf
+	maxf
+	hypot
+for everything but rand, they are equivalent to the C standard library function
+of the same name.

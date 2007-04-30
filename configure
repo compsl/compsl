@@ -1,4 +1,10 @@
 #!/bin/bash
+####################################################
+## Temporary configure script, right now it just produces the same
+## behavior we had before, the plan is to slowly replace parts with
+## some kind of scripted setup
+####################################################
+
 
 cat > config.mak <<'ENDCONFIGMAK'
 BISON   		= bison

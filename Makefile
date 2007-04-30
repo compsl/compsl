@@ -197,7 +197,8 @@ ifeq ($(OPTIMIZE),FULL)
 	CFLAGS += -fgcse-sm -fgcse-las -fgcse-after-reload
 	CFLAGS += -ftree-vectorize
 	CFLAGS += -ftracer
-	CFLAGS += -fvariable-expansion-in-unroller -fprefetch-loop-arrays
+	CFLAGS += -fvariable-expansion-in-unroller
+	#CFLAGS += -fprefetch-loop-arrays
 	CFLAGS += -freorder-blocks-and-partition
 	
 	CFLAGS += -fbranch-target-load-optimize 
@@ -223,7 +224,8 @@ endif
 override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
 
 MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
-ALL_CFLAGS := ${CFLAGS} ${MYCFLAGS} ${COMPSL_PIC}
+MYCFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(MYCFLAGS))
+ALL_CFLAGS := ${CFLAGS} $(MYCFLAGS) ${COMPSL_PIC}
 
 
 STATMSG = Compiling with $(CC) on $(_ARCH) for

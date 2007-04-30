@@ -38,7 +38,7 @@
 #define BREAK_NOOP_IDEN 90
 
 //where the compiler outputs error messages
-FILE *comp_out;
+extern FILE *comp_out;
 
 // Compiler is not reentrant
 // TODO: Make compiler reentrant

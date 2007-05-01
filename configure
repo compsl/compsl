@@ -5,6 +5,12 @@
 ## some kind of scripted setup
 ####################################################
 
+cat > src/intern/config.h <<'ENDCONFIGH'
+#ifndef COMPSL_CONFIG_H
+#define COMPSL_CONFIG_H
+
+#endif
+ENDCONFIGH
 
 cat > config.mak <<'ENDCONFIGMAK'
 BISON   		= bison

@@ -237,4 +237,4 @@ bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 
 ####################################################
 config.mak: configure
-	@./configure
+	@sh configure

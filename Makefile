@@ -195,7 +195,7 @@ $(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
 %.dep: %.c Makefile config.mak setup.mk
 	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< -MF $*.dep
 
-ifdef TARGET_WIN32
+ifeq ($(TARGET_WIN32),yes)
 $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 	@echo LINK $@
 	@$(CC) $(ALL_CFLAGS) $(OBJECTS) -shared \

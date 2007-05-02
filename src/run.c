@@ -19,6 +19,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "intern/config.h"
+
 #include "extern/compsl.h"
 
 #include "intern/panic.h"
@@ -330,7 +332,7 @@ static const int jmptbl[] =
 		sp++;
 		COMPSL_END_INST;
  	APUSH:
- 		if(__builtin_expect(lvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0,1))
+ 		if(likely(lvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0))
  		{
  			*(sp - 1) = lvs[pc->a1].p[(sp - 1)->i];
  			COMPSL_END_INST;
@@ -355,7 +357,7 @@ static const int jmptbl[] =
 		COMPSL_END_INST;
  	APOP:
  		sp -=2;
- 		if(__builtin_expect(lvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0,1))
+ 		if(likely(lvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0))
  		{
  			lvs[pc->a1].p[(sp+1)->i] = *(sp);
  			COMPSL_END_INST;
@@ -546,7 +548,7 @@ static const int jmptbl[] =
 		sp++;
 		COMPSL_END_INST;
  	GAPS:
-		if(__builtin_expect(gvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0,1))
+		if(likely(gvs[pc->a1].size > (sp - 1)->i && (sp - 1)->i >= 0))
  		{
  			*(sp - 1) = gvs[pc->a1].p[(sp - 1)->i];
  			COMPSL_END_INST;

@@ -17,19 +17,13 @@
 COMPSL_VERSION := 0.1.2
 
 .SUFFIXES:
-#.SUFFIXES: .c .o .h .gch .dep
 
-ifeq ($(origin CC),default)
-CC      		= gcc
+HAVE_CONFIG_OPTS=$(shell if [ -f config.opts ]; then echo yes; else echo no; fi)
+ifeq ($(HAVE_CONFIG_OPTS),yes)
+	CONFIG_OPTS = $(shell if [ -f config.opts ]; then cat config.opts; fi)
 endif
 
-ifndef _ARCH
-	_ARCH := $(strip $(shell uname -s))
-	export _ARCH
-endif
-
--include config.mak
-
+include setup.mk
 
 ################################
 # FILES                        #
@@ -46,8 +40,8 @@ REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm
 
 DERIVED_SRCS=$(CMPATH)/lex.yy.c $(CMPATH)/compsl.tab.c
 DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h 
-SOURCES := $(REG_SRCS) $(DERIVED_SRCS)
-OBJECTS := $(SOURCES:.c=.o)
+SOURCES := $(REG_SRCS) 
+OBJECTS := $(SOURCES:.c=.o) $(DERIVED_SRCS:.c=.o)
 
 TESTSRCS := $(addprefix src/test/,test-interp.c test-intern.c test-api.c test-comp.c test-torture.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
@@ -56,16 +50,16 @@ OTHERSRC := src/dumper.c src/perf-test.c
 OTHEROBJ := $(OTHERSRC:.c=.o)
 
 DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep) $(TESTSRCS:.c=.dep)
+DDEPS := $(DERIVED_SRCS:.c=.ddp)
 
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
 STATIC_LIB_OUT := bin/$(LIBNAME).a
-ifdef WINDOWS
+ifdef TARGET_WIN32
 	DYN_LIB_OUT := bin/$(SHORTLIB).dll
 	DEFFILE     := bin/$(SHORTLIB).def
 	IMPLIB      := bin/$(SHORTLIB).a
 	LIBFILE     := bin/$(SHORTLIB).lib
-	ALL_CFLAGS += -DWINDOWS
 else
 	DYN_LIB_OUT := bin/$(LIBNAME).so.$(COMPSL_VERSION)
 endif
@@ -73,7 +67,7 @@ endif
 DOXYFILE = compsl.doxyfile
 
 .PHONY: test cleantest all clean docs install install-strip help package
-.PHONY: test-valgrind statmsg testmsg test-exes
+.PHONY: test-valgrind statmsg testmsg test-exes distclean autoconfig
 #.INTERMEDIATE: 
 .SECONDARY: $(OBJECTS) $(DERIVED_FILES) $(CMPATH)/compsl.output
 .SECONDARY: $(TESTOBJS) $(OTHEROBJ)
@@ -99,10 +93,12 @@ install-strip:
 strip: all
 	strip --strip-unneeded $(STATIC_LIB_OUT) $(DYN_LIB_OUT)
 
+distclean: clean
+	-rm -f config.mak src/intern/config.h
 clean:
-	@-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(DEPS) 
+	@-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(DEPS) $(DDEPS)
 	-rm -f -- $(DYN_LIB_OUT) $(STATIC_LIB_OUT) $(TEST_EXES:=*)
-	-rm -f -- $(DERIVED_FILES) $(CMPATH)/compsl.output
+	-rm -f -- $(CMPATH)/compsl.output $(CMPATH)/compsl.tab.h 
 	-rm -f -- bin/perf-test* bin/dumper* 
 	-rm -f -- $(DEFFILE) $(LIBFILE) $(IMPLIB)
 	-rm -rf   doc/html doc/latex doc/man
@@ -125,11 +121,11 @@ help:
 static: statmsg $(STATIC_LIB_OUT) ;
 dynamic: statmsg $(DYN_LIB_OUT) ;
 
-package: clean
+package: distclean
 	rm -f compsl-${COMPSL_VERSION}.tar.bz2
 	tar --exclude "*/.svn*" --exclude "*/.settings*" \
 		--exclude "*/.cvsignore" --exclude "*/.*project*" \
-		--exclude "*~" --exclude "*/latex*"\
+		--exclude "*~" --exclude "*/latex*"\ --exclude "*/config.*"\ 
 		--exclude "*/compsl-${COMPSL_VERSION}/compsl-${COMPSL_VERSION}"\
 		--transform 's,^,compsl-${COMPSL_VERSION}/,'\
 		-cjvf compsl-${COMPSL_VERSION}.tar.bz2 *
@@ -163,7 +159,8 @@ statmsg:
 	@echo -ne "\nSETTINGS\n"
 	@echo -ne "***************************************************\n"
 	@echo -ne $(STATMSG)
-	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n" | fold -s
+	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n\n" | fold -s
+	@echo -e "PLATLIBS\n$(PLATLIBS)\n" | fold -s
 	@sleep 5
 	@echo -ne "\nSTARTING OPERATION\n"
 	@echo -ne "***************************************************\n"
@@ -173,19 +170,31 @@ statmsg:
 
 #Dash makes it not error if not found
 -include $(DEPS)
+-include $(DDEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
-src/run.o: src/run.c config.mak
+src/run.o: src/run.c config.mak Makefile setup.mk
 	@echo CC $<
-	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< > src/run.dep
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
-%.o: %.c config.mak
+$(CMPATH)/compsl.tab.o: $(CMPATH)/compsl.tab.c
 	@echo CC $<
-	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $*.c > $*.dep
+	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/compsl.tab.ddp
+	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
+
+$(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
+	@echo CC $<
+	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/lex.yy.ddp
+	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
+
+%.o: %.c config.mak Makefile setup.mk
+	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 
-ifdef WINDOWS
+%.dep: %.c Makefile config.mak setup.mk
+	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< > $*.dep
+
+ifdef TARGET_WIN32
 $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 	@echo LINK $@
 	@$(CC) $(ALL_CFLAGS) $(OBJECTS) -shared \
@@ -209,15 +218,14 @@ $(STATIC_LIB_OUT): $(OBJECTS)
 # FLEX/BISON TARGETS           #
 ################################
 
-$(CMPATH)/binops.c: $(CMPATH)/compsl.tab.h
-$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.tab.c
-
-$(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.y
+$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile setup.mk
 	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
 	@echo BISON $<
 	@$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
+	
+$(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.tab.h
 
-$(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h
+$(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h config.mak Makefile setup.mk
 	@rm -f $(CMPATH)/lex.yy.c
 	@echo FLEX $<
 	@$(FLEX) -o$@ $<
@@ -236,5 +244,34 @@ bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
 ####################################################
-config.mak: configure
-	@sh configure
+
+ifeq ($(HAVE_CONFIG_OPTS),yes)
+config.mak: configure config.opts
+	@sh configure $(CONFIG_OPTS)
+	@$(MAKE) clean
+	@sleep 5
+src/intern/config.h: config.mak
+else
+src/intern/config.h: configure
+	@if [ -f config.mak ]; then \
+	  echo "############################################################";\
+	  echo "################## Please run ./configure ##################";\
+	  echo "############################################################";\
+	  exit 1;\
+	else \
+	  echo "############################################################";\
+	  echo "####### Please run ./configure again - it's changed! #######";\
+	  echo "############################################################";\
+	fi
+endif
+
+ifeq ($(HAVE_CONFIG_OPTS),yes)
+autoconfig: configure config.opts
+	@sh configure $(CONFIG_OPTS)
+	@$(MAKE) clean
+	@sleep 5
+else
+autoconfig: configure clean 
+	@sh configure $(CONFIG_OPTS)
+	@sleep 5
+endif

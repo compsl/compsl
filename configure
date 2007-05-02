@@ -5,266 +5,2467 @@
 ## some kind of scripted setup
 ####################################################
 
-cat > src/intern/config.h <<'ENDCONFIGH'
+#! /bin/sh
+#
+# Original version (C) 2000 Pontscho/fresh!mindworkz
+#                      pontscho@makacs.poliod.hu
+#
+# History / Contributors: check the cvs log !
+#
+# Cleanups all over the place (c) 2001 pl
+#
+#
+# This configure script is *not* autoconf-based and has different semantics.
+# It attempts to autodetect all settings and options where possible. It is
+# possible to override autodetection with the --enable-option/--disable-option
+# command line parameters.  --enable-option forces the option on skipping
+# autodetection. Yes, this means that compilation may fail and yes, this is not
+# how autoconf-based configure scripts behave.
+#
+# configure generates a series of configuration files:
+#  - config.h contains #defines that are used in the C code.
+#  - config.mak is included from the Makefiles.
+#
+# If you want to add a new check for $feature, here is a simple skeleton:
+#
+# echocheck "$feature"
+# if "$_feature" = auto; then
+# cat > $TMPC << EOF
+# #include <feature.h>
+# int main(void) { return 0; }
+# EOF
+# _feature=no
+# cc_check && _feature=yes
+# if test "$_feature" = yes ; then
+#   _def_feature='#define HAVE_FEATURE 1'
+# else
+#   _def_feature='#undef HAVE_FEATURE'
+# fi
+# echores "$_feature"
+#
+# Furthermore you need to add the variable _feature to the list of default
+# settings and set it to one of yes/no/auto. Also add appropriate
+# --enable-feature/--disable-feature command line options.
+# The results of the check should be written to config.h and config.mak
+# at the end of this script. The variable names used for this should be
+# uniform, i.e. if the option is named 'feature':
+#
+# _feature     : should have a value of yes/no/auto
+# _def_feature : '#define ... 1' or '#undef ...' for conditional compilation
+# _ld_feature  : '-L/path/dir -lfeature' GCC options
+#
+#############################################################################
+
+# we don't use any sse/mmx etc directly so mplayer's concept of runtime cpu detection does not apply
+# everything you would need it for should be done by specifying a target cpu
+_runtime_cpudetection=no
+
+# Prevent locale nonsense from breaking basic text processing utils
+LC_ALL=C
+export LC_ALL
+
+# Prefer these macros to full length text !
+# These macros only return an error code - NO display is done
+compile_check() {
+  echo >> "$TMPLOG"
+  cat "$1" >> "$TMPLOG"
+  echo >> "$TMPLOG"
+  echo "$_cc $CFLAGS $_inc_extra $_ld_static $_ld_extra -o $TMPO $@" >> "$TMPLOG"
+  rm -f "$TMPO"
+  $_cc $CFLAGS $_inc_extra $_ld_static $_ld_extra -o "$TMPO" "$@" >> "$TMPLOG" 2>&1
+  TMP="$?"
+  echo >> "$TMPLOG"
+  echo "ldd $TMPO" >> "$TMPLOG"
+  $_ldd "$TMPO" >> "$TMPLOG" 2>&1
+  echo >> "$TMPLOG"
+  return "$TMP"
+}
+
+cc_check() {
+  compile_check $TMPC $@
+}
+
+cxx_check() {
+  compile_check $TMPCPP $@ -lstdc++
+}
+
+tmp_run() {
+  "$TMPO" >> "$TMPLOG" 2>&1
+}
+
+# Display error message, flushes tempfile, exit
+die () {
+  echo
+  echo "Error: $@" >&2
+  echo >&2
+  rm -f "$TMPO" "$TMPC" "$TMPS" "$TMPCPP"
+  echo "Check \"$TMPLOG\" if you do not understand why it failed."
+  exit 1
+}
+
+# OS test booleans functions
+issystem() {
+  test "`echo $system_name | tr A-Z a-z`" = "`echo $1 | tr A-Z a-z`"
+}
+linux()   { issystem "Linux"   ; return "$?" ; }
+sunos()   { issystem "SunOS"   ; return "$?" ; }
+hpux()    { issystem "HP-UX"   ; return "$?" ; }
+irix()    { issystem "IRIX"    ; return "$?" ; }
+aix()     { issystem "AIX"     ; return "$?" ; }
+cygwin()  { issystem "CYGWIN"  ; return "$?" ; }
+freebsd() { issystem "FreeBSD" ; return "$?" ; }
+netbsd()  { issystem "NetBSD"  ; return "$?" ; }
+bsdos()   { issystem "BSD/OS"  ; return "$?" ; }
+openbsd() { issystem "OpenBSD" ; return "$?" ; }
+bsd()     { freebsd || netbsd || bsdos || openbsd ; return "$?" ; }
+qnx()     { issystem "QNX"     ; return "$?" ; }
+darwin()  { issystem "Darwin"  ; return "$?" ; }
+gnu()     { issystem "GNU"     ; return "$?" ; }
+mingw32() { issystem "MINGW32" ; return "$?" ; }
+morphos() { issystem "MorphOS" ; return "$?" ; }
+win32()   { cygwin || mingw32  ; return "$?" ; }
+beos()    { issystem "BEOS"    ; return "$?" ; }
+
+# arch test boolean functions
+# x86/x86pc is used by QNX
+x86() {
+  case "$host_arch" in
+    i[3-9]86|x86|x86pc|k5|k6|k6-2|k6-3|pentium*|athlon*|i586-i686) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+x86_64() {
+  case "$host_arch" in
+    x86_64|amd64) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+ppc() {
+  case "$host_arch" in
+    ppc) return 0;;
+    *) return 1;;
+  esac
+}
+
+alpha() {
+  case "$host_arch" in
+    alpha) return 0;;
+    *) return 1;;
+  esac
+}
+
+arm() {
+  case "$host_arch" in
+    arm) return 0;;
+    *) return 1;;
+  esac
+}
+
+# not boolean test: implement the posix shell "!" operator for a
+# non-posix /bin/sh.
+#   usage:  not {command}
+# returns exit status "success" when the execution of "command"
+# fails.
+not() {
+  eval "$@"
+  test $? -ne 0
+}
+
+# Use this before starting a check
+echocheck() {
+  echo "============ Checking for $@ ============" >> "$TMPLOG"
+  echo ${_echo_n} "Checking for $@ ... ${_echo_c}"
+}
+
+# Use this to echo the results of a check
+echores() {
+  if test "$_res_comment" ; then
+    _res_comment="($_res_comment)"
+  fi
+  echo "Result is: $@ $_res_comment" >> "$TMPLOG"
+  echo "##########################################" >> "$TMPLOG"
+  echo "" >> "$TMPLOG"
+  echo "$@ $_res_comment"
+  _res_comment=""
+}
+#############################################################################
+
+# Check how echo works in this /bin/sh
+case `echo -n` in
+  -n)	_echo_n=	_echo_c='\c'	;;	# SysV echo
+  *)	_echo_n='-n '	_echo_c=	;;	# BSD echo
+esac
+
+LANGUAGES=`echo help/help_mp-??.h help/help_mp-??_??.h | sed "s:help/help_mp-\(..\).h:\1:g" | sed "s:help/help_mp-\(.....\).h:\1:g"`
+
+show_help(){
+cat << EOF
+Usage: $0 [OPTIONS]...
+
+Configuration:
+  -h, --help             display this help and exit
+
+Installation directories:
+  --prefix=DIR           use this prefix for installing compsl [/usr/local]
+  --bindir=DIR           use this prefix for installing compsl binary
+                         [PREFIX/bin]
+  --datadir=DIR          use this prefix for installing machine independent
+                         data files (fonts, skins) [PREFIX/share/compsl]
+  --mandir=DIR           use this prefix for installing manpages [PREFIX/man]
+  --confdir=DIR          use this prefix for installing configuration files
+                         [PREFIX/etc/compsl]
+  --libdir=DIR           use this prefix for object code libraries [PREFIX/lib]
+  
+Miscellaneous options:
+  --enable-cross-compile Enable cross-compilation [autodetect]
+  --cc=COMPILER          use this C compiler to build CompSL [gcc]
+  --host-cc=COMPILER     use this C compiler to build apps needed for the build process [gcc]
+  --as=ASSEMBLER         use this assembler to build CompSL [as]
+  --target=PLATFORM      target platform (i386-linux, arm-linux, etc)
+  --disable-cpudetection disable guessing the cpu
+  --enable-static        build a statically linked binary. Set further linking
+                         options with --enable-static="-lslang -lncurses"
+  --charset              convert the help messages to this charset
+  --language=list        a white space or comma separated list of languages
+                         for translated man pages, the first language is the
+                         primary and therefore used for translated messages
+                         and GUI (also the environment variable \$LINGUAS is
+                         honored) [en]
+                         (Available: $LANGUAGES all)
+  --with-install=PATH    use a custom install program (useful if your OS uses 
+                         a GNU-incompatible install utility by default and 
+                         you want to use GNU version)
+  --install-path=PATH    the path to a custom install program 
+                         this option is obsolete and will be removed soon,
+                         use --with-install instead.
+
+Advanced options:
+  --enable-mmx           build with MMX support [autodetect]
+  --enable-mmxext        build with MMX2 support (PIII, Athlon) [autodetect]
+  --enable-3dnow         build with 3DNow! support [autodetect]
+  --enable-3dnowext      build with extended 3DNow! support [autodetect]
+  --enable-sse           build with SSE support [autodetect]
+  --enable-sse2          build with SSE2 support [autodetect]
+  --enable-shm           build with shm support [autodetect]
+  --enable-altivec       build with Altivec support (PowerPC) [autodetect]
+  --enable-armv5te       build with DSP extensions support (ARM) [autodetect]
+  --enable-iwmmxt        build with iWMMXt support (ARM) [autodetect]
+  --disable-fastmemcpy   disable 3DNow!/SSE/MMX optimized memcpy() [enable]
+  --enable-big-endian    Force byte order to big-endian [autodetect]
+  --enable-debug[=1-3]   compile debugging information into compsl [disable]
+
+Hazardous options a.k.a. "DO NOT REPORT ANY BUGS!"
+  --disable-gcc-check   disable gcc version checking [enable]
+
+Use these options if autodetection fails (Options marked with (*) accept
+multiple paths separated by ':'):
+  --with-extraincdir=DIR   extra headers (png, mad, sdl, ...) in DIR (*)
+  --with-extralibdir=DIR   extra linker search paths in DIR (*)
+  --extra-libs=FLAGS       extra linker flags
+
+This configure script is NOT autoconf-based, even though its output is similar.
+It will try to autodetect all configuration options. If you --enable an option
+it will be forcefully turned on, skipping autodetection. This can break
+compilation, so you need to know what you are doing.
+EOF
+exit 0
+} #show_help()
+
+for parm in "$@" ; do
+  case $parm in
+    --help|-help|-h)
+      show_help
+  esac
+done
+
+_cpudetection=yes
+_mmx=auto
+_3dnow=auto
+_3dnowext=auto
+_mmxext=auto
+_sse=auto
+_sse2=auto
+_armv5te=auto
+_iwmmxt=auto
+_install=install
+_ranlib=ranlib
+_cc=cc
+_bison=bison
+_flex=flex
+test "$CC" && _cc="$CC"
+_gcc_check=yes
+_as=auto
+_cross_compile=auto
+for ac_option do
+  case "$ac_option" in
+  --target=*)
+    _target=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --cc=*)
+    _cc=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --host-cc=*)
+    _host_cc=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --as=*)
+    _as=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --enable-gcc-check)
+    _gcc_check=yes
+    ;;
+  --disable-gcc-check)
+    _gcc_check=no
+    ;;
+  --with-extraincdir=*)
+    _inc_extra=-I`echo $ac_option | cut -d '=' -f 2 | sed 's,:, -I,g'`
+    ;;
+  --with-extralibdir=*)
+    _ld_extra=-L`echo $ac_option | cut -d '=' -f 2 | sed 's,:, -L,g'`
+    ;;
+  --extra-libs=*)
+    _extra_libs=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --enable-cross-compile)
+    _cross_compile=yes
+    ;;
+  --disable-cross-compile)
+    _cross_compile=no
+    ;;
+  --install-path=*)
+    _install=`echo $ac_option | cut -d '=' -f 2 | sed 's/\/$//'`"/install"
+    ;;
+  --with-install=*)
+    _install=`echo $ac_option | cut -d '=' -f 2 `
+    ;;
+  --enable-debug)
+    _debug='-g -DDEBUG'
+    _conf_debug='DEBUG=1'
+    ;;
+  --enable-debug=*)
+    _debug=`echo $_echo_n '-g'$_echo_c; echo $ac_option | cut -d '=' -f 2`
+    _debug="$_debug -DDEBUG"
+    _conf_debug='DEBUG=1'
+    ;;
+  --disable-debug)
+    _debug=
+    _conf_debug=
+    ;;
+  --disable-cpudetection)
+    _cpudetection=no
+    #enable mmx unless we were told not to
+    test "$_mmx"= no || _mmx=yes 
+    ;;
+  --enable-sse)	_sse=yes ;;
+  --disable-sse) _sse=no ;;
+  --enable-sse2) _sse2=yes ;;
+  --disable-sse2) _sse2=no ;;
+  --enable-mmxext) _mmxext=yes ;;
+  --disable-mmxext) _mmxext=no ;;
+  --enable-3dnow) _3dnow=yes ;;
+  --disable-3dnow) _3dnow=no _3dnowext=no ;;
+  --enable-3dnowext) _3dnow=yes _3dnowext=yes ;;
+  --disable-3dnowext) _3dnowext=no ;;
+  --enable-altivec) _altivec=yes ;;
+  --disable-altivec) _altivec=no ;;
+  --enable-armv5te) _armv5te=yes ;;
+  --disable-armv5te) _armv5te=no ;;
+  --enable-iwmmxt) _iwmmxt=yes ;;
+  --disable-iwmmxt) _iwmmxt=no ;;
+  --enable-mmx)	_mmx=yes ;;
+  --disable-mmx) # 3Dnow! and MMX2 require MMX
+        _3dnow=no _3dnowext=no _mmx=no _mmxext=no ;;
+    ##FIXME
+    ##add in all compsl's extra debuging output features as options here
+    ## and do
+  esac
+done
+
+# Determine our OS name and CPU architecture
+if test -z "$_target" ; then
+  # OS name
+  system_name=`uname -s 2>&1`
+  case "$system_name" in
+  Linux|FreeBSD|NetBSD|BSD/OS|OpenBSD|SunOS|QNX|Darwin|GNU|BeOS|MorphOS|AIX)
+    ;;
+  IRIX*)
+    system_name=IRIX
+    ;;
+  HP-UX*)
+    system_name=HP-UX
+    ;;
+  [cC][yY][gG][wW][iI][nN]*)
+    system_name=CYGWIN
+    ;;
+  MINGW32*)
+    system_name=MINGW32
+    ;;
+  *)
+    system_name="$system_name-UNKNOWN"
+    ;;
+  esac
+
+
+  # host's CPU/instruction set
+   host_arch=`uname -p 2>&1`
+   case "$host_arch" in
+   i386|sparc|ppc|alpha|arm|mips|vax)
+     ;;
+   powerpc) # Darwin returns 'powerpc'
+     host_arch=ppc
+     ;;
+   *) # uname -p on Linux returns 'unknown' for the processor type,
+      # OpenBSD returns 'Intel Pentium/MMX ("Genuine Intel" 586-class)'
+
+      # Maybe uname -m (machine hardware name) returns something we
+      # recognize.
+
+      # x86/x86pc is used by QNX
+      case "`uname -m 2>&1`" in
+      i[3-9]86*|x86|x86pc|k5|k6|k6_2|k6_3|k6-2|k6-3|pentium*|athlon*|i586_i686|i586-i686|BePC) host_arch=i386 ;;
+      ia64) host_arch=ia64 ;;
+      x86_64|amd64)
+        if [ -n "`$_cc -dumpmachine | sed -n '/^x86_64-/p;/^amd64-/p'`" -a \
+             -z "`echo $CFLAGS | grep -- -m32`"  ]; then
+          host_arch=x86_64
+        else
+          host_arch=i386
+        fi
+      ;;
+      macppc|ppc|ppc64) host_arch=ppc ;;
+      alpha) host_arch=alpha ;;
+      sparc) host_arch=sparc ;;
+      sparc64) host_arch=sparc64 ;;
+      parisc*|hppa*|9000*) host_arch=hppa ;;
+      arm*|zaurus|cats) host_arch=arm ;;
+      s390) host_arch=s390 ;;
+      s390x) host_arch=s390x ;;
+      mips*) host_arch=mips ;;
+      vax) host_arch=vax ;;
+      *) host_arch=UNKNOWN ;;
+    esac
+    ;;
+  esac
+else # if test -z "$_target"
+  system_name=`echo $_target | cut -d '-' -f 2`
+  case "`echo $system_name | tr A-Z a-z`" in
+    linux) system_name=Linux ;;
+    freebsd) system_name=FreeBSD ;;
+    netbsd) system_name=NetBSD ;;
+    bsd/os) system_name=BSD/OS ;;
+    openbsd) system_name=OpenBSD ;;
+    sunos) system_name=SunOS ;;
+    qnx) system_name=QNX ;;
+    morphos) system_name=MorphOS ;;
+    mingw32msvc) system_name=MINGW32 ;;
+  esac
+  # We need to convert underscores so that values like k6-2 and pentium-mmx can be passed
+  host_arch=`echo $_target | cut -d '-' -f 1 | tr '_' '-'`
+fi
+
+echo "Detected operating system: $system_name"
+echo "Detected host architecture: $host_arch"
+
+# LGB: temporary files
+for I in "$TMPDIR" "$TEMPDIR" "/tmp" ; do
+  test "$I" && break
+done
+
+TMPLOG="configure.log"
+rm -f "$TMPLOG"
+TMPC="$I/compsl-conf-$RANDOM-$$.c"
+TMPCPP="$I/compsl-conf-$RANDOM-$$.cpp"
+TMPO="$I/compsl-conf-$RANDOM-$$.o"
+TMPS="$I/compsl-conf-$RANDOM-$$.S"
+
+# config files
+
+# FIXME: A lot of stuff is installed under /usr/local
+# NK: But we should never use this stuff implicitly since we call compiler
+# from /usr we should be sure that there no effects from other compilers
+# (libraries) which might be installed into /usr/local.  Let users use this
+# stuff explicitly as command line argument.  In other words: It would be
+# resonable to have only /usr/include or only /usr/local/include.
+
+if freebsd ; then
+  _ld_extra="$_ld_extra -L/usr/local/lib"
+  _inc_extra="$_inc_extra -I/usr/local/include"
+fi
+
+_ldd=ldd
+if darwin; then
+  _ldd="otool -L"
+fi
+
+if aix ; then
+  _ld_libC="-lC"
+else
+  _ld_libC=""
+fi
+
+# Check how to call 'head' and 'tail'. Newer versions spit out warnings
+# if used as 'head -1' instead of 'head -n 1', but older versions don't
+# know about '-n'.
+if test "`(echo line1 ; echo line2) | head -1 2>/dev/null`" = "line1" ; then
+  _head() { head -$1 2>/dev/null ; }
+else
+  _head() { head -n $1 2>/dev/null ; }
+fi
+if test "`(echo line1 ; echo line2) | tail -1 2>/dev/null`" = "line2" ; then
+  _tail() { tail -$1 2>/dev/null ; }
+else
+  _tail() { tail -n $1 2>/dev/null ; }
+fi
+
+# Checking CC version...
+if test "$_gcc_check" = yes ; then
+ # Intel C++ Compilers (no autoselect, use CC=/some/binary ./configure)
+ if test "`basename $_cc`" = "icc" || test "`basename $_cc`" = "ecc"; then
+  echocheck "$_cc version"
+  cc_vendor=intel
+  cc_name=`$_cc -V 2>&1 | _head 1 | cut -d ',' -f 1`
+  cc_version=`$_cc -V 2>&1 | _head 1 | cut -d ',' -f 2 | cut -d ' ' -f 3`
+  _cc_major=`echo $cc_version | cut -d '.' -f 1`
+  _cc_minor=`echo $cc_version | cut -d '.' -f 2`
+  # TODO verify older icc/ecc compatibility
+  case $cc_version in
+    '')
+      cc_version="v. ?.??, bad"
+      cc_verc_fail=yes
+      ;;
+    8.0)
+      cc_version="$cc_version, ok"
+      cc_verc_fail=no
+      ;;
+    *)
+      cc_version="$cc_version, bad"
+      cc_verc_fail=yes
+      ;;
+  esac
+  echores "$cc_version"
+ else
+ for _cc in "$_cc" gcc gcc-3.4 gcc-3.3 gcc-3.2 gcc-3.1 gcc3 gcc-3.0 cc ; do
+  echocheck "$_cc version"
+  cc_vendor=gnu
+  cc_name=`$_cc -v 2>&1 | _tail 1 | cut -d ' ' -f 1`
+  cc_version=`$_cc -dumpversion 2>&1`
+  if test "$?" -gt 0; then
+    cc_version="not found"
+  fi
+  case $cc_version in
+    '')
+      cc_version="v. ?.??, bad"
+      cc_verc_fail=yes
+      ;;
+    [3-4].*)
+      _cc_major=`echo $cc_version | cut -d '.' -f 1`
+      _cc_minor=`echo $cc_version | cut -d '.' -f 2`
+      _cc_mini=`echo $cc_version | cut -d '.' -f 3`
+      cc_version="$cc_version, ok"
+      cc_verc_fail=no
+      ;;
+    'not found')
+      cc_verc_fail=yes
+      ;;
+    *)
+      cc_version="$cc_version, bad"
+      cc_verc_fail=yes
+      ;;
+  esac
+  echores "$cc_version"
+  test "$cc_verc_fail" = "no" && break
+ done 
+ fi # icc
+  if test "$cc_verc_fail" = yes ; then
+    cat <<EOF
+
+*** Please downgrade/upgrade C compiler to version gcc-3.x or 4.x! ***
+
+You are not using a supported compiler. We do not have the time to make sure
+everything works with compilers other than the ones we use.  Use either the
+same compiler as we do, or use --disable-gcc-check but DO *NOT* REPORT BUGS
+unless you can reproduce them after recompiling with a 3/4.x version!
+
+        GCC < 3.0 IS NOT AND WILL NOT BE SUPPORTED BY US !
+
+EOF
+    die "Bad gcc version"
+  fi
+else
+cat <<EOF
+
+******************************************************************************
+
+Hmm. You really want to compile with an *UNSUPPORTED* C compiler?
+
+DO NOT SEND BUGREPORTS OR COMPLAIN, it's *YOUR* compiler's fault!
+
+******************************************************************************
+
+EOF
+
+read _answer
+
+fi
+echocheck "host cc"
+test "$_host_cc" || _host_cc=$_cc
+echores $_host_cc 
+
+echocheck "cross compilation"
+if test $_cross_compile = auto ; then
+  cat > $TMPC << EOF
+int main() { return 0; }
+EOF
+  _cross_compile=yes
+  cc_check && "$TMPO" && _cross_compile=no
+fi
+echores $_cross_compile
+
+if test $_cross_compile = yes; then
+  tmp_run() {
+    return 0
+  }
+fi
+
+# ---
+
+# now that we know what compiler should be used for compilation, try to find
+# out which assembler is used by the $_cc compiler
+if test "$_as" = auto ; then
+  _as=`$_cc -print-prog-name=as`
+  test -z "$_as" && _as=as
+fi
+
+# XXX: this should be ok..
+_cpuinfo="echo"
+if test -r /proc/cpuinfo; then
+  # Linux with /proc mounted, extract CPU information from it
+  _cpuinfo="cat /proc/cpuinfo"
+elif test -r /compat/linux/proc/cpuinfo && not x86 ; then
+  # FreeBSD with Linux emulation /proc mounted,
+  # extract CPU information from it
+  _cpuinfo="cat /compat/linux/proc/cpuinfo"
+elif darwin && not x86 ; then
+  # use hostinfo on Darwin
+  _cpuinfo="hostinfo"
+elif aix; then
+  # use 'lsattr' on AIX
+  _cpuinfo="lsattr -E -l proc0 -a type"
+elif x86 || x86_64; then
+  # all other OSes try to extract CPU information from a small helper
+  # program TOOLS/cpuinfo instead
+  # need -w or we get warnings on mingw...
+  $_cc -w -o TOOLS/cpuinfo TOOLS/cpuinfo.c
+  _cpuinfo="TOOLS/cpuinfo"
+fi
+
+if x86 || x86_64 ; then
+  # gather more CPU information
+  pname=`$_cpuinfo | grep 'model name' | cut -d ':' -f 2 | _head 1`
+  pvendor=`$_cpuinfo | grep 'vendor_id' | cut -d ':' -f 2  | cut -d ' ' -f 2 | _head 1`
+  pfamily=`$_cpuinfo | grep 'cpu family' | cut -d ':' -f 2 | cut -d ' ' -f 2 | _head 1`
+  pmodel=`$_cpuinfo | grep -v 'model name' | grep 'model' | cut -d ':' -f 2 | cut -d ' ' -f 2 | _head 1`
+  pstepping=`$_cpuinfo | grep 'stepping' | cut -d ':' -f 2 | cut -d ' ' -f 2 | _head 1`
+
+  exts=`$_cpuinfo | egrep 'features|flags' | cut -d ':' -f 2 | _head 1`
+
+  pparam=`echo $exts | sed -e s/k6_mtrr/mtrr/ -e s/cyrix_arr/mtrr/ -e s/centaur_mcr/mtrr/ \
+                           -e s/xmm/sse/ -e s/kni/sse/`
+
+  if test "$_cpudetection" = yes; then
+    for ext in $pparam ; do
+      eval _$ext=auto && eval _$ext=yes
+    done
+  else
+    for ext in $pparam ; do
+        eval tmp=_$ext
+        test "$tmp" = auto && eval _$ext=no
+    done
+  fi
+
+  # SSE implies MMX2, but not all SSE processors report the mmxext CPU flag.
+  test $_sse = yes && _mmxext=yes
+
+  echocheck "CPU vendor"
+  echores "$pvendor ($pfamily:$pmodel:$pstepping)"
+
+  echocheck "CPU type"
+  echores "$pname"
+fi
+
+case "$host_arch" in
+  i[3-9]86|x86|x86pc|k5|k6|k6-2|k6-3|pentium*|athlon*|i586-i686)
+  _def_arch="#define ARCH_X86 1"
+  _target_arch="TARGET_ARCH_X86 = yes"
+
+
+  case "$pvendor" in
+  AuthenticAMD)
+    case "$pfamily" in
+    3) proc=i386 iproc=386 ;;
+    4) proc=i486 iproc=486 ;;
+    5) iproc=586       # LGB: models are: K5/SSA5 K5 K5 K5 ? ? K6 K6 K6-2 K6-3
+	# K6 model 13 are the K6-2+ and K6-III+, only differing in cache size.
+	if test "$pmodel" -eq 9 -o "$pmodel" -eq 13; then
+		proc=k6-3
+	elif test "$pmodel" -ge 8; then
+		proc=k6-2
+	elif test "$pmodel" -ge 6; then
+		proc=k6
+	else
+		proc=i586
+	fi
+	;;
+    6) iproc=686
+	# It's a bit difficult to determine the correct type of Family 6
+	# AMD CPUs just from their signature. Instead, we check directly
+	# whether it supports SSE.
+	if test "$_sse" = yes; then
+		# gcc treats athlon-xp, athlon-4 and athlon-mp similarly.
+		proc=athlon-xp
+	else
+		# Again, gcc treats athlon and athlon-tbird similarly.
+		proc=athlon
+	fi
+	;;
+    15) iproc=686
+    	# k8 cpu-type only supported in gcc >= 3.4.0, but that will be
+    	# caught and remedied in the optimization tests below.
+    	proc=k8
+    	;;
+
+    *) proc=k8 iproc=686 ;;
+    esac
+    ;;
+  GenuineIntel)
+    case "$pfamily" in
+    3) proc=i386 iproc=386 ;;
+    4) proc=i486 iproc=486 ;;
+    5) iproc=586
+	if test "$pmodel" -eq 4 || test "$pmodel" -eq 8; then
+		proc=pentium-mmx # 4 is desktop, 8 is mobile
+	else
+		proc=i586
+	fi
+	;;
+    6) iproc=686
+	if test "$pmodel" -eq 9 -o "$pmodel" -ge 13; then
+		proc=pentium-m
+	elif test "$pmodel" -ge 7; then
+		proc=pentium3
+	elif test "$pmodel" -ge 3; then
+		proc=pentium2
+	else
+		proc=i686
+	fi
+	;;
+    15) iproc=686
+	# A nocona in 32-bit mode has no more capabilities than a prescott.
+	if test "$pmodel" -ge 3; then
+		proc=prescott
+	else
+		proc=pentium4
+	fi
+	;;
+    *) proc=prescott iproc=686 ;;
+    esac
+    ;;
+  CentaurHauls)
+    case "$pfamily" in
+    5) iproc=586
+	if test "$pmodel" -ge 8; then
+		proc=winchip2
+	elif test "$pmodel" -ge 4; then
+		proc=winchip-c6
+	else
+		proc=i586
+	fi
+	;;
+    6) iproc=686
+	if test "$pmodel" -ge 9; then
+		proc=c3-2
+	else
+		proc=c3
+		iproc=586
+	fi
+	;;
+    *) proc=i686 iproc=i686 ;;
+    esac
+    ;;
+  unknown)
+    case "$pfamily" in
+    3) proc=i386 iproc=386 ;;
+    4) proc=i486 iproc=486 ;;
+    *) proc=i586 iproc=586 ;;
+    esac
+    ;;
+  *)
+    proc=i586 iproc=586 ;;
+  esac
+
+    # check that gcc supports our CPU, if not, fall back to earlier ones
+    # LGB: check -mcpu and -march swithing step by step with enabling
+    # to fall back till 386.
+
+    # gcc >= 3.4.0  doesn't support -mcpu, we have to use -mtune instead
+
+    if [ "$cc_vendor" = "gnu" ] && ([ "$_cc_major" -gt 3 ] || ( [ "$_cc_major" = 3 ] && [ "$_cc_minor" -ge 4 ])) ; then
+	cpuopt=-mtune
+    else
+	cpuopt=-mcpu
+    fi
+
+    echocheck "GCC & CPU optimization abilities"
+    if test "$_cpudetection" = yes ; then
+cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+    if test "$proc" = "k8"; then
+      cc_check -march=$proc $cpuopt=$proc || proc=athlon-xp
+    fi
+    if test "$proc" = "athlon-xp"; then
+      cc_check -march=$proc $cpuopt=$proc || proc=athlon
+    fi
+    if test "$proc" = "k6-3" || test "$proc" = "k6-2"; then
+      cc_check -march=$proc $cpuopt=$proc  || proc=k6
+    fi
+    if test "$proc" = "k6" || test "$proc" = "c3"; then
+      if not cc_check -march=$proc $cpuopt=$proc; then
+        if cc_check -march=i586 $cpuopt=i686; then
+          proc=i586-i686
+        else 
+          proc=i586
+	    fi
+      fi
+    fi
+    if test "$proc" = "prescott" ; then
+      cc_check -march=$proc $cpuopt=$proc || proc=pentium4
+    fi
+    if test "$proc" = "pentium4" || test "$proc" = "pentium-m" || test "$proc" = "pentium3" || test "$proc" = "pentium2" || test "$proc" = "athlon" || test "$proc" = "c3-2"; then
+      cc_check -march=$proc $cpuopt=$proc  || proc=i686
+    fi
+    if test "$proc" = "i686" || test "$proc" = "pentium-mmx" || test "$proc" = "winchip-c6" || test "$proc" = "winchip2"; then
+      cc_check -march=$proc $cpuopt=$proc  || proc=i586
+    fi
+    if test "$proc" = "i586"; then
+      cc_check -march=$proc $cpuopt=$proc  || proc=i486
+    fi
+    if test "$proc" = "i486" ; then
+      cc_check -march=$proc $cpuopt=$proc  || proc=i386
+    fi
+    if test "$proc" = "i386" ; then
+      cc_check -march=$proc $cpuopt=$proc  || proc=error
+    fi
+    if test "$proc" = "error" ; then
+        echores "CPU optimization disabled. CPU not recognized or your compiler is too old."
+      _mcpu=""
+      _march=""
+      _optimizing=""
+    elif test "$proc" = "i586-i686"; then
+      _march="-march=i586"
+      _mcpu="$cpuopt=i686"
+      _optimizing="$proc"
+    else
+      _march="-march=$proc"
+      _mcpu="$cpuopt=$proc"
+      _optimizing="$proc"
+    fi
+    
+    else # if test "$_cpudetection" = no
+        # i686 is probably the most common CPU - optimize for it
+        _mcpu="$cpuopt=i686"
+        _march="-march=i586"
+        _optimizing="i586"
+        cc_check $_mcpu || _mcpu=""
+        cc_check $_march $_mcpu || _march=""
+    fi
+    ## Gabucino : --target takes effect here (hopefully...) by overwriting
+    ##             autodetected mcpu/march parameters
+    if test "$_target" ; then
+      # TODO: it may be a good idea to check GCC and fall back in all cases
+      if test "$host_arch" = "i586-i686"; then
+        _march="-march=i586"
+        _mcpu="$cpuopt=i686"
+      else      
+        _march="-march=$host_arch"
+        _mcpu="$cpuopt=$host_arch"
+      fi
+    
+      proc="$host_arch"
+
+      case "$proc" in
+        i386) iproc=386 ;;
+        i486) iproc=486 ;;
+        i586|k5|k6|k6-2|k6-3|pentium|pentium-mmx) iproc=586 ;;
+        i686|athlon*|pentium*) iproc=686 ;;
+        *) iproc=586 ;;
+      esac
+    fi
+
+    echores "$proc"
+    ;;
+
+  ia64)
+    _def_arch='#define ARCH_IA64 1'
+    _target_arch='TARGET_ARCH_IA64 = yes'
+    iproc='ia64'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+    ;;
+
+  x86_64|amd64)
+    _def_arch='#define ARCH_X86_64 1'
+    _target_arch='TARGET_ARCH_X86_64 = yes'
+    iproc='x86_64'
+
+    # gcc >= 3.4.0  doesn't support -mcpu, we have to use -mtune instead
+    if test "$cc_vendor" = "gnu" && test "$_cc_major" -gt 3 -o "$_cc_major" -eq 3 -a "$_cc_minor" -ge 4 ; then
+	cpuopt=-mtune
+    else
+	cpuopt=-mcpu
+    fi
+    case "$pvendor" in
+    AuthenticAMD)
+      proc=k8;;
+    GenuineIntel)
+      # 64-bit prescotts exist, but as far as GCC is concerned they have the
+      # same capabilities as a nocona.
+      proc=nocona;;
+    *)
+      proc=error;;
+    esac
+
+    echocheck "GCC & CPU optimization abilities"
+cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+    _optimizing=""
+
+    echores "$proc"
+    ;;
+
+  sparc)
+    _def_arch='#define ARCH_SPARC 1'
+    _target_arch='TARGET_ARCH_SPARC = yes'
+    iproc='sparc'
+    if sunos ; then
+	echocheck "CPU type"
+	karch=`uname -m`
+	case "`echo $karch`" in
+	    sun4) proc=v7 ;;
+	    sun4c) proc=v7 ;; 
+	    sun4d) proc=v8 ;;
+	    sun4m) proc=v8 ;;
+	    sun4u) proc=v9 _vis='yes' _def_vis='#define HAVE_VIS = yes' ;;
+	    sun4v) proc=v9 ;;
+	    *) proc=v8 ;;
+	esac
+	echores "$proc"
+    else
+	proc=v8
+    fi
+    _march=''
+    _mcpu="-mcpu=$proc"
+    _optimizing="$proc"
+    ;;
+
+  sparc64)
+    _def_arch='#define ARCH_SPARC 1'
+    _target_arch='TARGET_ARCH_SPARC = yes'
+    _vis='yes'
+    _def_vis='#define HAVE_VIS = yes'
+    iproc='sparc'
+    proc='v9'
+    _march=''
+    _mcpu="-mcpu=$proc"
+    _optimizing="$proc"
+    ;;
+
+  arm|armv4l|armv5tel)
+    _def_arch='#define ARCH_ARMV4L 1'
+    _target_arch='TARGET_ARCH_ARMV4L = yes'
+    iproc='arm'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+    ;;
+
+  ppc)
+    _def_arch='#define ARCH_POWERPC 1'
+    _def_dcbzl='#define NO_DCBZL 1'
+    _target_arch='TARGET_ARCH_POWERPC = yes'
+    iproc='ppc'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+    _altivec=no
+
+    echocheck "CPU type"
+    case $system_name in
+      Linux)
+	proc=`$_cpuinfo | grep 'cpu' | cut -d ':' -f 2 | cut -d ',' -f 1 | cut -b 2- | _head 1`
+	if test -n "`$_cpuinfo | grep altivec`"; then
+	    _altivec=yes
+	fi
+        ;;
+      Darwin)
+	proc=`$_cpuinfo | grep "Processor type" | cut -f 3 -d ' ' | sed 's/ppc//'`
+	if [ `sysctl -n hw.vectorunit` -eq 1 -o \
+	    "`sysctl -n hw.optional.altivec 2> /dev/null`" = "1" ]; then
+	    _altivec=yes
+	fi
+        ;;
+      NetBSD)
+        # only gcc 3.4 works reliably with AltiVec code under NetBSD
+	case $cc_version in
+	    2*|3.0*|3.1*|3.2*|3.3*)
+		;;
+	    *)
+		if [ `sysctl -n machdep.altivec` -eq 1 ]; then
+		    _altivec=yes
+		fi
+		;;
+	esac
+        ;;
+      AIX)
+	proc=`$_cpuinfo | grep 'type' | cut -f 2 -d ' ' | sed 's/PowerPC_//'`
+	;;
+    esac
+    if test "$_altivec" = yes; then
+        echores "$proc altivec"
+    else
+        echores "$proc"
+    fi
+
+    echocheck "GCC & CPU optimization abilities"
+
+    if test -n "$proc"; then
+        case "$proc" in
+	    601) _march='-mcpu=601' _mcpu='-mtune=601' ;;
+	    603) _march='-mcpu=603' _mcpu='-mtune=603' ;;
+	    603e|603ev) _march='-mcpu=603e' _mcpu='-mtune=603e' ;;
+	    604|604e|604r|604ev) _march='-mcpu=604' _mcpu='-mtune=604' ;;
+	    740|740/750|745/755) _march='-mcpu=740' _mcpu='-mtune=740' ;;
+	    750|750CX) _march='-mcpu=750' _mcpu='-mtune=750' ;;
+	    POWER)  _march='-mcpu=power'  _mcpu='-mtune=power'  ;;
+	    POWER2) _march='-mcpu=power2' _mcpu='-mtune=power2' ;;
+	    POWER3) _march='-mcpu=power3' _mcpu='-mtune=power3' ;;
+    	    *) ;;
+        esac
+	# gcc 3.1(.1) and up supports 7400 and 7450
+	if test "$_cc_major" -ge "3" && test "$_cc_minor" -ge "1" || test "$_cc_major" -ge "4"; then
+	    case "$proc" in
+		7400*|7410*) _march='-mcpu=7400' _mcpu='-mtune=7400' ;;
+		7447*|7450*|7455*) _march='-mcpu=7450' _mcpu='-mtune=7450' ;;
+    		*) ;;
+    	    esac
+	fi
+	# gcc 3.2 and up supports 970
+	if test "$_cc_major" -ge "3" && test "$_cc_minor" -ge "3" || test "$_cc_major" -ge "4"; then
+	    case "$proc" in
+		970*|PPC970*) _march='-mcpu=970' _mcpu='-mtune=970'
+                      _def_dcbzl='#undef NO_DCBZL' ;;
+    		*) ;;
+    	    esac
+	fi
+	# gcc 3.3 and up supports POWER4
+	if test "$_cc_major" -ge "3" && test "$_cc_minor" -ge "3" || test "$_cc_major" -ge "4"; then
+	    case "$proc" in
+		POWER4) _march='-mcpu=power4' _mcpu='-mtune=power4' ;;
+		*) ;;
+	    esac
+	fi
+	# gcc 4.0 and up supports POWER5
+	if test "$_cc_major" -ge "4"; then
+	    case "$proc" in
+		POWER5*) _march='-mcpu=power5' _mcpu='-mtune=power5' ;;
+		*) ;;
+	    esac
+	fi
+    fi
+
+    if test -n "$_mcpu"; then
+        _optimizing=`echo $_mcpu | cut -c 8-`
+        echores "$_optimizing"
+    else
+        echores "none"
+    fi
+
+    ;;
+
+  alpha)
+    _def_arch='#define ARCH_ALPHA 1'
+    _target_arch='TARGET_ARCH_ALPHA = yes'
+    iproc='alpha'
+    _march=''
+    
+    echocheck "CPU type"
+    cat > $TMPC << EOF
+int main() {
+    unsigned long ver, mask;
+    asm ("implver %0" : "=r" (ver));
+    asm ("amask %1, %0" : "=r" (mask) : "r" (-1));
+    printf("%ld-%x\n", ver, ~mask);
+    return 0;
+}
+EOF
+    $_cc -o "$TMPO" "$TMPC"
+    case `"$TMPO"` in
+
+        0-0)    proc="ev4";   cpu_understands_mvi="0";;
+        1-0)    proc="ev5";   cpu_understands_mvi="0";;
+        1-1)    proc="ev56";  cpu_understands_mvi="0";; 
+        1-101)  proc="pca56"; cpu_understands_mvi="1";;
+        2-303)  proc="ev6";   cpu_understands_mvi="1";;
+        2-307)  proc="ev67";  cpu_understands_mvi="1";;
+        2-1307) proc="ev68";  cpu_understands_mvi="1";;
+    esac
+    echores "$proc"
+    
+    echocheck "GCC & CPU optimization abilities"
+    if test "$proc" = "ev68" ; then
+      cc_check -mcpu=$proc || proc=ev67
+    fi
+    if test "$proc" = "ev67" ; then
+      cc_check -mcpu=$proc || proc=ev6
+    fi
+    _mcpu="-mcpu=$proc"
+    echores "$proc"
+    
+    _optimizing="$proc"
+
+    echocheck "MVI instruction support in GCC"
+    if test "$_cc_major" -ge "3" && test "$cpu_understands_mvi" = "1" ; then
+        _def_gcc_mvi_support="#define CAN_COMPILE_ALPHA_MVI 1"
+	echores "yes"
+    else
+	_def_gcc_mvi_support="#undef CAN_COMPILE_ALPHA_MVI"
+	echores "no, GCC = `$_cc -dumpversion 2>&1` (must be >= 3), CPU = $proc (must be pca56 or later)"
+    fi
+    ;;
+
+  mips)
+    _def_arch='#define ARCH_SGI_MIPS 1'
+    _target_arch='TARGET_ARCH_SGI_MIPS = yes'
+    iproc='sgi-mips'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+
+    if irix ; then
+	echocheck "CPU type"
+	proc=`hinv -c processor | grep CPU | cut -d " " -f3`
+	case "`echo $proc`" in
+	    R3000) _march='-mips1' _mcpu='-mtune=r2000' ;;
+	    R4000) _march='-mips3' _mcpu='-mtune=r4000' ;;
+	    R4400) _march='-mips3' _mcpu='-mtune=r4400' ;;
+	    R4600) _march='-mips3' _mcpu='-mtune=r4600' ;;
+	    R5000) _march='-mips4' _mcpu='-mtune=r5000' ;;
+	    R8000|R10000|R12000|R14000|R16000) _march='-mips4' _mcpu='-mtune=r8000' ;;
+	esac
+	# gcc < 3.x does not support -mtune.
+	if test "$cc_vendor" = "gnu" && test "$_cc_major" -lt 3 ; then
+	    _mcpu=''
+	fi
+        echores "$proc"
+    fi
+
+    ;;
+
+  hppa)
+    _def_arch='#define ARCH_PA_RISC 1'
+    _target_arch='TARGET_ARCH_PA_RISC = yes'
+    iproc='PA-RISC'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+    ;;
+
+  s390)
+    _def_arch='#define ARCH_S390 1'
+    _target_arch='TARGET_ARCH_S390 = yes'
+    iproc='390'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+    ;;
+
+  s390x)
+    _def_arch='#define ARCH_S390X 1'
+    _target_arch='TARGET_ARCH_S390X = yes'
+    iproc='390x'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+    ;;
+
+  vax)
+    _def_arch='#define ARCH_VAX 1'
+    _target_arch='TARGET_ARCH_VAX = yes'
+    iproc='vax'
+    proc=''
+    _march=''
+    _mcpu=''
+    _optimizing=''
+    ;;
+
+  *)
+    echo "The architecture of your CPU ($host_arch) is not supported by this configure script"
+    echo "It seems nobody has ported CompSL to your OS or CPU type yet."
+    die "unsupported architecture $host_arch"
+    ;;
+esac # case "$host_arch" in
+
+
+if x86; then
+  extcheck() {
+    if test "$1" = yes ; then
+      echocheck "kernel support of $2"
+      cat > $TMPC <<EOF
+#include <signal.h>
+void catch() { exit(1); }
+int main(void){
+  signal(SIGILL, catch);
+  __asm__ __volatile__ ("$3":::"memory");return(0);
+}
+EOF
+
+      if cc_check && tmp_run; then
+        echores "yes"
+	_optimizing="$_optimizing $2"
+        return 0
+      else
+        echores "failed"
+        echo "It seems that your kernel does not correctly support $2."
+        echo "To use $2 extensions in CompSL, you have to upgrade/recompile your kernel!"
+	return 1
+      fi
+    fi
+    return 0
+  }
+
+  extcheck $_mmx "mmx" "emms" || _mmx=no
+  extcheck $_mmxext "mmxext" "sfence" || _mmxext=no
+  extcheck $_3dnow "3dnow" "femms" || _3dnow=no
+  extcheck $_3dnowext "3dnowext" "pswapd %%mm0, %%mm0" || _3dnowext=no
+  extcheck $_sse "sse" "xorps %%xmm0, %%xmm0" || _sse=no _gcc3_ext="$_gcc3_ext -mno-sse"
+  extcheck $_sse2 "sse2" "xorpd %%xmm0, %%xmm0" || _sse2=no _gcc3_ext="$_gcc3_ext -mno-sse2"
+
+  if test "$_gcc3_ext" != ""; then
+    # if we had to disable sse/sse2 because the active kernel does not
+    # support this instruction set extension, we also have to tell
+    # gcc3 to not generate sse/sse2 instructions for normal C code
+    cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+    cc_check $_march $_gcc3_ext && _march="$_march $_gcc3_ext"
+  fi
+fi
+
+
+echocheck "assembler support of -pipe option"
+cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+cc_check -pipe && _pipe="-pipe" && echores "yes" || echores "no"
+
+echocheck "compiler support of named assembler arguments"
+_named_asm_args=yes
+_def_named_asm_args="#define NAMED_ASM_ARGS 1"
+if test "$cc_vendor" = "gnu" && test "$_cc_major" -lt 3 \
+     -o "$_cc_major" -eq 3 -a "$_cc_minor" = 0 ; then
+  _named_asm_args=no
+  _def_named_asm_args="#undef NAMED_ASM_ARGS"
+fi
+echores $_named_asm_args
+
+
+# Checking for CFLAGS
+# FIXME added all our stuff in here...
+_stripbinaries=yes
+if test "$_profile" != "" || test "$_debug" != "" ; then
+  CFLAGS="$_march $_mcpu $_debug $_profile"
+  if test "$_cc_major" -ge "3" ; then
+    CFLAGS=`echo "$CFLAGS" | sed -e 's/\(-Wall\)/\1 -Wno-unused-parameter/'`
+  fi
+  _stripbinaries=no
+elif test -z "$CFLAGS" ; then
+    CFLAGS="$_march $_mcpu $_pipe"
+else
+  _warn_CFLAGS=yes
+fi
+if test -n "$LDFLAGS" ; then
+  _ld_extra="$_ld_extra $LDFLAGS"
+  _warn_CFLAGS=yes
+fi
+if test -n "$CPPFLAGS" ; then
+  _inc_extra="$_inc_extra $CPPFLAGS"
+  _warn_CFLAGS=yes
+fi
+
+_prefix="/usr/local"
+
+# need to check to see if we can compile compsl!
+echocheck "--std=gnu99 (required)"
+cat > $TMPC << EOF
+#include <feature.h>
+int main(void) { return 0; }
+EOF
+_gnu99=no
+cc_check '--std=gnu99' && _gnu99=yes
+echores "$_gnu99"
+
+# GOTCHA: the variables below defines the default behavior for autodetection
+# and have - unless stated otherwise - at least 2 states : yes no
+# If autodetection is available then the third state is: auto
+
+#### options go here
+
+for ac_option do
+  case "$ac_option" in
+  # Skip 1st pass
+  --target=*) ;;
+  --cc=*) ;;
+  --host-cc=*) ;;
+  --as=*) ;;
+  --enable-gcc-check) ;;
+  --disable-gcc-check) ;;
+  --enable-static*) ;;
+  --disable-static*) ;;
+  --with-extraincdir=*) ;;
+  --with-extralibdir=*) ;;
+  --extra-libs=*) ;;
+  --enable-cross-compile) ;;
+  --disable-cross-compile) ;;
+  --install-path=*) ;;
+  --with-install=*) ;;
+  --enable-profile) ;;
+  --disable-profile) ;;
+  --enable-debug) ;;
+  --enable-debug=*) ;;
+  --disable-debug) ;;
+  --disable-cpudetection) ;;
+
+  --enable-sse)	;;
+  --disable-sse) ;;
+  --enable-sse2) ;;
+  --disable-sse2) ;;
+  --enable-mmxext)  ;;
+  --disable-mmxext)  ;;
+  --enable-3dnow)  ;;
+  --disable-3dnow)  ;;
+  --enable-3dnowext)  ;;
+  --disable-3dnowext)  ;;
+  --enable-altivec)  ;;
+  --disable-altivec)  ;;
+  --enable-armv5te)  ;;
+  --disable-armv5te)  ;;
+  --enable-iwmmxt)  ;;
+  --disable-iwmmxt)  ;;
+  --enable-mmx)	 ;;
+  --disable-mmx) ;;
+
+##option stuff goes here
+  
+
+## dirs
+  --prefix=*)
+    _prefix=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --bindir=*)
+    _bindir=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --datadir=*)
+    _datadir=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --mandir=*)
+    _mandir=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --confdir=*)
+    _confdir=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  --libdir=*)
+    _libdir=`echo $ac_option | cut -d '=' -f 2`
+    ;;
+  *)
+    echo "Unknown parameter: $ac_option"
+    exit 1
+    ;;
+
+  esac
+done
+
+test -z "$_bindir" && _bindir="$_prefix/bin"
+test -z "$_datadir" && _datadir="$_prefix/share/compsl"
+test -z "$_mandir" && _mandir="$_prefix/man"
+test -z "$_confdir" && _confdir="$_prefix/etc/compsl"
+test -z "$_libdir" && _libdir="$_prefix/lib"
+
+if x86 ; then
+  # Checking assembler (_as) compatibility...
+  # Added workaround for older as that reads from stdin by default - atmos
+  as_version=`echo '' | $_as -version 2>&1 | sed -n 's/^.*assembler \(version \)*\([0-9.]*\).*$/\2/p'`
+  echocheck "assembler ($_as $as_version)"
+
+  _pref_as_version='2.9.1'
+  echo 'nop' > $TMPS
+  if test "$_mmx" = yes ; then
+    echo 'emms' >> $TMPS
+  fi
+  if test "$_3dnow" = yes ; then
+    _pref_as_version='2.10.1'
+    echo 'femms' >> $TMPS
+  fi
+  if test "$_3dnowext" = yes ; then
+    _pref_as_version='2.10.1'
+    echo 'pswapd	%mm0, %mm0' >> $TMPS
+  fi
+  if test "$_mmxext" = yes ; then
+    _pref_as_version='2.10.1'
+    echo 'movntq	%mm0, (%eax)' >> $TMPS
+  fi
+  if test "$_sse" = yes ; then
+    _pref_as_version='2.10.1'
+    echo 'xorps %xmm0, %xmm0' >> $TMPS
+  fi
+  #if test "$_sse2" = yes ; then
+  #  _pref_as_version='2.11'
+  #  echo 'xorpd %xmm0, %xmm0' >> $TMPS
+  #fi
+  $_as $TMPS -o $TMPO > /dev/null 2>&1 || as_verc_fail=yes
+
+  if test "$as_verc_fail" != yes ; then
+    echores "ok"
+  else
+    _res_comment="Upgrade binutils to ${_pref_as_version} ..."
+    echores "failed"
+    die "obsolete binutils version"
+  fi
+
+fi #if x86
+
+
+echocheck ".align is a power of two"
+if test "$_asmalign_pot" = auto ; then
+_asmalign_pot=no
+cat > $TMPC << EOF
+main() { asm (".align 3"); }
+EOF
+cc_check && _asmalign_pot=yes
+fi
+if test "$_asmalign_pot" = "yes" ; then
+  _def_asmalign_pot='#define ASMALIGN(ZEROBITS) ".align " #ZEROBITS "\n\t"'
+else
+  _def_asmalign_pot='#define ASMALIGN(ZEROBITS) ".align 1<<" #ZEROBITS "\n\t"'
+fi
+echores $_asmalign_pot
+
+#FIXME: This should happen before the check for CFLAGS..
+if ppc ; then
+    
+    # check if altivec is supported by the compiler, and how to enable it
+
+    _altivec_gcc_flags=''
+
+    if test "$_altivec" = yes -o "$_runtime_cpudetection" = yes ; then
+        echocheck "GCC altivec support"
+        
+        p=''
+        cat > $TMPC << EOF
+int main() {
+    return 0;
+}
+EOF
+        FSF_flags='-maltivec -mabi=altivec'
+        Darwin_flags='-faltivec -D__APPLE_ALTIVEC__'
+
+        # check for Darwin-style flags first, since
+        # gcc-3.3 (August Update from Apple) on MacOS 10.2.8
+        # accepts but ignores FSF-style flags...
+
+        if test -z "$p"; then
+            cc_check $Darwin_flags && p='Darwin'
+        fi
+        if test -z "$p"; then
+            cc_check $FSF_flags && p='FSF'
+        fi
+
+        case $p in
+            FSF) _altivec_gcc_flags="$FSF_flags" _altivec=yes ;;
+            Darwin) _altivec_gcc_flags="$Darwin_flags" _altivec=yes ;;
+            *) _altivec=no ;;
+        esac
+
+        if test -z "$p"; then
+            p=none
+        else
+            p="$p-style ($_altivec_gcc_flags)"
+        fi
+
+        echores "$p"
+    fi
+
+    # check if <altivec.h> should be included
+
+    _def_altivec_h='#undef HAVE_ALTIVEC_H'
+
+    if test "$_altivec" = yes ; then
+        echocheck "altivec.h"
+        cat > $TMPC << EOF
+#include <altivec.h>
+int main(void) { return 0; }
+EOF
+        _have_altivec_h=no
+         cc_check $_altivec_gcc_flags && _have_altivec_h=yes
+         if test "$_have_altivec_h" = yes ; then
+             _def_altivec_h='#define HAVE_ALTIVEC_H 1'
+         fi
+         echores "$_have_altivec_h"
+    fi
+
+    # disable runtime cpudetection if 
+    # - we cannot generate altivec code
+    # - altivec is disabled by the user
+
+    if test "$_runtime_cpudetection" = yes -a "$_altivec" = no ; then
+        _runtime_cpudetection=no
+    fi
+
+    # show that we are optimizing for altivec (if enabled and supported)
+
+    if test "$_runtime_cpudetection" = no -a "$_altivec" = yes ; then
+	_optimizing="$_optimizing altivec"
+    fi
+
+    # if altivec is enabled, make sure the correct flags turn up in CFLAGS
+
+    if test "$_altivec" = yes ; then
+        #FIXME: _mcpu is used for CFLAGS, this needs to be set earlier
+        #_mcpu="$_mcpu $_altivec_gcc_flags"
+        CFLAGS="$CFLAGS $_altivec_gcc_flags"
+    fi
+
+    # setup _def_altivec correctly
+
+    if test "$_altivec" = yes ; then
+	_def_altivec='#define HAVE_ALTIVEC 1'
+    else
+	_def_altivec='#undef HAVE_ALTIVEC'
+    fi
+fi
+
+if arm ; then
+  echocheck "ARMv5TE (Enhanced DSP Extensions)"
+  if test $_armv5te = "auto" ; then
+    cat > $TMPC << EOF
+int main(void) {
+    __asm__ __volatile__ ("qadd r0, r0, r0");
+}
+EOF
+    _armv5te=no
+    cc_check && _armv5te=yes
+  fi
+  echores "$_armv5te"
+
+  echocheck "iWMMXt (Intel XScale SIMD instructions)"
+  if test $_iwmmxt = "auto" ; then
+    cat > $TMPC << EOF
+int main(void) {
+    __asm__ __volatile__ ("wunpckelub wr6, wr4");
+}
+EOF
+    _iwmmxt=no
+    cc_check && _iwmmxt=yes
+  fi
+  echores "$_iwmmxt"
+fi
+
+_def_mmx='#undef HAVE_MMX'
+test "$_mmx" = yes && _def_mmx='#define HAVE_MMX 1'
+_def_mmxext='#undef HAVE_MMX2'
+test "$_mmxext" = yes && _def_mmxext='#define HAVE_MMX2 1'
+_def_3dnow='#undef HAVE_3DNOW'
+test "$_3dnow" = yes && _def_3dnow='#define HAVE_3DNOW 1'
+_def_3dnowext='#undef HAVE_3DNOWEX'
+test "$_3dnowext" = yes && _def_3dnowext='#define HAVE_3DNOWEX 1'
+_def_sse='#undef HAVE_SSE'
+test "$_sse" = yes && _def_sse='#define HAVE_SSE 1'
+_def_sse2='#undef HAVE_SSE2'
+test "$_sse2" = yes && _def_sse2='#define HAVE_SSE2 1'
+_def_armv5te='#undef HAVE_ARMV5TE'
+test "$_armv5te" = yes && _def_armv5te='#define HAVE_ARMV5TE 1'
+_def_iwmmxt='#undef HAVE_IWMMXT'
+test "$_iwmmxt" = yes && _def_iwmmxt='#define HAVE_IWMMXT 1'
+
+
+# Checking kernel version...
+if x86 && linux ; then
+  _k_verc_problem=no
+  kernel_version=`uname -r 2>&1`
+  echocheck "$system_name kernel version"
+  case "$kernel_version" in
+    '') kernel_version="?.??"; _k_verc_fail=yes;;
+    [0-1].[0-9].[0-9]*|2.[0-3].[0-9]*)
+      _k_verc_problem=yes;;
+  esac
+  if test "$_k_verc_problem" = yes && test "$_sse" = yes ; then
+    _k_verc_fail=yes
+  fi
+  if test "$_k_verc_fail" ; then
+    echores "$kernel_version, fail"
+    echo "WARNING! If you want to run CompSL on this system, get prepared for problems!"
+    echo "2.2.x has limited SSE support. Upgrade the kernel or use --disable-sse if you"
+    echo "experience crashes. CompSL tries to autodetect if your kernel correctly"
+    echo "supports SSE, but you have been warned! If you are using a kernel older than"
+    echo "2.2.x you must upgrade it to get SSE support!"
+#    die "Your kernel is too old for this CPU." # works fine on some 2.2.x so don't die (later check will test)
+  else
+    echores "$kernel_version, ok"
+  fi
+fi
+
+##FIXME: make this ours
+echocheck "CompSL binary name"
+if win32 ; then
+  _dyn_lib="compsl.dll"
+  _static_lib="compsl.lib"
+else
+    #FIXME: this
+  _dyn_lib="libcompsl.so"
+  _static_lib="libcompsl.a"
+fi
+echores $_dyn_lib $_static_lib note these names not actually used right now.
+
+# checking for a working awk, I'm using mawk first, because it's fastest - atmos
+_awk=
+if test "$_vidix_internal" = yes ; then
+_awk_verc_fail=yes
+echocheck "awk"
+for _awk in mawk gawk nawk awk; do
+  if ( $_awk 'BEGIN{testme();}function testme(){print"";}' ) >> "$TMPLOG" 2>&1; then
+    _awk_verc_fail=no
+    break
+  fi
+done
+test "$_awk_verc_fail" = yes && _awk=no
+echores "$_awk"
+if test "$_awk_verc_fail" = yes; then
+echo "VIDIX needs awk, but no working implementation was found!"
+echo "Try the GNU version, which can be downloaded from:"
+echo "ftp://ftp.gnu.org/gnu/gawk/"
+echo "If you don't need VIDIX, you can use configure --disable-vidix instead."
+die "no awk"
+fi
+fi
+
+# If IRIX we must use ar instead of ranlib (not present on IRIX systems)
+if irix ; then
+  _ranlib='ar -r'
+elif linux ; then
+  _ranlib='true'
+fi
+
+######################
+# MAIN TESTS GO HERE #
+######################
+
+
+echocheck "extra headers"
+if test "$_inc_extra" ; then
+  echores "$_inc_extra"
+else
+  echores "none"
+fi
+
+
+echocheck "extra libs"
+if test "$_ld_extra" ; then
+  echores "$_ld_extra"
+else
+  echores "none"
+fi
+
+echocheck "-lposix"
+cat > $TMPC <<EOF
+int main(void) { return 0; }
+EOF
+if cc_check -lposix ; then
+  _ld_arch="$_ld_arch -lposix"
+  echores "yes"
+else
+  echores "no"
+fi
+
+echocheck "-lm"
+cat > $TMPC <<EOF
+int main(void) { return 0; }
+EOF
+if cc_check -lm ; then
+  _ld_lm="-lm"
+  echores "yes"
+else
+  _ld_lm=""
+  echores "no"
+fi
+
+echocheck "restrict keyword"
+for restrict_keyword in restrict __restrict __restrict__ ; do
+  echo "void foo(char * $restrict_keyword p); int main(){}" > $TMPC
+  if cc_check; then
+    _def_restrict_keyword=$restrict_keyword
+    break;
+  fi
+done
+if [ -n "$_def_restrict_keyword" ]; then
+  echores "$_def_restrict_keyword"
+else
+  echores "none"
+fi
+# Avoid infinite recursion loop ("#define restrict restrict")
+if [ "$_def_restrict_keyword" != "restrict" ]; then
+  _def_restrict_keyword="#define restrict $_def_restrict_keyword"
+else
+  _def_restrict_keyword=""
+fi
+
+
+echocheck "__builtin_expect"
+# GCC branch prediction hint
+cat > $TMPC << EOF
+int foo (int a) {
+    a = __builtin_expect (a, 10);
+    return a == 10 ? 0 : 1;
+}
+int main() { return foo(10) && foo(0); }
+EOF
+_builtin_expect=no
+cc_check && _builtin_expect=yes
+if test "$_builtin_expect" = yes ; then
+  _def_builtin_expect='#define HAVE_BUILTIN_EXPECT 1'
+else
+  _def_builtin_expect='#undef HAVE_BUILTIN_EXPECT'
+fi
+echores "$_builtin_expect"
+
+echocheck "posix4"
+# required for nanosleep on some systems
+cat > $TMPC << EOF
+#include <time.h>
+int main(void) { (void) nanosleep(0, 0); return 0; }
+EOF
+_posix4=no
+cc_check -lposix4 && _posix4=yes
+if test "$_posix4" = yes ; then
+  _ld_arch="-lposix4 $_ld_arch"
+fi
+echores "$_posix4"
+
+echocheck "lrintf"
+cat > $TMPC << EOF
+#include <math.h>
+int main(void) { long (*foo)(float); foo = lrintf; (void)(*foo)(0.0); return 0; }
+EOF
+_lrintf=no
+cc_check -D_GNU_SOURCE $_ld_lm && _lrintf=yes
+if test "$_lrintf" = yes ; then
+  _def_lrintf="#define HAVE_LRINTF 1"
+else
+  _def_lrintf="#undef HAVE_LRINTF"
+fi
+echores "$_lrintf"
+
+echocheck "round"
+cat > $TMPC << EOF
+#include <math.h>
+int main(void) { (void) round(0.0); return 0; }
+EOF
+_round=no
+cc_check $_ld_lm && _round=yes
+if test "$_round" = yes ; then
+  _def_round="#define HAVE_ROUND 1"
+else
+  _def_round="#undef HAVE_ROUND"
+fi
+echores "$_round"
+
+echocheck "nanosleep"
+# also check for nanosleep
+cat > $TMPC << EOF
+#include <time.h>
+int main(void) { (void) nanosleep(0, 0); return 0; }
+EOF
+_nanosleep=no
+cc_check $_ld_arch && _nanosleep=yes
+if test "$_nanosleep" = yes ; then
+  _def_nanosleep='#define HAVE_NANOSLEEP 1'
+else
+  _def_nanosleep='#undef HAVE_NANOSLEEP'
+fi
+echores "$_nanosleep"
+
+echocheck "inttypes.h (required)"
+cat > $TMPC << EOF
+#include <inttypes.h>
+int main(void) { return 0; }
+EOF
+_inttypes=no
+cc_check && _inttypes=yes
+echores "$_inttypes"
+
+if test "$_inttypes" = no ; then
+  echocheck "bitypes.h (inttypes.h predecessor)"
+  cat > $TMPC << EOF
+#include <sys/bitypes.h>
+int main(void) { return 0; }
+EOF
+  cc_check && _inttypes=yes
+  if test "$_inttypes" = yes ; then
+    die "You don't have inttypes.h, but sys/bitypes.h is present. Please copy etc/inttypes.h into the include path, and re-run configure."
+  else
+    die "Cannot find header either inttypes.h or bitypes.h"
+  fi
+fi
+
+
+echocheck "int_fastXY_t in inttypes.h"
+cat > $TMPC << EOF
+#include <inttypes.h>
+int main(void) { 
+volatile int_fast16_t v= 0;
+return v; }
+EOF
+_fast_inttypes=no
+cc_check && _fast_inttypes=yes
+if test "$_fast_inttypes" = yes ; then
+  # nothing to do
+  :
+else
+  _def_fast_inttypes='  
+    typedef signed char int_fast8_t;
+    typedef signed int  int_fast16_t;
+    typedef signed int  int_fast32_t;
+    typedef signed long long int_fast64_t;
+    typedef unsigned char uint_fast8_t;
+    typedef unsigned int  uint_fast16_t;
+    typedef unsigned int  uint_fast32_t;
+    typedef unsigned long long uint_fast64_t;'
+fi
+echores "$_fast_inttypes"
+
+echocheck "word size"
+_mp_wordsize="#undef MP_WORDSIZE"
+cat > $TMPC << EOF
+#include <stdio.h>
+#include <sys/types.h>
+int main(void) { printf("%d\n", sizeof(size_t)*8); return 0; }
+EOF
+cc_check && _wordsize=`$TMPO` && _mp_wordsize="#define MP_WORDSIZE $_wordsize"
+echores "$_wordsize"
+
+
+echocheck "stddef.h"
+cat > $TMPC << EOF
+#include <stddef.h>
+int main(void) { return 0; }
+EOF
+_stddef=no
+cc_check && _stddef=yes
+if test "$_stddef" = yes ; then
+  _def_stddef='#define HAVE_STDDEF_H 1'
+else
+  _def_stddef='#undef HAVE_STDDEF_H'
+fi
+echores "$_stddef"
+
+
+echocheck "malloc.h"
+cat > $TMPC << EOF
+#include <malloc.h>
+int main(void) { (void) malloc(0); return 0; }
+EOF
+_malloc=no
+cc_check && _malloc=yes
+if test "$_malloc" = yes ; then
+  _def_malloc='#define HAVE_MALLOC_H 1'
+else
+  _def_malloc='#undef HAVE_MALLOC_H'
+fi
+# malloc.h emits a warning in FreeBSD and OpenBSD
+freebsd || openbsd && _def_malloc='#undef HAVE_MALLOC_H'
+echores "$_malloc"
+
+
+echocheck "memalign()"
+# XXX restrict to x86 ? extend to other CPUs/cacheline sizes ?
+cat > $TMPC << EOF
+#include <malloc.h>
+int main (void) { (void) memalign(64, sizeof(char)); return 0; }
+EOF
+_memalign=no
+cc_check && _memalign=yes
+if test "$_memalign" = yes ; then
+ _def_memalign='#define HAVE_MEMALIGN 1'
+else
+ _def_memalign='#undef HAVE_MEMALIGN'
+ _def_map_memalign='#define memalign(a,b) malloc(b)'
+ not darwin && _def_memalign_hack='#define MEMALIGN_HACK 1'
+fi
+echores "$_memalign"
+
+
+echocheck "alloca.h"
+cat > $TMPC << EOF
+#include <alloca.h>
+int main(void) { (void) alloca(0); return 0; }
+EOF
+_alloca=no
+cc_check && _alloca=yes
+if cc_check ; then
+  _def_alloca='#define HAVE_ALLOCA_H 1'
+else
+  _def_alloca='#undef HAVE_ALLOCA_H'
+fi
+echores "$_alloca"
+
+
+echocheck "mman.h"
+cat > $TMPC << EOF
+#include <sys/types.h>
+#include <sys/mman.h>
+int main(void) { (void) mmap(0, 0, 0, 0, 0, 0); return 0; }
+EOF
+_mman=no
+cc_check && _mman=yes
+if test "$_mman" = yes ; then
+  _def_mman='#define HAVE_SYS_MMAN_H 1'
+else
+  _def_mman='#undef HAVE_SYS_MMAN_H'
+fi
+echores "$_mman"
+
+cat > $TMPC << EOF
+#include <sys/types.h>
+#include <sys/mman.h>
+int main(void) { void *p = MAP_FAILED; return 0; }
+EOF
+_mman_has_map_failed=no
+cc_check && _mman_has_map_failed=yes
+if test "$_mman_has_map_failed" = yes ; then
+  _def_mman_has_map_failed=''
+else
+  _def_mman_has_map_failed='#define MAP_FAILED ((void *) -1)'
+fi
+
+_def_threads='#undef HAVE_THREADS'
+
+echocheck "pthread"
+if test "$_pthreads" = auto ; then
+cat > $TMPC << EOF
+#include <pthread.h>
+void* func(void *arg) { return arg; }
+int main(void) { pthread_t tid; return pthread_create (&tid, 0, func, 0) == 0 ? 0 : 1; }
+EOF
+_pthreads=no
+if not hpux ; then
+  for _ld_tmp in "-lpthreadGC2" "" "-lpthread" "-pthread" ; do
+    # for crosscompilation, we cannot execute the program, be happy if we can link statically
+    cc_check $_ld_tmp && (tmp_run || test "$_ld_static") && _ld_pthread="$_ld_tmp" && _pthreads=yes && break
+  done
+fi
+fi
+if test "$_pthreads" = yes ; then
+  _res_comment="using $_ld_pthread"
+  _def_pthreads='#define HAVE_PTHREADS 1'
+  _def_threads='#define HAVE_THREADS 1'
+else
+  _def_pthreads='#undef HAVE_PTHREADS'
+  _macosx=no
+  if not mingw32 ; then
+    _win32=no
+  fi
+fi
+echores "$_pthreads"
+
+echocheck "rpath"
+netbsd &&_rpath=yes
+if test "$_rpath" = yes ; then
+  for I in `echo $_ld_extra | sed 's/-L//g'` ; do
+    tmp="$tmp ` echo $I | sed 's/.*/ -L& -Wl,-R&/'`"
+  done
+_ld_extra=$tmp
+fi
+echores "$_rpath"
+
+echocheck "shm"
+if test "$_shm" = auto ; then
+  cat > $TMPC << EOF
+#include <sys/types.h>
+#include <sys/shm.h>
+int main(void) { shmget(0, 0, 0); shmat(0, 0, 0); shmctl(0, 0, 0); return 0; }
+EOF
+  _shm=no
+  cc_check && _shm=yes
+fi
+if test "$_shm" = yes ; then
+  _def_shm='#define HAVE_SHM 1'
+else
+  _def_shm='#undef HAVE_SHM'
+fi
+echores "$_shm"
+
+echocheck "swab()"
+cat > $TMPC << EOF
+#include <unistd.h>
+int main(void) { swab(0, 0, 0); return 0; }
+EOF
+_swab=no
+cc_check && _swab=yes
+if test "$_swab" = yes ; then
+  _def_swab='#define HAVE_SWAB 1'
+else
+  _def_swab='#undef HAVE_SWAB'
+fi
+echores "$_swab"
+
+if sunos; then
+echocheck "sysi86()"
+cat > $TMPC << EOF
+#include <sys/sysi86.h>
+int main (void) { sysi86(0); return 0; }
+EOF
+_sysi86=no
+cc_check && _sysi86=yes
+if test "$_sysi86" = yes ; then
+  _def_sysi86='#define HAVE_SYSI86 1'
+else
+  _def_sysi86='#undef HAVE_SYSI86'
+fi
+echores "$_sysi86"
+fi #if sunos
+
+
+echocheck "sys/sysinfo.h"
+cat > $TMPC << EOF
+#include <sys/sysinfo.h>
+int main(void) {
+  struct sysinfo s_info;
+  sysinfo(&s_info);
+  return 0;
+}
+EOF
+_sys_sysinfo=no
+cc_check && _sys_sysinfo=yes
+if test "$_sys_sysinfo" = yes ; then
+  _def_sys_sysinfo='#define HAVE_SYS_SYSINFO_H 1'
+else
+  _def_sys_sysinfo='#undef HAVE_SYS_SYSINFO_H'
+fi
+echores "$_sys_sysinfo"
+
+#echocheck "compiler support for -fno-PIC"
+#if x86; then
+#cat > $TMPC <<EOF
+#int main(void) { return 0; }
+#EOF
+#if cc_check -fno-PIC ; then
+#  CFLAGS="-fno-PIC $CFLAGS"
+#  echores "yes"
+#else
+#  echores "no"
+#fi
+#else
+#  echores "only used for x86"
+#fi
+
+# endian testing
+echocheck "byte order"
+if test "$_big_endian" = auto ; then
+  cat > $TMPC <<EOF
+short ascii_name[] = { (('M'<<8)|'P'),(('l'<<8)|'a'),(('y'<<8)|'e'),(('r'<<8)|'B'),
+                      (('i'<<8)|'g'),(('E'<<8)|'n'),(('d'<<8)|'i'),(('a'<<8)|'n'),0};
+int main(){
+  return (int)ascii_name;
+} 
+EOF
+  if cc_check ; then 
+    if strings $TMPO | grep -l MPlayerBigEndian >/dev/null ; then 
+      _big_endian=yes
+    else
+      _big_endian=no
+    fi
+  else
+    echo -n "failed to autodetect byte order, defaulting to "
+  fi
+fi
+if test "$_big_endian" = yes ; then
+  _byte_order='big-endian'
+  _def_words_endian='#define WORDS_BIGENDIAN 1'
+else
+  _byte_order='little-endian'
+  _def_words_endian='#undef WORDS_BIGENDIAN'
+fi
+echores "$_byte_order"
+
+echocheck "compiler support for noexecstack"
+cat > $TMPC <<EOF
+int main(void) { return 0; }
+EOF
+if cc_check -Wl,-z,noexecstack ; then
+  _ld_extra="-Wl,-z,noexecstack $_ld_extra"
+  echores "yes"
+else
+  echores "no"
+fi
+
+####################################################
+# Determine OS dependent libs
+#################################################
+if cygwin ; then
+  CFLAGS="$CFLAGS -D__CYGWIN__"
+fi
+
+if win32 ; then
+  _confwin32='TARGET_WIN32 = yes'
+else
+  _confwin32='TARGET_WIN32 = no'
+fi
+
+# Dynamic linking flags 
+# (FIXME: 'echocheck "dynamic linking"' above and modify here accordingly)
+_ld_dl_dynamic=''
+bsd && _ld_dl_dynamic='-rdynamic'
+if test "$_real" = yes || test "$_xanim" = yes && not win32 && not qnx && not darwin ; then
+  _ld_dl_dynamic='-rdynamic'
+fi
+
+_ld_arch="$_ld_arch $_ld_pthread $_ld_dl $_ld_dl_dynamic"
+bsdos && _ld_arch="$_ld_arch -ldvd"
+if netbsd ; then
+  x86 && _ld_arch="$_ld_arch -li386"
+fi
+
+_def_debug='#undef MP_DEBUG'
+test "$_debug" != "" && _def_debug='#define MP_DEBUG 1'
+
+_def_linux='#undef TARGET_LINUX'
+linux && _def_linux='#define TARGET_LINUX 1'
+
+
+###################################################################
+# THOM ORIGINAL HERE
+###################################################################
+
+for func in sin cos tan acos asin atan log ceil floor; do
+    echocheck "${func}f"
+    cat > $TMPC << EOF
+#include <math.h>
+int main(void) { ${func}f(0.5f); return 0; }
+EOF
+    if cc_check; then
+        declare _def_${func}='' 
+        echores "yes"
+    else
+        declare _def_${func}="#define ${func}f ${func}"
+        echores "no"
+    fi
+done
+
+for func in pow fmod atan2 hypot; do
+    echocheck "${func}f"
+    cat > $TMPC << EOF
+#include <math.h>
+int main(void) { ${func}f(0.5f,0.5f); return 0; }
+EOF
+    if cc_check; then
+        declare _def_${func}='' 
+        echores "yes"
+    else
+        declare _def_${func}="#define ${func}f ${func}"
+        echores "no"
+    fi
+done
+
+echocheck "fmaxf"
+cat > $TMPC << EOF
+#include <math.h>
+int main(void) { $fmaxf(0.5f,0.5f); return 0; }
+EOF
+if cc_check; then
+    _def_fmax='' 
+    echores "yes"
+else
+    _def_fmax='#define fmaxf(a,b) ((a<b)?b:a)'
+    echores "no"
+fi
+
+echocheck "fminf"
+cat > $TMPC << EOF
+#include <math.h>
+int main(void) { $fminf(0.5f,0.5f); return 0; }
+EOF
+if cc_check; then
+    _def_fmin='' 
+    echores "yes"
+else
+    _def_fmin='#define fminf(a,b) ((a<b)?b:a)'
+    echores "no"
+fi
+
+##################################################
+# create config.h
+##################################################
+echo "Creating config.h"
+cat > src/intern/config.h <<ENDCONFIGH
+/* -------- This file has been automatically generated by configure ---------
+   Note: Any changes in it will be lost when you run configure again. */
 #ifndef COMPSL_CONFIG_H
 #define COMPSL_CONFIG_H
+
+/* floating point math functions */
+#include <math.h>
+$_def_sin
+$_def_cos
+$_def_tan
+$_def_acos
+$_def_asin
+$_def_atan
+$_def_log
+$_def_ciel
+$_def_floor
+$_def_pow
+$_def_fmod
+$_def_atan2
+$_def_hypot
+$_def_fmax
+$_def_fmin
+
+/* "restrict" keyword */
+$_def_restrict_keyword
+
+/* __builtin_expect branch prediction hint */
+$_def_builtin_expect
+#ifdef HAVE_BUILTIN_EXPECT
+#define likely(x) __builtin_expect ((x), 1)
+#define unlikely(x) __builtin_expect ((x), 0)
+#else
+#define likely(x) (x)
+#define unlikely(x) (x)
+#endif
+
+/* attribute(used) as needed by some compilers */
+#if (__GNUC__ * 100 + __GNUC_MINOR__ >= 300)
+# define attribute_used __attribute__((used))
+#else
+# define attribute_used
+#endif
+
+/* compiler support for named assembler arguments */
+$_def_named_asm_args
+
+#define PREFIX "$_prefix"
+
+/* Toggles debugging informations */
+$_def_debug
+
+/* Common data directory (for fonts, etc) */
+#define COMPSL_DATADIR "$_datadir"
+#define COMPSL_CONFDIR "$_confdir"
+#define COMPSL_LIBDIR "$_libdir"
+
+/* Define this if your system has the sysinfo header */
+$_def_sys_sysinfo
+
+/* Define this if your system has the "malloc.h" header file */
+$_def_malloc
+
+/* memalign is mapped to malloc if unsupported */
+$_def_memalign
+$_def_map_memalign
+$_def_memalign_hack
+
+/* assembler handling of .align */
+$_def_asmalign_pot
+
+/* Define this if your system has the "alloca.h" header file */
+$_def_alloca
+
+/* Define this if your system has the "sys/mman.h" header file */
+$_def_mman
+$_def_mman_has_map_failed
+
+/* Define this if your system has swab */
+$_def_swab
+
+/* Define this if your system has sysi86 */
+$_def_sysi86
+
+/* Define this if your system has pthreads */
+$_def_pthreads
+
+/*----------------------------------------------------------------------------
+**
+** NOTE: Instead of modifying these definitions here, use the
+**       --enable/--disable options of the ./configure script!
+**       See ./configure --help for details.
+**
+*---------------------------------------------------------------------------*/
+
+/* C99 lrintf function available */
+$_def_lrintf
+
+/* round function is available */
+$_def_round
+
+/* yes, we have inttypes.h */
+#define HAVE_INTTYPES_H 1
+
+/* int_fastXY_t emulation */
+$_def_fast_inttypes
+
+/* nanosleep support */
+$_def_nanosleep
+
+/* Extension defines */
+$_def_target_arch
+$_def_confwin32
+#define TARGET_CPU $iproc
+$_def_3dnow	// only define if you have 3DNOW (AMD k6-2, AMD Athlon, iDT WinChip, etc.)
+$_def_3dnowext	// only define if you have 3DNOWEXT (AMD Athlon, etc.)
+$_def_mmx	// only define if you have MMX (newer x86 chips, not P54C/PPro)
+$_def_mmxext	// only define if you have MMX2 (Athlon/PIII/4/CelII)
+$_def_sse	// only define if you have SSE (Intel Pentium III/4 or Celeron II)
+$_def_sse2	// only define if you have SSE2 (Intel Pentium 4)
+$_def_altivec	// only define if you have Altivec (G4)
+$_def_armv5te	// only define if you have Enhanced DSP Extensions (ARM)
+$_def_iwmmxt	// only define if you have XScale IWMMX (ARM)
+
+$_def_altivec_h	// enables usage of altivec.h
+
 
 #endif
 ENDCONFIGH
 
-cat > config.mak <<'ENDCONFIGMAK'
+echo "Creating config.mak"
+cat > config.mak << EOF
+# -------- Generated by configure -----------
+
+LANG = C
+TARGET_OS = $system_name
+DESTDIR =
+prefix = \$(DESTDIR)$_prefix
+BINDIR = \$(DESTDIR)$_bindir
+DATADIR = \$(DESTDIR)$_datadir
+MANDIR = \$(DESTDIR)$_mandir
+CONFDIR = \$(DESTDIR)$_confdir
+LIBDIR = \$(DESTDIR)$_libdir
+
+bindir = \$(BINDIR)
+datadir = \$(DATADIR)
+sysconfdir = \$(CONFDIR)
+includedir = \$(prefix)/include
+docdir = \$(datadir)/doc/compsl
+libdir = \$(LIBDIR)
+mandir = \$(MANDIR)
+
+CC = $_cc
+HOST_CC = $_host_cc
+EXTRA_INC = $_inc_extra
+OPTFLAGS = $CFLAGS \$(EXTRA_INC)
+STRIPBINARIES = $_stripbinaries
+AWK = $_awk
+RANLIB = $_ranlib
+INSTALL = $_install
+
 BISON   		= bison
 FLEX    		= flex
 LIBTOOL         = libtool
-INSTALL 		= install
-INSTALL_PROGRAM = $(INSTALL) -v
-INSTALL_DATA 	= ${INSTALL} -v -m 644
+INSTALL_PROGRAM = \$(INSTALL) -v
+INSTALL_DATA 	= \${INSTALL} -v -m 644
 LDCONFIG		= ldconfig
-RANLIB			= ranlib
 DOXYGEN			= doxygen
 
-NORMAL_INSTALL = :
-PRE_INSTALL = :
-POST_INSTALL = :
-NORMAL_UNINSTALL = :
-PRE_UNINSTALL = :
-POST_UNINSTALL = :
+EXTRALIBS = $_extra_libs
+EXTRA_LIB = $_ld_extra
+HAVE_PTHREADS = $_pthreads
+MATH_LIB = $_ld_lm
+LIBC_LIB = $_ld_libC
 
-prefix = /usr/local
-exec_prefix = $(prefix)
-bindir = $(exec_prefix)/bin
-#libexecdir for programs run by this package and plugins and such
-#should put that sort of thing in $(libexecdir)/<packagename>
-libexecdir = $(exec_prefix)/libexec
-datarootdir = $(prefix)/share
-datadir = $(datarootdir)
-sysconfdir = $(prefix)/etc
-includedir = $(prefix)/include
-docdir = $(datarootdir)/doc/compsl
-htmldir = $(docdir)
-libdir = $(exec_prefix)/lib
-mandir = $(datarootdir)/man
-man1dir = $(mandir)/man1
-man2dir = $(mandir)/man2
-man3dir = $(mandir)/man3
-man4dir = $(mandir)/man4
-man5dir = $(mandir)/man5
-man6dir = $(mandir)/man6
-man7dir = $(mandir)/man7
-man8dir = $(mandir)/man8
-manext = .1
+PLATLIBS = \$(EXTRALIBS) \$(MATH_LIB) \$(LIBC_LIB ) $_ld_arch \$(EXTRA_LIB)
 
-################################
-# FLAGS                        #
-################################
+# --- Some stuff for autoconfigure ----
+$_conf_debug
+$_target_arch
+$_confwin32
+TARGET_CPU=$iproc
+GUESSED_CPU=$proc
+TARGET_MMX = $_mmx
+TARGET_MMX2 = $_mmxext
+TARGET_3DNOW = $_3dnow
+TARGET_3DNOWEX = $_3dnowext
+TARGET_SSE = $_sse
+TARGET_SSE2 = $_sse2
+TARGET_ALTIVEC = $_altivec
+TARGET_ARMV5TE = $_armv5te
+TARGET_IWMMXT = $_iwmmxt
+TARGET_VIS = $_vis
+TARGET_BUILTIN_VECTOR = $_builtin_vector
+TARGET_BUILTIN_3DNOW  = $_mm3dnow
 
+CPUGUESS=$_cpudetection
 
-ifeq ($(_ARCH),Linux)
-	PLATLIBS := -lm 
-endif
-
-CFLAGS  = -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
-CFLAGS += -Wnonnull
-#CFLAGS += -Wunreachable-code
-
-CFLAGS += -fsingle-precision-constant -ffast-math -fno-math-errno 
-CFLAGS += -ffinite-math-only -fno-trapping-math 
-
-CFLAGS += -funit-at-a-time -funroll-loops -funswitch-loops
-
-ifeq ($(findstring MINGW,$(_ARCH)),MINGW)
-	override WINDOWS := 1
-else
-	CPUTYPE := auto
-endif
-
-override CPUGUESS=0
-ifeq ($(CPUTYPE),auto)
-	override CPUFLAGS = $(shell ./gcc-arch &2>/dev/null)
-	override CPUGUESS=1
-else
-	override CPUFLAGS =
-	ifdef CPUTYPE
-		override CPUFLAGS += -march=$(CPUTYPE) 
-	endif
-	ifeq ($(MMX),1)
-		override CPUFLAGS += -mmmx
-	endif
-	ifdef SSE
-		ifeq ($(SSE),1)
-			override CPUFLAGS += -msse -mfpmath=sse,387 
-		else
-			override CPUFLAGS += -msse${SSE} -mfpmath=sse,387
-		endif
-	endif
-endif
-CFLAGS += $(CPUFLAGS)
-
-CFLAGS += -mno-ieee-fp
-
-override APPSTATMSG=
-
-ifdef DEBUG_COMP
-	CFLAGS += -DDEBUG_COMP
-	override APPSTATMSG += Compiler Debug messages are ON\\n
-else
-	override APPSTATMSG += Compiler Debug messages are OFF\\n
-endif
-
-ifdef TRACE_INTERP
-	CFLAGS += -D_COMPSL_TRACE
-	override APPSTATMSG += Interpreter execution tracing is ON\\n
-else
-	override APPSTATMSG += Interpreter execution tracing is OFF\\n
-endif
-
-#cause the optimizer to output code dumps as it runs each stage
-ifdef TRACE_OPTIM
-	CFLAGS += -DCOMPSL_TRACE_OPTIM
-	override APPSTATMSG += Tracing bytecode optimizer is ON\\n
-else
-	override APPSTATMSG += Tracing bytecode optimizer is OFF\\n
-endif
-
-# make the compiler output the line number it's currently compiling 
-# to stdout
-ifdef TRACE_COMPILE
-	CFLAGS += -DCOMPSL_TRACE_COMPILE
-	override APPSTATMSG += Tracing compile is ON\\n
-else
-	override APPSTATMSG += Tracing compile is OFF\\n
-endif
-
-#allow overrides from command line, but enable by default
 STACK_CHECK = 1
-ifeq ($(STACK_CHECK), 1)
-	CFLAGS += -DCOMP_STACKCHECK
-	override APPSTATMSG += Compile time bytecode stack bounds checking is ON\\n
-else
-	override APPSTATMSG += Compile time bytecode stack bounds checking is OFF\\n
-endif
 
-# note: not needed on x86 apparntly
-ifdef PIC
-	COMPSL_PIC := -fpic
-	override APPSTATMSG += Position independant code generation ON\\n
-endif
-
-ifdef DEBUG
-	# mudflap is some pointer debuging stuff
-	# disable builtins since we can't set breakpoints on
-	# calls to builtin functions
-	# stack protector checks for stack overruns
-	CFLAGS += -ggdb3 -DDEBUG -fmudflap -fno-builtin -fstack-protector
-	#CFLAGS += -D DEBUG $(DBG_ENVS)
-	OPTIMIZE=0
-else
-	#for asserts
-overide CFLAGS += -DNDEBUG
-	OPTIMIZE=FULL
-endif
-
-ifeq ($(OPTIMIZE),FULL)
-	CFLAGS += -O3 -fdata-sections -ffunction-sections -frename-registers
-	CFLAGS += -fsingle-precision-constant -funroll-loops -finline-functions
-	CFLAGS += -fsched-spec-load -maccumulate-outgoing-args
-	CFLAGS += -minline-all-stringops -fomit-frame-pointer
-	CFLAGS += -finline-limit=2000
-	CFLAGS += -frename-registers
-	CFLAGS += -fno-stack-limit
-	CFLAGS += -funswitch-loops
-	
-
-	# TODO: figure out if we need the -fno-strict-aliasing option.
-	# TODO: make sure none of these breaks the library for linking....
-	CFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
-	
-	CFLAGS += -fgcse-sm -fgcse-las -fgcse-after-reload
-	CFLAGS += -ftree-vectorize
-	CFLAGS += -ftracer
-	CFLAGS += -fvariable-expansion-in-unroller
-	#CFLAGS += -fprefetch-loop-arrays
-	CFLAGS += -freorder-blocks-and-partition
-	
-	CFLAGS += -fbranch-target-load-optimize 
-	#CFLAGS += -fbranch-target-load-optimize2
-	CFLAGS += -floop-optimize2 -fmove-all-movables
-	
-	###################################################
-	# potentially bad optimizations
-	###################################################
-	# from gcc manual
-	# This option is experimental, as not all machine descriptions used by GCC 
-	# model the CPU closely enough to avoid unreliable results from the algorithm.
-	CFLAGS += -fsched2-use-superblocks
-else
-	CFLAGS += -O$(OPTIMIZE)
-endif
-
-# for shared library
-ifndef WINDOWS
-	override CFLAGS += -fvisibility=hidden
-endif
-
-override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
-
-MYCFLAGS := -std=gnu99 -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
-MYCFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(MYCFLAGS))
-ALL_CFLAGS := ${CFLAGS} $(MYCFLAGS) ${COMPSL_PIC}
+EOF
 
 
-STATMSG  = Compiling with $(CC) version $(shell gcc -dumpversion)
-STATMSG += targeting $(shell gcc -dumpmachine) on $(_ARCH) for
-ifdef DEBUG
-	STATMSG += Debugging\\n
-else
-	STATMSG += Release\\n
-endif
-ifeq ($(OPTIMIZE),0)
-	STATMSG += Optimization is OFF\\n
-else
-	STATMSG += Optimization is ON at $(OPTIMIZE)\\n
-endif
-ifdef CPUTYPE
-	ifeq ($(CPUGUESS),1)
-		STATMSG += Guessed CPUTYPE of $(patsubst -march=%,%,$(filter -march% ,$(CPUFLAGS)))\\n
-		STATMSG +=    Adding CPU flags $(CPUFLAGS)\\n
-	else
-		STATMSG += Compiling for $(CPUTYPE) with $(CPUFLAGS)\\n
-	endif
-endif
-ifdef PLATLIBS
-	STATMSG += Platform specifice librarys to link $(patsubst -l%,lib%,$(PLATLIBS))\\n
-endif
-STATMSG += $(APPSTATMSG)
 
-STATMSG += \\nTools\\n
+#####################################################################################
 
-STATMSG +=BISON           = $(BISON)\\n
-STATMSG +=FLEX            = $(FLEX)\\n
-STATMSG +=LIBTOOL         = $(LIBTOOL)\\n
-STATMSG +=INSTALL         = $(INSTALL)\\n
-STATMSG +=INSTALL_PROGRAM = $(INSTALL_PROGRAM)\\n
-STATMSG +=INSTALL_DATA    = $(INSTALL_DATA)\\n
-STATMSG +=LDCONFIG        = $(LDCONFIG)\\n
-STATMSG +=RANLIB          = $(RANLIB)\\n
-STATMSG +=DOXYGEN         = $(DOXYGEN)\\n
+cat << EOF
 
-STATMSG +=\\nDirectories\\n
-STATMSG +=prefix      = $(prefix)\\n
-STATMSG +=exec_prefix = $(prefix)\\n
-STATMSG +=bindir      = $(bindir)\\n
-STATMSG +=libexecdir  = $(libexecdir)\\n
-STATMSG +=datarootdir = $(datarootdir)\\n
-STATMSG +=datadir     = $(datadir)\\n
-STATMSG +=sysconfdir  = $(sysconfdir)\\n
-STATMSG +=includedir  = $(includedir)\\n
-STATMSG +=docdir      = $(docdir)\\n
-STATMSG +=htmldir     = $(htmldir)\\n
-STATMSG +=libdir      = $(libdir)\\n
-STATMSG +=mandir      = $(mandir)\\n
+Config files successfully generated by ./configure !
 
-STATMSG +=\\n
+  Install prefix: $_prefix
+  Data directory: $_datadir
+  Config direct.: $_confdir
 
-ENDCONFIGMAK
+  Byte order: $_byte_order
+  Optimizing for: $_optimizing
+  
+EOF
 
+cat <<EOF
+
+Check $TMPLOG if you wonder why an autodetection failed (check whether
+the development headers/packages are installed).
+Do not report compilation errors if you used any of the --enable-* options
+(except --enable-gui and maybe --enable-debug).
+
+EOF
+
+if test "$_warn_CFLAGS" = yes; then
+  cat <<EOF
+
+CompSL compilation will use the CPPFLAGS/CFLAGS/LDFLAGS set by you, but:
+
+    *** ***  DO NOT REPORT BUGS IF IT DOES NOT COMPILE/WORK!  *** ***
+
+It is strongly recommended to let configure choose the correct CFLAGS!
+To do so, execute 'CFLAGS= ./configure <options>'
+
+EOF
+fi
+
+# Last move:
+rm -f "$TMPO" "$TMPC" "$TMPS" "$TMPCPP"
+rm -f TOOLS/cpuinfo
+rm -f TOOLS/cpuinfo.exe

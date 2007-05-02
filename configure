@@ -1,11 +1,5 @@
-#!/bin/bash
-####################################################
-## Temporary configure script, right now it just produces the same
-## behavior we had before, the plan is to slowly replace parts with
-## some kind of scripted setup
-####################################################
+#!/bin/sh
 
-#! /bin/sh
 #
 # Original version (C) 2000 Pontscho/fresh!mindworkz
 #                      pontscho@makacs.poliod.hu
@@ -58,11 +52,12 @@
 
 # we don't use any sse/mmx etc directly so mplayer's concept of runtime cpu detection does not apply
 # everything you would need it for should be done by specifying a target cpu
+
 _runtime_cpudetection=no
 
 # Prevent locale nonsense from breaking basic text processing utils
-LC_ALL=C
-export LC_ALL
+#LC_ALL=C
+#export LC_ALL
 
 # Prefer these macros to full length text !
 # These macros only return an error code - NO display is done

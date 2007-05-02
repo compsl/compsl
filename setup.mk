@@ -18,7 +18,7 @@ else
 endif
 
 override APPSTATMSG=
-override DEFFLAGS=
+DEFFLAGS=
 ifdef DEBUG_COMP
 	DEFFLAGS += -DDEBUG_COMP
 	override APPSTATMSG += Compiler Debug messages are ON\\n
@@ -50,7 +50,7 @@ else
 	override APPSTATMSG += Tracing compile is OFF\\n
 endif
 
-ifeq ($(STACK_CHECK), 1)
+ifeq ($(STACK_CHECK),1)
 	DEFFLAGS += -DCOMP_STACKCHECK
 	override APPSTATMSG += Compile time bytecode stack bounds checking is ON\\n
 else

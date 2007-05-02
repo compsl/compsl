@@ -55,7 +55,7 @@ DDEPS := $(DERIVED_SRCS:.c=.ddp)
 TEST_EXES := $(addprefix bin/,$(notdir $(basename $(TESTSRCS))))
 
 STATIC_LIB_OUT := bin/$(LIBNAME).a
-ifdef TARGET_WIN32
+ifeq ($(TARGET_WIN32),yes)
 	DYN_LIB_OUT := bin/$(SHORTLIB).dll
 	DEFFILE     := bin/$(SHORTLIB).def
 	IMPLIB      := bin/$(SHORTLIB).a

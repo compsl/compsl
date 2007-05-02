@@ -111,7 +111,7 @@ override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
 MYCFLAGS := -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
 
 # for shared library
-ifndef TARGET_WIN32
+ifneq ($(TARGET_WIN32),yes)
 	MYCFLAGS += -fvisibility=hidden
 	DEFFLAGS += -DWINDOWS
 endif

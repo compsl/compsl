@@ -221,7 +221,7 @@ $(STATIC_LIB_OUT): $(OBJECTS)
 
 #dummy file since dep generation is dumb
 compsl.tab.h: $(CMPATH)/compsl.tab.h
-	touch compsl.tab.h
+	@touch compsl.tab.h
 
 $(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile setup.mk
 	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h

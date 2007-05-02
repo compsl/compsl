@@ -160,13 +160,10 @@ STATMSG +=\\nDirectories\\n
 STATMSG +=prefix      = $(prefix)\\n
 STATMSG +=exec_prefix = $(prefix)\\n
 STATMSG +=bindir      = $(bindir)\\n
-STATMSG +=libexecdir  = $(libexecdir)\\n
-STATMSG +=datarootdir = $(datarootdir)\\n
 STATMSG +=datadir     = $(datadir)\\n
 STATMSG +=sysconfdir  = $(sysconfdir)\\n
 STATMSG +=includedir  = $(includedir)\\n
 STATMSG +=docdir      = $(docdir)\\n
-STATMSG +=htmldir     = $(htmldir)\\n
 STATMSG +=libdir      = $(libdir)\\n
 STATMSG +=mandir      = $(mandir)\\n
 

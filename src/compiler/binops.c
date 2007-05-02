@@ -25,7 +25,7 @@
 #include <string.h>
 #include "node.h"
 #include "interncomp.h"
-#include "compsl.tab.h"
+#include "./compsl.tab.h"
 
 
 

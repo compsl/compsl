@@ -1028,13 +1028,137 @@ int main()
 		}
 	}
 	
+	{ // EQ/JMZ2 
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 2
+			{.code = BC_CPUSH, { {.a1 =2} } }, //push const at address 1
+			{.code = BC_FEQ }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f  = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f  = 2.0f;
+		com->cons[2].size = -1;
+		com->cons[2].v.f  = 0.0f;
+		for(int i = 0; i < 10; i++)
+			com->cons[2].v.f += 0.01f;
+		com->cons[2].v.f *= 10.0f;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.f = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.f = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FEQ 2: PASS!\n");
+		else 
+		{
+			printf("FEQ 2: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	{ // EQ/JMZ3
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =2} } }, //push const at address 2
+			{.code = BC_CPUSH, { {.a1 =3} } }, //push const at address 1
+			{.code = BC_FEQ }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f  = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f  = 2.0f;
+		com->cons[2].size = -1;
+		com->cons[2].v.f  = ((float)INT_MAX)*((float)INT_MAX)/(1000.0f);
+		com->cons[3].size = -1;
+		com->cons[3].v.f  = 0.001f*((float)INT_MAX)*((float)INT_MAX);
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.f = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.f = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FEQ 3: PASS!\n");
+		else 
+		{
+			printf("FEQ 3: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
+	{ // EQ/JMZ3
+		bytecode code[] = 
+		{ 
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =2} } }, //push const at address 2
+			{.code = BC_CPUSH, { {.a1 =3} } }, //push const at address 1
+			{.code = BC_FEQ }, // compare
+			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
+			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
+			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
+			{.code = BC_END}
+		};
+		
+		com->cubbys[0].code = code;
+		
+		com->cons[0].size = -1;
+		com->cons[0].v.f  = 1.0f;
+		com->cons[1].size = -1;
+		com->cons[1].v.f  = 2.0f;
+		com->cons[2].size = -1;
+		com->cons[2].v.f  = 5.0f*FLT_MIN-2.0f*FLT_MIN;
+		com->cons[3].size = -1;
+		com->cons[3].v.f  = 3.0f*FLT_MIN;
+		
+		com->vt.vars[0].size =-1;
+		com->vt.vars[0].v.f = 0;
+		com->vt.vars[1].size =-1;
+		com->vt.vars[1].v.f = 0;
+		
+		runCubbyhole(com, 0);
+		
+		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
+			printf("FEQ 4: PASS!\n");
+		else 
+		{
+			printf("FEQ 4: FAIL!\n");
+			ret = 1;
+		}
+	}
+	
 	{ // EQ/JMN 
 		bytecode code[] = 
 		{ 
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
-			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
-			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 0
+			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 2
+			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
 			{.code = BC_FEQ }, // compare
 			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
@@ -1045,22 +1169,22 @@ int main()
 		com->cubbys[0].code = code;
 		
 		com->cons[0].size = -1;
-		com->cons[0].v.f = 1.0f;
+		com->cons[0].v.f  = 1.0f;
 		com->cons[1].size = -1;
-		com->cons[1].v.f = 2.0f;
+		com->cons[1].v.f  = 2.0f;
 		
 		com->vt.vars[0].size =-1;
-		com->vt.vars[0].v.i = 0;
+		com->vt.vars[0].v.f = 0;
 		com->vt.vars[1].size =-1;
-		com->vt.vars[1].v.i = 0;
+		com->vt.vars[1].v.f = 0;
 		
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
-			printf("FEQ 2: PASS!\n");
+			printf("FEQ 5: PASS!\n");
 		else 
 		{
-			printf("FEQ 2: FAIL!\n");
+			printf("FEQ 5: FAIL!\n");
 			ret = 1;
 		}
 	}

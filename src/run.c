@@ -487,27 +487,36 @@ static const int jmptbl[] =
  		COMPSL_END_INST; 
  	FLE:
  		sp--;
- 		(sp - 1)->f = (sp - 1)->f <= sp->f;
+ 		(sp - 1)->i = (sp - 1)->f <= sp->f;
  		COMPSL_END_INST; 
  	FLS:
  		sp--;
- 		(sp - 1)->f = (sp - 1)->f < sp->f;
+ 		(sp - 1)->i = (sp - 1)->f < sp->f;
  		COMPSL_END_INST;
 	FEQ:
  		sp--;
- 		(sp - 1)->f = fdimf(sp->f, (sp - 1)->f) < VM_FLOAT_EPSILON;
+ 		//(sp - 1)->f = fabsf(sp->f - (sp - 1)->f) < fabsf(sp->f)*VM_FLOAT_EPSILON;
+ // solid, fast routine across all platforms
+// with constant time behavior
+	{ //note all these variables will probably be optimized out of existance...
+		int ai = sp->i;
+		int bi = (sp-1)->i;
+		int test = (((unsigned int)(ai^bi))>>31)-1;
+		int diff = (((0x80000000 - ai)&(~test))|(ai&test))-bi; 
+		(sp - 1)->i = (((7+diff)|(7-diff)) >= 0);
+	}
  		COMPSL_END_INST;
 	FNE:
  		sp--;
- 		(sp - 1)->f = (sp - 1)->f != sp->f;
+ 		(sp - 1)->i = (sp - 1)->f != sp->f;
  		COMPSL_END_INST;
  	FGR:
  		sp--;
- 		(sp - 1)->f = (sp - 1)->f > sp->f;
+ 		(sp - 1)->i = (sp - 1)->f > sp->f;
  		COMPSL_END_INST;
  	FGE:
  		sp--;
- 		(sp - 1)->f = (sp - 1)->f >= sp->f;
+ 		(sp - 1)->i = (sp - 1)->f >= sp->f;
  		COMPSL_END_INST;
  	JMP:
  		pc += pc->sa - 1; // compensate for pc++ at top

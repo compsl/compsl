@@ -97,21 +97,21 @@
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG=1</buildArguments>
 <buildTarget>all DEBUG=1 OPTIMIZE=0</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="debug test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k DEBUG='1' -j2</buildArguments>
 <buildTarget>test DEBUG=1 OPTIMIZE=0</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="cleantest" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>cleantest DEBUG=1</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="test-valgrind" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -132,14 +132,14 @@
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>test DEBUG=1 DEBUG_COMP=1 OPTIMIZE=0</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="dumper" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments>-k -j2</buildArguments>
 <buildTarget>bin/dumper DEBUG=1 OPTIMIZE=0</buildTarget>
-<stopOnError>false</stopOnError>
+<stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="test trace run" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -153,8 +153,8 @@
 <buildCommand>make</buildCommand>
 <buildArguments/>
 <buildTarget>docs</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
 </target>
 <target name="statmsg" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>

@@ -68,7 +68,7 @@ DOXYFILE = compsl.doxyfile
 
 .PHONY: test cleantest all clean docs install install-strip help package
 .PHONY: test-valgrind statmsg testmsg test-exes distclean autoconfig
-#.INTERMEDIATE: 
+.INTERMEDIATE: compsl.tab.h
 .SECONDARY: $(OBJECTS) $(DERIVED_FILES) $(CMPATH)/compsl.output
 .SECONDARY: $(TESTOBJS) $(OTHEROBJ)
 
@@ -102,6 +102,7 @@ clean:
 	-rm -f -- bin/perf-test* bin/dumper* 
 	-rm -f -- $(DEFFILE) $(LIBFILE) $(IMPLIB)
 	-rm -rf   doc/html doc/latex doc/man
+	-rm -f compsl.tab.h
 	@echo
 
 docs: $(DOXYFILE)
@@ -192,7 +193,7 @@ $(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 
 %.dep: %.c Makefile config.mak setup.mk
-	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< > $*.dep
+	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< -MF $*.dep
 
 ifdef TARGET_WIN32
 $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
@@ -217,6 +218,10 @@ $(STATIC_LIB_OUT): $(OBJECTS)
 ################################
 # FLEX/BISON TARGETS           #
 ################################
+
+#dummy file since dep generation is dumb
+compsl.tab.h: $(CMPATH)/compsl.tab.h
+	touch compsl.tab.h
 
 $(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile setup.mk
 	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
@@ -271,7 +276,8 @@ autoconfig: configure config.opts
 	@$(MAKE) clean
 	@sleep 5
 else
-autoconfig: configure clean 
+autoconfig: configure
 	@sh configure $(CONFIG_OPTS)
+	@$(MAKE) clean
 	@sleep 5
 endif

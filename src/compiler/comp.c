@@ -49,6 +49,7 @@ llist* list_getNode(list * lst, int ind) {
   if(root!=NULL) 
     return root;
   assert(false);
+  return NULL;
 }
 
 void* list_get(list * lst, int ind) {

@@ -174,7 +174,7 @@ statmsg:
 -include $(DDEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
-src/run.o: src/run.c config.mak Makefile setup.mk
+src/run.o: src/run.c config.mak Makefile
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
@@ -188,11 +188,11 @@ $(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
 	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/lex.yy.ddp
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
-%.o: %.c config.mak Makefile setup.mk
+%.o: %.c config.mak Makefile
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 
-%.dep: %.c Makefile config.mak setup.mk
+%.dep: %.c config.mak Makefile
 	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< -MF $*.dep
 
 ifeq ($(TARGET_WIN32),yes)
@@ -223,14 +223,14 @@ $(STATIC_LIB_OUT): $(OBJECTS)
 compsl.tab.h: $(CMPATH)/compsl.tab.h
 	@touch compsl.tab.h
 
-$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile setup.mk
+$(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.tab.h
+
+$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile
 	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
 	@echo BISON $<
 	@$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
-	
-$(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.tab.h
 
-$(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h config.mak Makefile setup.mk
+$(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h config.mak Makefile
 	@rm -f $(CMPATH)/lex.yy.c
 	@echo FLEX $<
 	@$(FLEX) -o$@ $<
@@ -249,6 +249,8 @@ bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
 ####################################################
+
+Makefile: setup.mk
 
 ifeq ($(HAVE_CONFIG_OPTS),yes)
 config.mak: configure config.opts

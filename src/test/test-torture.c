@@ -73,4 +73,8 @@ int main()
 	*x = 0;
 	while(*x < 1000000) 
 		runCubbyhole(com1, cubbyid);
+	
+	destroyComp(com1);
+	destroyComp(com2);
+	destroyVM(vm);
 }

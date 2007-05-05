@@ -23,6 +23,9 @@ Please let us know if you find this code useful!
 For help with the makefile type:
 $ make help  
 
+Before compiling run ./configure to detect compiliation settings (note configure
+script is NOT autoconf based)
+
 The API is specified in src/extern/compsl.h
 
 The scripting language is C like. Files are known as "compartments" and are made 

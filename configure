@@ -2506,7 +2506,7 @@ cat <<EOF
 Check $TMPLOG if you wonder why an autodetection failed (check whether
 the development headers/packages are installed).
 Do not report compilation errors if you used any of the --enable-* options
-(except --enable-gui and maybe --enable-debug).
+(except maybe --enable-debug).
 
 EOF
 

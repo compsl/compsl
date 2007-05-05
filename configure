@@ -261,7 +261,8 @@ Advanced options:
   --enable-debug[=1-3]   compile debugging information into compsl [disable]
   --optimization-level=  gcc optimization level, default FULL, (-03 plus extra flags)
   --enable-ieee          make compsl use ieee compliant floating point
-                         (default is off, may produce less accurate float results in scripts)
+                         (default is off, may produce less accurrate or incorrect
+                         floating point results in scripts)
 
 Hazardous options a.k.a. "DO NOT REPORT ANY BUGS!"
   --disable-gcc-check   disable gcc version checking [enable]

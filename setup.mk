@@ -1,59 +1,66 @@
 # this file sets up variables further, based on the values from config.mak
 -include config.mak
 
-CFLAGS  = -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
-CFLAGS += -Wnonnull
+CFLAGS += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
+CFLAGS += -Wnonnull -Wno-attributes
 #CFLAGS += -Wunreachable-code
 
 override CPUFLAGS =
 ifeq ($(TARGET_MMX),yes)
-    override CPUFLAGS += -mmmx
+    override CPUFLAGS +=-mmmx
 endif
 ifeq ($(TARGET_SSE2),yes)
-    override CPUFLAGS += -msse2 -mfpmath=sse,387
+    override CPUFLAGS +=-msse2 -mfpmath=sse,387
 else
     ifeq ($(TARGET_SSE),yes)
-        override CPUFLAGS += -msse -mfpmath=sse,387 
+        override CPUFLAGS +=-msse -mfpmath=sse,387 
     endif
 endif
 
-override APPSTATMSG=
+APPSTATMSG=
 DEFFLAGS=
+
+APPSTATMSG += Compiler Debug messages are
 ifeq ($(DEBUG_COMP),yes)
-	DEFFLAGS += -DDEBUG_COMP
-	override APPSTATMSG += Compiler Debug messages are ON\\n
+	DEFFLAGS +=-DDEBUG_COMP
+	APPSTATMSG += ON\\n
 else
-	override APPSTATMSG += Compiler Debug messages are OFF\\n
+	APPSTATMSG += OFF\\n
 endif
+
+APPSTATMSG += Interpreter execution tracing is
 ifeq ($(TRACE_INTERP),yes)
 	DEFFLAGS += -D_COMPSL_TRACE
-	override APPSTATMSG += Interpreter execution tracing is ON\\n
+	APPSTATMSG += ON\\n
 else
-	override APPSTATMSG += Interpreter execution tracing is OFF\\n
+	APPSTATMSG += OFF\\n
 endif
 
 #cause the optimizer to output code dumps as it runs each stage
+APPSTATMSG += Tracing bytecode optimizer is
 ifeq ($(TRACE_OPTIM),yes)
 	DEFFLAGS += -DCOMPSL_TRACE_OPTIM
-	override APPSTATMSG += Tracing bytecode optimizer is ON\\n
+	APPSTATMSG += ON\\n
 else
-	override APPSTATMSG += Tracing bytecode optimizer is OFF\\n
+	APPSTATMSG += OFF\\n
 endif
 
 # make the compiler output the line number it's currently compiling 
 # to stdout
+APPSTATMSG += Tracing compile is
 ifeq ($(TRACE_COMPILE),yes)
 	DEFFLAGS += -DCOMPSL_TRACE_COMPILE
-	override APPSTATMSG += Tracing compile is ON\\n
+	APPSTATMSG += ON\\n
 else
-	override APPSTATMSG += Tracing compile is OFF\\n
+	APPSTATMSG += OFF\\n
 endif
 
+APPSTATMSG += Compile time bytecode stack bounds checking is
 ifeq ($(STACK_CHECK),yes)
 	DEFFLAGS += -DCOMP_STACKCHECK
-	override APPSTATMSG += Compile time bytecode stack bounds checking is ON\\n
+	APPSTATMSG += ON\\n
 else
-	override APPSTATMSG += Compile time bytecode stack bounds checking is OFF\\n
+	APPSTATMSG += OFF\\n
 endif
 
 ifdef DEBUG
@@ -61,34 +68,33 @@ ifdef DEBUG
 	# -fno-builtins since we can't set breakpoints on calls to builtin functions
 	# -fstack-protector checks for stack overruns
 	CFLAGS += -fmudflap -fno-builtin -fstack-protector
-	OPTIMIZE=0
 else
+	CFLAGS += -fbuiltin
 	DEFFLAGS += -DNDEBUG
-	OPTIMIZE=FULL
 endif
 
 ifeq ($(OPTIMIZE),FULL)
-	CFLAGS += -O3 -frename-registers 
-	CFLAGS += -funit-at-a-time -funroll-loops -finline-functions -funswitch-loops
-	CFLAGS += -fsched-spec-load -maccumulate-outgoing-args
-	CFLAGS += -minline-all-stringops -fomit-frame-pointer
-	CFLAGS += -finline-limit=2000
-	CFLAGS += -fno-stack-limit
+	OPTFLAGS += -O3 -frename-registers 
+	OPTFLAGS += -funit-at-a-time -funroll-loops -finline-functions -funswitch-loops
+	OPTFLAGS += -fsched-spec-load -maccumulate-outgoing-args
+	OPTFLAGS += -minline-all-stringops -fomit-frame-pointer
+	OPTFLAGS += -finline-limit=2000
+	OPTFLAGS += -fno-stack-limit
 	
-	#CFLAGS +=-fdata-sections -ffunction-sections
+	#OPTFLAGS +=-fdata-sections -ffunction-sections
 	# TODO: make sure none of these breaks the library for linking....
-	CFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
+	OPTFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
 	
-	CFLAGS += -fgcse-sm -fgcse-las -fgcse-after-reload
-	CFLAGS += -ftree-vectorize
-	CFLAGS += -ftracer
-	CFLAGS += -fvariable-expansion-in-unroller
-	#CFLAGS += -fprefetch-loop-arrays
-	CFLAGS += -freorder-blocks-and-partition
+	OPTFLAGS += -fgcse-sm -fgcse-las -fgcse-after-reload
+	OPTFLAGS += -ftree-vectorize
+	OPTFLAGS += -ftracer
+	OPTFLAGS += -fvariable-expansion-in-unroller
+	#OPTFLAGS += -fprefetch-loop-arrays
+	OPTFLAGS += -freorder-blocks-and-partition
 	
-	CFLAGS += -fbranch-target-load-optimize 
-	#CFLAGS += -fbranch-target-load-optimize2
-	CFLAGS += -floop-optimize2 -fmove-all-movables
+	OPTFLAGS += -fbranch-target-load-optimize 
+	#OPTFLAGS += -fbranch-target-load-optimize2
+	OPTFLAGS += -floop-optimize2 -fmove-all-movables
 	
 	###################################################
 	# potentially bad optimizations
@@ -96,28 +102,33 @@ ifeq ($(OPTIMIZE),FULL)
 	# from gcc manual
 	# This option is experimental, as not all machine descriptions used by GCC 
 	# model the CPU closely enough to avoid unreliable results from the algorithm.
-	CFLAGS += -fsched2-use-superblocks
+	OPTFLAGS += -fsched2-use-superblocks
 else
-	CFLAGS += -O$(OPTIMIZE)
+	OPTFLAGS += -O$(OPTIMIZE)
 endif
 
-CFLAGS += -fsingle-precision-constant -fno-math-errno 
-CFLAGS += -ffast-math -mno-ieee-fp
-CFLAGS += -ffinite-math-only -fno-trapping-math 
+MATH_FLAGS =-fsingle-precision-constant -fno-math-errno
+MATH_FLAGS += -fno-trapping-math -ffast-math
 
-override CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(CFLAGS))
-
-MYCFLAGS := -fbuiltin -D_GNU_SOURCE -DBUILDING_COMPSL -Wno-attributes
+APPSTATMSG += IEEE compliant floating point is
+ifeq ($(IEEE_FLOATS),yes)
+	APPSTATMSG += ON\\n
+else
+	MATH_FLAGS += -ffinite-math-only -mno-ieee-fp
+	APPSTATMSG += OFF\\n
+endif
 
 # for shared library
 ifneq ($(TARGET_WIN32),yes)
-	MYCFLAGS += -fvisibility=hidden
+	CFLAGS += -fvisibility=hidden
+else
 	DEFFLAGS += -DWINDOWS
 endif
 
-MYCFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(MYCFLAGS))
-ALL_CFLAGS := -std=gnu99 $(OPTFLAGS) $(CPUFLAGS) $(MYCFLAGS) $(CFLAGS) $(DEFFLAGS)
+DEFFLAGS +=-D_GNU_SOURCE -DBUILDING_COMPSL
+ALL_CFLAGS = -std=gnu99 $(CPUFLAGS) $(OPTFLAGS) $(MATH_FLAGS) $(CFLAGS) $(DEFFLAGS)
 
+override ALL_CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(ALL_CFLAGS))
 
 STATMSG  = Compiling with $(CC) version $(shell $(CC) -dumpversion)
 STATMSG += targeting $(TARGET_CPU) on $(TARGET_OS) for

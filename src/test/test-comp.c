@@ -101,7 +101,7 @@ int main()
 	  	ecom = NULL;
 	}
 	destroyVM(evm);
-	
+	fclose(comp_out);
 	
 	return 0;
 }

@@ -19,14 +19,13 @@ endif
 
 override APPSTATMSG=
 DEFFLAGS=
-ifdef DEBUG_COMP
+ifeq ($(DEBUG_COMP),yes)
 	DEFFLAGS += -DDEBUG_COMP
 	override APPSTATMSG += Compiler Debug messages are ON\\n
 else
 	override APPSTATMSG += Compiler Debug messages are OFF\\n
 endif
-
-ifdef TRACE_INTERP
+ifeq ($(TRACE_INTERP),yes)
 	DEFFLAGS += -D_COMPSL_TRACE
 	override APPSTATMSG += Interpreter execution tracing is ON\\n
 else
@@ -34,7 +33,7 @@ else
 endif
 
 #cause the optimizer to output code dumps as it runs each stage
-ifdef TRACE_OPTIM
+ifeq ($(TRACE_OPTIM),yes)
 	DEFFLAGS += -DCOMPSL_TRACE_OPTIM
 	override APPSTATMSG += Tracing bytecode optimizer is ON\\n
 else
@@ -43,14 +42,14 @@ endif
 
 # make the compiler output the line number it's currently compiling 
 # to stdout
-ifdef TRACE_COMPILE
+ifeq ($(TRACE_COMPILE),yes)
 	DEFFLAGS += -DCOMPSL_TRACE_COMPILE
 	override APPSTATMSG += Tracing compile is ON\\n
 else
 	override APPSTATMSG += Tracing compile is OFF\\n
 endif
 
-ifeq ($(STACK_CHECK),1)
+ifeq ($(STACK_CHECK),yes)
 	DEFFLAGS += -DCOMP_STACKCHECK
 	override APPSTATMSG += Compile time bytecode stack bounds checking is ON\\n
 else

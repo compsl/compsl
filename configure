@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# Taken from mplayer
+# Adapted from mplayer's configure script
 #
 # Original version (C) 2000 Pontscho/fresh!mindworkz
 #                      pontscho@makacs.poliod.hu
@@ -52,9 +52,9 @@
 #
 #############################################################################
 
-# we don't use any sse/mmx etc directly so mplayer's concept of runtime cpu detection does not apply
-# everything you would need it for should be done by specifying a target cpu
-
+# we don't use any sse/mmx etc directly so mplayer's concept of runtime cpu 
+# detection does not apply everything you would need it for should be done by 
+# specifying a target cpu
 _runtime_cpudetection=no
 
 # Prevent locale nonsense from breaking basic text processing utils
@@ -237,6 +237,13 @@ Miscellaneous options:
   --install-path=PATH    the path to a custom install program 
                          this option is obsolete and will be removed soon,
                          use --with-install instead.
+Debugging Options
+  --disable-stackcheck        Disable compile time stack bounds checking (default enabled)
+  --enable-debug-compiler     Enable compiler debug output (Note this generates an awful
+                              lot of output)
+  --enable-trace-interpreter  Enable printing of each bytecode before running it
+  --enable-trace-optimizer    Trace the bytecode optimizer (Also generates an awful lot of output)
+  --enable-trace-compile      Cause the compiler to output each line number as it is compiled
 
 Advanced options:
   --enable-mmx           build with MMX support [autodetect]
@@ -1326,6 +1333,11 @@ echores "$_gnu99"
 # If autodetection is available then the third state is: auto
 
 #### options go here
+_stackcheck=yes
+_debug_compiler=no
+_trace_interpreter=no
+_trace_optimizer=no
+_trace_compile=no
 
 for ac_option do
   case "$ac_option" in
@@ -1372,7 +1384,37 @@ for ac_option do
   --disable-mmx) ;;
 
 ##option stuff goes here
-  
+  --enable-stackcheck)
+  	_stackcheck=yes
+  ;;
+  --disable-stackcheck)
+  	_stackcheck=no
+  ;;
+  --enable-debug-compiler)
+  	_debug_compiler=yes
+  ;;
+  --disable-debug-compiler)
+  	_debug_compiler=no
+  ;;
+  --enable-trace-interpreter)
+  	_trace_interpreter=yes
+  ;;
+  --disable-trace-interpreter)
+  	_trace_interpreter=no
+  ;;
+  --enable-trace-optimizer)
+  	_trace_optimizer=yes
+  ;;
+  --disable-trace-optimizer)
+  	_trace_optimizer=no
+  ;;
+  #TRACE_COMPILE
+  --enable-trace-compile)
+  	_trace_compile=yes
+  ;;
+  --disable-trace-compile)
+  	_trace_compile=no
+  ;;
 
 ## dirs
   --prefix=*)
@@ -2419,7 +2461,11 @@ TARGET_BUILTIN_3DNOW  = $_mm3dnow
 
 CPUGUESS=$_cpudetection
 
-STACK_CHECK = 1
+STACK_CHECK=$_stackcheck
+DEBUG_COMP=$_debug_compiler
+TRACE_INTERP=$_trace_interpreter
+TRACE_OPTIM=$_trace_optimizer
+TRACE_COMPILE=$_trace_compile
 
 EOF
 

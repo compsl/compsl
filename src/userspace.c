@@ -80,15 +80,15 @@ COMPSL_INTERN intfloat compsl_printHello(var *args) { printf("Hello world\n"); r
 // Actual addFunct calls          //
 ////////////////////////////////////
 COMPSL_EXPORT void addDebugLibToVm(VM *vm) {
-  assert(addFunc(vm, &compsl_testEqi, "testeqi", "int int",false,true));
-  assert(addFunc(vm, &compsl_testEqf, "testeqf", "float float",false,true));
-  assert(addFunc(vm, &compsl_testReset, "test_reset", "",false,true));
-  assert(addFunc(vm, &compsl_testSummary, "test_summary", "",false,true));
+  addFunc(vm, &compsl_testEqi, "testeqi", "int int",false,true);
+  addFunc(vm, &compsl_testEqf, "testeqf", "float float",false,true);
+  addFunc(vm, &compsl_testReset, "test_reset", "",false,true);
+  addFunc(vm, &compsl_testSummary, "test_summary", "",false,true);
 }
 
 COMPSL_EXPORT void addPrintLibToVm(VM *vm)
 {
-  assert(addFunc(vm, &compsl_printFloat, "printf", "float",false,true));
-  assert(addFunc(vm, &compsl_printInt, "printi", "int",false,true));
-  assert(addFunc(vm, &compsl_printHello, "helloWorld", "",false,true));
+  addFunc(vm, &compsl_printFloat, "printf", "float",false,true);
+  addFunc(vm, &compsl_printInt, "printi", "int",false,true);
+  addFunc(vm, &compsl_printHello, "helloWorld", "",false,true);
 }

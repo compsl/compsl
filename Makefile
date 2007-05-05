@@ -129,9 +129,9 @@ package: distclean
 	rm -f compsl-${COMPSL_VERSION}.tar.bz2
 	tar --exclude "*/.svn*" --exclude "*/.settings*" \
 		--exclude "*/.cvsignore" --exclude "*/.*project*" \
-		--exclude "*~" --exclude "*/latex*"\ --exclude "*/config.*"\ 
-		--exclude "*/compsl-${COMPSL_VERSION}/compsl-${COMPSL_VERSION}"\
-		--transform 's,^,compsl-${COMPSL_VERSION}/,'\
+		--exclude "*~" --exclude "*/latex*"\ --exclude "*/config.*" \ 
+		--exclude "*/compsl-${COMPSL_VERSION}/compsl-${COMPSL_VERSION}" \
+		--transform 's,^,compsl-${COMPSL_VERSION}/,' \
 		-cjvf compsl-${COMPSL_VERSION}.tar.bz2 *
 
 bin/dumper: src/dumper.o $(OBJECTS)

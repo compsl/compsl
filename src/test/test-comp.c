@@ -100,7 +100,7 @@ int main()
 	  	destroyComp(ecom);
 	  	ecom = NULL;
 	}
-	
+	destroyVM(evm);
 	
 	
 	return 0;

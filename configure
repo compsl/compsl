@@ -259,6 +259,9 @@ Advanced options:
   --disable-fastmemcpy   disable 3DNow!/SSE/MMX optimized memcpy() [enable]
   --enable-big-endian    Force byte order to big-endian [autodetect]
   --enable-debug[=1-3]   compile debugging information into compsl [disable]
+  --optimization-level=  gcc optimization level, default FULL, (-03 plus extra flags)
+  --enable-ieee          make compsl use ieee compliant floating point
+                         (default is off, may produce less accurate float results in scripts)
 
 Hazardous options a.k.a. "DO NOT REPORT ANY BUGS!"
   --disable-gcc-check   disable gcc version checking [enable]
@@ -1337,6 +1340,8 @@ _debug_compiler=no
 _trace_interpreter=no
 _trace_optimizer=no
 _trace_compile=no
+test -z "$_debug" && _optimize_code=FULL || _optimize_code=0
+_ieee_floats=no
 
 for ac_option do
   case "$ac_option" in
@@ -1413,6 +1418,15 @@ for ac_option do
   ;;
   --disable-trace-compile)
   	_trace_compile=no
+  ;;
+  --optimization-level=*)
+  	_optimize_code=`echo $ac_option | cut -d '=' -f 2`
+  ;;
+  --enable-ieee)
+  	_ieee_floats=yes
+  ;;
+  --disable-ieee)
+  	_ieee_floats=no
   ;;
 
 ## dirs
@@ -2465,7 +2479,8 @@ DEBUG_COMP=$_debug_compiler
 TRACE_INTERP=$_trace_interpreter
 TRACE_OPTIM=$_trace_optimizer
 TRACE_COMPILE=$_trace_compile
-
+OPTIMIZE=$_optimize_code
+IEEE_FLOATS=$_ieee_floats
 EOF
 
 

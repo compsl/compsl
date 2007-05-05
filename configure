@@ -1321,11 +1321,10 @@ _prefix="/usr/local"
 # need to check to see if we can compile compsl!
 echocheck "--std=gnu99 (required)"
 cat > $TMPC << EOF
-#include <feature.h>
 int main(void) { return 0; }
 EOF
 _gnu99=no
-cc_check '--std=gnu99' && _gnu99=yes
+cc_check --std=gnu99 && _gnu99=yes
 echores "$_gnu99"
 
 # GOTCHA: the variables below defines the default behavior for autodetection

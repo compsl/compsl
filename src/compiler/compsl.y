@@ -348,11 +348,13 @@ expression:
 	    YYABORT;
 
 	  $$ = assignArray($1,arInd2, expr);
-	  free(arInd2);
+	  
 	  if(NULL == $$) 
 	    YYABORT;
 	  free($1);
 	  free($3);
+	  free(arInd2);
+	  free(arInd1);
 	  // TODO: MEM
 	}
 |

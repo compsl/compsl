@@ -14,7 +14,7 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-COMPSL_VERSION := 0.1.2
+COMPSL_VERSION := 0.2.0
 
 .SUFFIXES:
 
@@ -117,6 +117,9 @@ help:
 	@echo "           docs, test-exes"
 	@echo
 	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
+	@echo
+	@echo "  Please run ./configure to set up compilation, for help with configure"
+	@echo "           run ./configure --help"
 	@echo
 
 static: statmsg $(STATIC_LIB_OUT) ;

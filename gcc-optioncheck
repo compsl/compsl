@@ -8,8 +8,11 @@
 try_gcc_options() {
     $CC $* -S -o /dev/null -xc /dev/null >/dev/null 2>&1
 }
+goodopts=''
 for opt in $@; do
 	if try_gcc_options "$opt"; then 
-	    printf "%s " "$opt";
+	    goodopts="$goodopts $opt";
 	fi
 done
+
+echo $goodopts

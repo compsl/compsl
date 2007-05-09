@@ -2216,7 +2216,7 @@ linux && _def_linux='#define TARGET_LINUX 1'
 # THOM ORIGINAL HERE
 ###################################################################
 
-for func in sin cos tan acos asin atan log ceil floor; do
+for func in sin cos tan acos asin atan log ceil floor fabs sqrt; do
     echocheck "${func}f"
     cat > $TMPC << EOF
 #include <math.h>
@@ -2293,6 +2293,8 @@ $_def_atan
 $_def_log
 $_def_ceil
 $_def_floor
+$_def_fabs
+$_def_sqrt
 $_def_pow
 $_def_fmod
 $_def_atan2

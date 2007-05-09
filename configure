@@ -66,9 +66,9 @@ compile_check() {
   echo >> "$TMPLOG"
   cat "$1" >> "$TMPLOG"
   echo >> "$TMPLOG"
-  echo "$_cc $CFLAGS $_inc_extra $_ld_static $_ld_extra -o $TMPO $@" >> "$TMPLOG"
+  echo "$_cc --std=gnu99 $CFLAGS $_inc_extra $_ld_static $_ld_extra -o $TMPO $@" >> "$TMPLOG"
   rm -f "$TMPO"
-  $_cc $CFLAGS $_inc_extra $_ld_static $_ld_extra -o "$TMPO" "$@" >> "$TMPLOG" 2>&1
+  $_cc --std=gnu99 $CFLAGS $_inc_extra $_ld_static $_ld_extra -o "$TMPO" "$@" >> "$TMPLOG" 2>&1
   TMP="$?"
   echo >> "$TMPLOG"
   echo "ldd $TMPO" >> "$TMPLOG"
@@ -2222,7 +2222,7 @@ for func in sin cos tan acos asin atan log ceil floor; do
 #include <math.h>
 int main(void) { ${func}f(0.5f); return 0; }
 EOF
-    if cc_check $_ld_arch $_ld_lm; then
+    if cc_check -fno-builtin $_ld_arch $_ld_lm; then
         eval _def_${func}='' 
         echores "yes"
     else
@@ -2237,7 +2237,7 @@ for func in pow fmod atan2 hypot; do
 #include <math.h>
 int main(void) { ${func}f(0.5f,0.5f); return 0; }
 EOF
-    if cc_check $_ld_arch $_ld_lm; then
+    if cc_check -fno-builtin $_ld_arch $_ld_lm; then
         eval _def_${func}='' 
         echores "yes"
     else
@@ -2249,9 +2249,9 @@ done
 echocheck "fmaxf"
 cat > $TMPC << EOF
 #include <math.h>
-int main(void) { $fmaxf(0.5f,0.5f); return 0; }
+int main(void) { fmaxf(0.5f,0.5f); return 0; }
 EOF
-if cc_check $_ld_arch $_ld_lm; then
+if cc_check -fno-builtin $_ld_arch $_ld_lm; then
     _def_fmax='' 
     echores "yes"
 else
@@ -2262,9 +2262,9 @@ fi
 echocheck "fminf"
 cat > $TMPC << EOF
 #include <math.h>
-int main(void) { $fminf(0.5f,0.5f); return 0; }
+int main(void) { fminf(0.5f,0.5f); return 0; }
 EOF
-if cc_check $_ld_arch $_ld_lm; then
+if cc_check -fno-builtin $_ld_arch $_ld_lm; then
     _def_fmin='' 
     echores "yes"
 else
@@ -2291,7 +2291,7 @@ $_def_acos
 $_def_asin
 $_def_atan
 $_def_log
-$_def_ciel
+$_def_ceil
 $_def_floor
 $_def_pow
 $_def_fmod
@@ -2451,7 +2451,7 @@ HAVE_PTHREADS = $_pthreads
 MATH_LIB = $_ld_lm
 LIBC_LIB = $_ld_libC
 
-PLATLIBS = \$(EXTRALIBS) $_ld_arch \$(MATH_LIB) \$(LIBC_LIB ) \$(EXTRA_LIB)
+PLATLIBS = \$(EXTRALIBS) $_ld_arch \$(MATH_LIB) \$(LIBC_LIB) \$(EXTRA_LIB) \$(EXTRALIBS)
 
 # --- Some stuff for autoconfigure ----
 $_conf_debug

@@ -2241,7 +2241,7 @@ EOF
         eval _def_${func}='' 
         echores "yes"
     else
-        eval "_def_${func}=\"#define ${func}f(a) ${func}(a)\""
+        eval "_def_${func}=\"#define ${func}f(a,b) ${func}(a,b)\""
         echores "no"
     fi
 done

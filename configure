@@ -2226,7 +2226,7 @@ EOF
         eval _def_${func}='' 
         echores "yes"
     else
-        eval _def_${func}=\"#define ${func}f ${func}\"
+        eval _def_${func}=\"#define ${func}f(a) ${func}(a)\"
         echores "no"
     fi
 done
@@ -2241,7 +2241,7 @@ EOF
         eval _def_${func}='' 
         echores "yes"
     else
-        eval _def_${func}=\"#define ${func}f ${func}\"
+        eval _def_${func}=\"#define ${func}f(a) ${func}(a)\"
         echores "no"
     fi
 done
@@ -2451,7 +2451,7 @@ HAVE_PTHREADS = $_pthreads
 MATH_LIB = $_ld_lm
 LIBC_LIB = $_ld_libC
 
-PLATLIBS = \$(EXTRALIBS) \$(MATH_LIB) \$(LIBC_LIB ) $_ld_arch \$(EXTRA_LIB)
+PLATLIBS = \$(EXTRALIBS) $_ld_arch \$(MATH_LIB) \$(LIBC_LIB ) \$(EXTRA_LIB)
 
 # --- Some stuff for autoconfigure ----
 $_conf_debug

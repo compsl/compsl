@@ -2268,7 +2268,7 @@ if cc_check -fno-builtin $_ld_arch $_ld_lm; then
     _def_fmin='' 
     echores "yes"
 else
-    _def_fmin='#define fminf(a,b) ((a<b)?b:a)'
+    _def_fmin='#define fminf(a,b) ((a>b)?b:a)'
     echores "no"
 fi
 

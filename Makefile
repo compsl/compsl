@@ -111,15 +111,15 @@ docs: $(DOXYFILE)
 	mv doc/latex/refman.pdf doc/compsl.pdf
 
 help: 
-	@echo -e "\nMakefile for CompSL"
-	@echo -ne "***************************************************\n"
-	@echo "  Targets: all, clean, test, test-valgrind, static, dynamic, package,"
-	@echo "           docs, test-exes"
-	@echo
-	@echo "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)"
-	@echo
-	@echo "  Please run ./configure to set up compilation, for help with configure"
-	@echo "           run ./configure --help"
+	@printf "\nMakefile for CompSL\n"
+	@printf "***************************************************\n"
+	@printf "  Targets: all, clean, test, test-valgrind, static, dynamic, package,\n"
+	@printf "           docs, test-exes\n"
+	@printf
+	@printf "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)\n"
+	@printf "\n"
+	@printf "  Please run ./configure to set up compilation, for help with configure\n"
+	@printf "           run ./configure --help\n"
 	@echo
 
 static: statmsg $(STATIC_LIB_OUT) ;
@@ -157,17 +157,17 @@ test-valgrind: $(TEST_EXES)
 # Message targets              #
 ################################
 testmsg:
-	@echo -ne "\n\nRUNNING TESTS\n"
-	@echo -ne "***************************************************\n"
+	@printf "\n\nRUNNING TESTS\n"
+	@printf "***************************************************\n"
 statmsg:
-	@echo -ne "\nSETTINGS\n"
-	@echo -ne "***************************************************\n"
-	@echo -ne $(STATMSG)
-	@echo -e "CFLAGS\n$(ALL_CFLAGS)\n\n" | fold -s
-	@echo -e "PLATLIBS\n$(PLATLIBS)\n" | fold -s
+	@printf "\nSETTINGS\n"
+	@printf "***************************************************\n"
+	@printf "$(STATMSG)\n"
+	@printf "CFLAGS\n$(ALL_CFLAGS)\n\n" | fold -s
+	@printf "PLATLIBS\n$(PLATLIBS)\n" | fold -s
 	@sleep 5
-	@echo -ne "\nSTARTING OPERATION\n"
-	@echo -ne "***************************************************\n"
+	@printf "\nSTARTING OPERATION\n"
+	@printf "***************************************************\n"
 ################################
 # INTERNAL TARGETS             #
 ################################

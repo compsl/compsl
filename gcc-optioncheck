@@ -10,6 +10,6 @@ try_gcc_options() {
 }
 for opt in $@; do
 	if try_gcc_options "$opt"; then 
-	    printf "%s" "$opt";
+	    printf "%s " "$opt";
 	fi
 done

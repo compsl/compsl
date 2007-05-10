@@ -44,7 +44,7 @@ DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h
 SOURCES := $(REG_SRCS) 
 OBJECTS := $(SOURCES:.c=.o) $(DERIVED_SRCS:.c=.o)
 
-TESTSRCS := $(addprefix src/test/,test-interp.c test-intern.c test-api.c test-comp.c test-torture.c)
+TESTSRCS := $(addprefix src/test/test-,interp.c intern.c api.c comp.c torture.c so.c)
 TESTOBJS := $(TESTSRCS:.c=.o)
 
 OTHERSRC := src/dumper.c src/perf-test.c
@@ -251,6 +251,14 @@ run-test-%: bin/test-%
 bin/test-%: src/test/test-%.o $(STATIC_LIB_OUT)
 	@echo LINK $@
 	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
+
+run-test-so: bin/test-so
+	@echo
+	@LD_LIBRARY_PATH="bin" $<
+	@echo
+bin/test-so: src/test/test-so.o $(DYN_LIB_OUT)
+	@echo LINK $@
+	@$(CC) $(ALL_CFLAGS) -MD $< $(PLATLIBS) -Lbin/ -lcompsl -o $@
 
 ####################################################
 

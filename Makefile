@@ -7,6 +7,7 @@
 # http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
 # http://www.cs.berkeley.edu/~smcpeak/autodepend/autodepend.html
 # http://www.gnu.org/software/make/manual/make.html
+# http://www.fortran-2000.com/ArnaudRecipes/sharedlib.html
 
 
 #TODO: figure out how to make the test link against version of the lib with debug
@@ -32,6 +33,13 @@ include setup.mk
 CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
+
+ifeq ($(TARGET_OS),SunOS)
+LDFLAGS= -G -Wl,-h,lib$(SHORTLIB).so
+else
+# This works for linux, dunno about others
+LDFLAGS= -shared -Wl,-soname,lib$(SHORTLIB).so
+endif
 
 REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
@@ -207,10 +215,11 @@ $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 		-Wl,-soname,$(DYN_LIB_OUT)  \
 		-Wl,--add-stdcall-alias     \
 		-o $(DYN_LIB_OUT)
+elifeq 
 else
 $(DYN_LIB_OUT): $(OBJECTS)
 	@echo LINK $@
-	@$(CC) -shared -Wl,-soname,lib$(SHORTLIB).so $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
+	@$(CC) $(LDFLAGS) $(OBJECTS) $(PLATLIBS) -o $(DYN_LIB_OUT) $(ALL_CFLAGS)
 endif
 
 $(STATIC_LIB_OUT): $(OBJECTS)

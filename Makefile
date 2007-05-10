@@ -34,13 +34,6 @@ CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-ifeq ($(TARGET_OS),SunOS)
-LDFLAGS= -G -Wl,-h,lib$(SHORTLIB).so
-else
-# This works for linux, dunno about others
-LDFLAGS= -shared -Wl,-soname,lib$(SHORTLIB).so
-endif
-
 REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
 	$(CMPATH)/var.c $(CMPATH)/comp.c $(CMPATH)/control.c $(CMPATH)/compglobals.c \
@@ -215,7 +208,6 @@ $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
 		-Wl,-soname,$(DYN_LIB_OUT)  \
 		-Wl,--add-stdcall-alias     \
 		-o $(DYN_LIB_OUT)
-elifeq 
 else
 $(DYN_LIB_OUT): $(OBJECTS)
 	@echo LINK $@

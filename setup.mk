@@ -1,5 +1,12 @@
 # this file sets up variables further, based on the values from config.mak
 -include config.mak
+ifeq ($(TARGET_OS),SunOS)
+    LDFLAGS= -G -Wl,-h,lib$(SHORTLIB).so
+else
+# This works for linux, dunno about others
+	LDFLAGS= -shared -Wl,-soname,lib$(SHORTLIB).so
+endif
+
 
 CFLAGS += -ftabstop=4 -Wall -Wbad-function-cast -Wcast-align -Wwrite-strings
 CFLAGS += -Wnonnull -Wno-attributes
@@ -11,10 +18,8 @@ ifeq ($(TARGET_MMX),yes)
 endif
 ifeq ($(TARGET_SSE2),yes)
     override CPUFLAGS +=-msse2 -mfpmath=sse,387
-else
-    ifeq ($(TARGET_SSE),yes)
-        override CPUFLAGS +=-msse -mfpmath=sse,387 
-    endif
+else ifeq ($(TARGET_SSE),yes)
+    override CPUFLAGS +=-msse -mfpmath=sse,387 
 endif
 
 APPSTATMSG=
@@ -120,7 +125,7 @@ endif
 
 # for shared library
 ifneq ($(TARGET_WIN32),yes)
-	CFLAGS += -fvisibility=hidden
+	CFLAGS += -fvisibility=hidden -fpic
 else
 	DEFFLAGS += -DWINDOWS
 endif

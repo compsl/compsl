@@ -18,8 +18,10 @@ ifeq ($(TARGET_MMX),yes)
 endif
 ifeq ($(TARGET_SSE2),yes)
     override CPUFLAGS +=-msse2 -mfpmath=sse,387
-else ifeq ($(TARGET_SSE),yes)
-    override CPUFLAGS +=-msse -mfpmath=sse,387 
+else 
+	ifeq ($(TARGET_SSE),yes)
+    	override CPUFLAGS +=-msse -mfpmath=sse,387 
+    endif
 endif
 
 APPSTATMSG=

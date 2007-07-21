@@ -17,6 +17,17 @@ interpreter
  8. figure out how to make debug hooks
  9. 
  
+ Change integer max and min, And add a check to configure to see if we have signed shifts.
+Integer Minimum or Maximum
+
+Given 2's complement integer values x and y, the minimum can be computed without any branches as x+(((y-x)>>(WORDBITS-1))&(y-x)). Logically, this works because the shift by (WORDBITS-1) replicates the sign bit to create a mask -- be aware, however, that the C language does not require that shifts are signed even if their operands are signed, so there is a potential portability problem. Additionally, one might think that a shift by any number greater than or equal to WORDBITS would have the same effect, but many instruction sets have shifts that behave strangely when such shift distances are specified. 
+
+Of course, maximum can be computed using the same trick: x-(((x-y)>>(WORDBITS-1))&(x-y)). 
+
+Actually, the Integer Selection coding trick is just as efficient in encoding minimum and maximum....
+
+
+ 
 ======
 
 -- write documentation (Overview/Tutorial)

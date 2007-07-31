@@ -581,7 +581,7 @@ static const int jmptbl[] =
 		
  	GAPP:
  		sp -=2;
- 		if(__builtin_expect(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0,1))
+ 		if(likely(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0))
  		{
  			gvs[pc->a1].p[(sp+1)->i] = *(sp);
  			COMPSL_END_INST;

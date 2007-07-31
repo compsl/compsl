@@ -59,6 +59,7 @@ static const builtin builtins[] =
 	{.name = "minf", .ac=2, .isFloat=true, .code=BC_MINF},
 	{.name = "maxf", .ac=2, .isFloat=true, .code=BC_MAXF},
 	{.name = "hypot", .ac=2, .isFloat=true, .code=BC_HYPOT},
+	{.name = "equalf", .ac=2, .isFloat=true, .code=BC_FEQUAL},
 	{.name = "yes", .ac=0, .isFloat=false, .code=BC_PYES}
 };
 #endif /*BULTINS_H_*/

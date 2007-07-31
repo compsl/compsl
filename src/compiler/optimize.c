@@ -69,7 +69,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 			if(sp <0) break;
 			sp++;
 		}
-		else if(BC_ABS <= code[i].code && code[i].code <= BC_HYPOT)
+		else if(BC_ABS <= code[i].code && code[i].code <= BC_FEQUAL)
 		{ // builtin
 			int j;
 			for(j = 0; j < builtins_len && builtins[j].code != code[i].code; j++);

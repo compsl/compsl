@@ -151,6 +151,7 @@ static const char *tractbl[] =
 	"MINF",
 	"MAXF",
 	"HYPOT",
+	"FEQUAL",
 //misc
  	"PYES",
  	"NONO",
@@ -289,6 +290,7 @@ static const int jmptbl[] =
 	&&MINF - &&NOOP,
 	&&MAXF - &&NOOP,
 	&&HYPOT - &&NOOP,
+	&&FEQUAL - &&NOOP,
 //misc
  	&&PYES - &&NOOP,
  	&&NONO - &&NOOP,
@@ -447,26 +449,32 @@ static const int jmptbl[] =
  		(sp - 1)->i = (sp - 1)->i / sp->i;
  		COMPSL_END_INST;
 	LE:
+	FLE:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i <= sp->i;
  		COMPSL_END_INST;
  	LS:
+ 	FLS:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i < sp->i;
  		COMPSL_END_INST;
 	EQ:
+	FEQ:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i == sp->i;
  		COMPSL_END_INST;
 	NE:
+	FNE:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i != sp->i;
  		COMPSL_END_INST;
  	GR:
+ 	FGR:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i > sp->i;
  		COMPSL_END_INST;
  	GE:
+ 	FGE:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i >= sp->i;
  		COMPSL_END_INST;
@@ -486,7 +494,8 @@ static const int jmptbl[] =
  	FDIV:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f / sp->f;
- 		COMPSL_END_INST; 
+ 		COMPSL_END_INST;
+ /*
  	FLE:
  		sp--;
  		(sp - 1)->i = (sp - 1)->f <= sp->f;
@@ -520,6 +529,7 @@ static const int jmptbl[] =
  		sp--;
  		(sp - 1)->i = (sp - 1)->f >= sp->f;
  		COMPSL_END_INST;
+ */
  	JMP:
  		pc += pc->sa - 1; // compensate for pc++ at top
  		COMPSL_END_INST;
@@ -676,11 +686,13 @@ static const int jmptbl[] =
 		COMPSL_END_INST;
 	MIN:
 		sp--;
-		(sp - 1)->i = (sp->i < (sp - 1)->i)?sp->i:(sp - 1)->i;
+		//(sp - 1)->i = (sp->i < (sp - 1)->i)?sp->i:(sp - 1)->i;
+		(sp - 1)->i = COMPSL_IMIN(sp->i,(sp - 1)->i);
 		COMPSL_END_INST;
 	MAX:
 		sp--;
-		(sp - 1)->i = (sp->i > (sp - 1)->i)?sp->i:(sp - 1)->i;
+		//(sp - 1)->i = (sp->i > (sp - 1)->i)?sp->i:(sp - 1)->i;
+		(sp - 1)->i = COMPSL_IMAX(sp->i,(sp - 1)->i);
 		COMPSL_END_INST;
 	MINF:
 		sp--;
@@ -694,6 +706,19 @@ static const int jmptbl[] =
 		sp--;
 		(sp - 1)->f = hypotf(sp->f, (sp - 1)->f);
 		COMPSL_END_INST;
+	FEQUAL:
+ 		sp--;
+ 		//(sp - 1)->f = fabsf(sp->f - (sp - 1)->f) < fabsf(sp->f)*VM_FLOAT_EPSILON;
+ // solid, fast routine across all platforms
+// with constant time behavior
+	{ //note all these variables will probably be optimized out of existance...
+		int ai = sp->i;
+		int bi = (sp-1)->i;
+		int test = (((unsigned int)(ai^bi))>>31)-1;
+		int diff = (((0x80000000 - ai)&(~test))|(ai&test))-bi; 
+		(sp - 1)->i = (((7+diff)|(7-diff)) >= 0);
+	}
+ 		COMPSL_END_INST;
 //misc	
  	PYES:
  		if(pc->a1) {puts("YES");}

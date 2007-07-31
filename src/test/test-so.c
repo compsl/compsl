@@ -52,7 +52,7 @@ int main()
 	int16_t cubbyid;
 	cubbyid = getCubbyID(com1,"init");
 	runCubbyhole(com1, cubbyid);
-	puts("Done first init");
+	puts("PASS");
 	destroyComp(com1);
 	destroyVM(vm);
 }

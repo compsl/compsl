@@ -995,7 +995,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
-			{.code = BC_FEQ }, // compare
+			{.code = BC_FEQUAL }, // compare
 			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
@@ -1017,13 +1017,13 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.f == 1.0f)
-			printf("FEQ 1: PASS!\n");
+			printf("FEQUAL 1: PASS!\n");
 		else 
 		{
 			if(com->vt.vars[1].v.f == 1.0f)
-				printf("FEQ 1: FAIL! Didn't go far enough\n");
+				printf("FEQUAL 1: FAIL! Didn't go far enough\n");
 			else
-				printf("FEQ 1: FAIL! When't too far\n");
+				printf("FEQUAL 1: FAIL! When't too far\n");
 			ret = 1;
 		}
 	}
@@ -1035,7 +1035,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 2
 			{.code = BC_CPUSH, { {.a1 =2} } }, //push const at address 1
-			{.code = BC_FEQ }, // compare
+			{.code = BC_FEQUAL }, // compare
 			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
@@ -1062,10 +1062,10 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
-			printf("FEQ 2: PASS!\n");
+			printf("FEQUAL 2: PASS!\n");
 		else 
 		{
-			printf("FEQ 2: FAIL!\n");
+			printf("FEQUAL 2: FAIL!\n");
 			ret = 1;
 		}
 	}
@@ -1077,7 +1077,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =2} } }, //push const at address 2
 			{.code = BC_CPUSH, { {.a1 =3} } }, //push const at address 1
-			{.code = BC_FEQ }, // compare
+			{.code = BC_FEQUAL }, // compare
 			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
@@ -1103,10 +1103,10 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
-			printf("FEQ 3: PASS!\n");
+			printf("FEQUAL 3: PASS!\n");
 		else 
 		{
-			printf("FEQ 3: FAIL!\n");
+			printf("FEQUAL 3: FAIL!\n");
 			ret = 1;
 		}
 	}
@@ -1118,7 +1118,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =2} } }, //push const at address 2
 			{.code = BC_CPUSH, { {.a1 =3} } }, //push const at address 1
-			{.code = BC_FEQ }, // compare
+			{.code = BC_FEQUAL }, // compare
 			{.code = BC_JMZ, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
@@ -1144,10 +1144,10 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
-			printf("FEQ 4: PASS!\n");
+			printf("FEQUAL 4: PASS!\n");
 		else 
 		{
-			printf("FEQ 4: FAIL!\n");
+			printf("FEQUAL 4: FAIL!\n");
 			ret = 1;
 		}
 	}
@@ -1159,7 +1159,7 @@ int main()
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 0
 			{.code = BC_CPUSH, { {.a1 =0} } }, //push const at address 2
 			{.code = BC_CPUSH, { {.a1 =1} } }, //push const at address 1
-			{.code = BC_FEQ }, // compare
+			{.code = BC_FEQUAL }, // compare
 			{.code = BC_JMN, {.a = 2} }, // jump forward, skip next instruction
 			{.code = BC_POP, { {.a1 =1} }}, // pop into address 0
 			{.code = BC_POP, { {.a1 =0} }}, // pop into address 0
@@ -1181,10 +1181,10 @@ int main()
 		runCubbyhole(com, 0);
 		
 		if(com->vt.vars[0].v.f == 2.0f && com->vt.vars[1].v.f == 1.0f)
-			printf("FEQ 5: PASS!\n");
+			printf("FEQUAL 5: PASS!\n");
 		else 
 		{
-			printf("FEQ 5: FAIL!\n");
+			printf("FEQUAL 5: FAIL!\n");
 			ret = 1;
 		}
 	}

@@ -87,6 +87,7 @@ cxx_check() {
 
 tmp_run() {
   "$TMPO" >> "$TMPLOG" 2>&1
+  return "$?"
 }
 
 # Display error message, flushes tempfile, exit
@@ -194,7 +195,6 @@ case `echo -n` in
   *)	_echo_n='-n '	_echo_c=	;;	# BSD echo
 esac
 
-LANGUAGES=`echo help/help_mp-??.h help/help_mp-??_??.h | sed "s:help/help_mp-\(..\).h:\1:g" | sed "s:help/help_mp-\(.....\).h:\1:g"`
 
 show_help(){
 cat << EOF
@@ -223,13 +223,6 @@ Miscellaneous options:
   --disable-cpudetection disable guessing the cpu
   --enable-static        build a statically linked binary. Set further linking
                          options with --enable-static="-lslang -lncurses"
-  --charset              convert the help messages to this charset
-  --language=list        a white space or comma separated list of languages
-                         for translated man pages, the first language is the
-                         primary and therefore used for translated messages
-                         and GUI (also the environment variable \$LINGUAS is
-                         honored) [en]
-                         (Available: $LANGUAGES all)
   --with-install=PATH    use a custom install program (useful if your OS uses 
                          a GNU-incompatible install utility by default and 
                          you want to use GNU version)
@@ -2272,6 +2265,18 @@ else
     echores "no"
 fi
 
+echocheck "signed shifts"
+cat > $TMPC << EOF
+int main(void) { int foo=-1; return ((foo>>1)==foo)?0:1; }
+EOF
+if cc_check && tmp_run; then
+    _def_signshft='#define COMPSL_SIGNEDSHFT 1' 
+    echores "yes"
+else
+    _def_signshft='#undef COMPSL_SIGNEDSHFT' 
+    echores "no"
+fi
+
 ##################################################
 # create config.h
 ##################################################
@@ -2281,6 +2286,16 @@ cat > src/intern/config.h <<ENDCONFIGH
    Note: Any changes in it will be lost when you run configure again. */
 #ifndef COMPSL_CONFIG_H
 #define COMPSL_CONFIG_H
+
+$_def_signshft
+
+#ifdef COMPSL_SIGNEDSHFT
+#define COMPSL_IMIN(x,y) ((x)+((((y)-(x)) >> 31)&((y)-(x))))
+#define COMPSL_IMAX(x,y) ((x)-((((x)-(y)) >> 31)&((x)-(y))))
+#else
+#define COMPSL_IMIN(x,y) (((x)<(y))?(x):(y))
+#define COMPSL_IMAX(x,y) (((x)>(y))?(x):(y))
+#endif
 
 /* floating point math functions */
 #include <math.h>

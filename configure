@@ -2287,6 +2287,7 @@ cat > src/intern/config.h <<ENDCONFIGH
 #ifndef COMPSL_CONFIG_H
 #define COMPSL_CONFIG_H
 
+/* define this if your compiler uses sign extension for shifts */
 $_def_signshft
 
 #ifdef COMPSL_SIGNEDSHFT

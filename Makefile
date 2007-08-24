@@ -44,7 +44,10 @@ DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h
 SOURCES := $(REG_SRCS) 
 OBJECTS := $(SOURCES:.c=.o) $(DERIVED_SRCS:.c=.o)
 
-TESTSRCS := $(addprefix src/test/test-,interp.c intern.c api.c comp.c torture.c so.c)
+TESTSRCS := $(addprefix src/test/test-,interp-base.c interp-jumps.c \
+    interp-arith.c interp-comp.c interp-builtins.c interp.c intern.c api.c \
+    comp.c torture.c so.c)
+
 TESTOBJS := $(TESTSRCS:.c=.o)
 
 OTHERSRC := src/dumper.c src/perf-test.c

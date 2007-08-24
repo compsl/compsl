@@ -47,6 +47,16 @@
 #endif
 
 
+// use version of conditional JMPs that has no if in it
+//   Note I added this thinking it might be faster, it's not, at least not on
+//   my laptop, but it might be faster on a differnt CPU, so I'll leave the code
+//   in.
+//#define COMPSL_BRNCHLS_JMP
+// implementation requires that >> sign extend it's operand
+#ifndef COMPSL_SIGNEDSHFT
+#undef COMPSL_BRNCHLS_JMP
+#endif
+
 #ifndef COMPSL_INTERP_USE_DIRECT_JMPTBL
 #define COMPSL_NEXT_INSTRUCTION goto *(&&NOOP + jmptbl[(++pc)->code])
 #define CSL_JTE(x) &&x - &&NOOP
@@ -320,9 +330,9 @@ static const int jmptbl[] =
 	var *lcs = com->cons;
 	var *gvs = com->vm->vt.vars;
 	
-	nativeFN *natives = com->vm->natives;
-	
 	register bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
+	
+	nativeFN *natives = com->vm->natives;
 	
 	TOP: 
 	NOOP:
@@ -542,10 +552,20 @@ static const int jmptbl[] =
  		pc += pc->sa - 1; // compensate for pc++ at top
  		COMPSL_END_INST;
  	JMZ:
+ #ifdef COMPSL_BRNCHLS_JMP
+ 		sp--;
+ 		pc += (~((sp->i| -sp->i)>>31))&(pc->sa - 1);
+ #else
  		if(!((--sp)->i)) pc += pc->sa - 1; // compensate for pc++ at top
+ #endif
  		COMPSL_END_INST;
  	JMN:
+ #ifdef COMPSL_BRNCHLS_JMP
+ 		sp--;
+ 		pc += (((sp->i| -sp->i)>>31))&(pc->sa - 1);
+ #else
  		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
+ #endif
  		COMPSL_END_INST;
  	FLIN: 
  		(sp-1)->i = (int)((sp-1)->f);

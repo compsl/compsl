@@ -27,10 +27,13 @@ on x86 platform, 32 or 64 bits.
 // set number of times to run test
 const int NUMTESTS = 100;
 
+intfloat callTester(var *args) { return (intfloat)0; } // function called to test CALL bytecode
+
 compart *com;
 int16_t cubbyid;
 const char *csl = 
 "declare {int a,b,c,d,i; int stat;}\n\
+ cubby empty { callTester(); callTester(); callTester(); callTester();}\n\
  cubby foo {\n\
  	a=b=c=(int)(rand() * 10);\n\
  	d=3;\n\
@@ -91,6 +94,79 @@ const char *csl =
  	a=b+c;\n\
  	a=b+c;\n\
  	a=b+c;\n\
+ 	a=0;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
+ 	if(a) b=0; a=!a;\n\
  }";
 // ###################### END DEFINE CONSTANTS ######################
 
@@ -203,10 +279,13 @@ int main() {
    // list of clock counts
    uint64_t clocklist[NUMTESTS];
    uint64_t avg = 0;
-   int i;
+   int i,j;
    
    	VM *vm=createVM();
 	if(vm == NULL) { fprintf(stderr,"Error initializing compsl"); exit(1);}
+	
+	addFunc(vm, &callTester, "callTester", "",false,true);
+	
 	com=createComp(vm);
 	if(com == NULL)
 	{
@@ -215,7 +294,8 @@ int main() {
 	}
 	stringCompile(csl, com);
 	
-	cubbyid = getCubbyID(com,"foo");
+	//cubbyid = getCubbyID(com,"foo");
+	cubbyid = getCubbyID(com,"empty");
 
    // run tests
    ClockTest (clocklist);
@@ -226,8 +306,25 @@ int main() {
    	  avg += clocklist[i];
       printf ("\n%6i  %14llu", i+1, clocklist[i]);
    }
-   printf ("\n\nTotal   %14llu", avg);
-   printf (  "\nAverage %14llu\n", avg/NUMTESTS);
+   
+   
+   	//sort the tests find min max median
+   	for(i=NUMTESTS-1;i>=0;i--){
+   		for(j=0;j<i;j++){
+   			if(clocklist[j] > clocklist[j+1]) {
+   				//swap
+   				uint64_t clocktmp = clocklist[j];
+   				clocklist[j] = clocklist[j+1];
+   				clocklist[j+1] = clocktmp; 
+   			}
+   		}
+   	}
+   
+	printf ("\n\nTotal   %14llu\n", avg);
+	printf (  "\nAverage %14llu", avg/NUMTESTS);
+	printf (  "\nMedian  %14llu\n",clocklist[NUMTESTS/2]);
+	printf (  "\nMin     %14llu",clocklist[0]);
+	printf (  "\nMax     %14llu",clocklist[NUMTESTS-1]);
 
-   return 0;
+	return 0;
 }

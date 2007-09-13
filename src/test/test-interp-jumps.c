@@ -7,7 +7,7 @@
 #include "../intern/bytecode.h"
 #include "../extern/compsl.h"
 #include "../intern/vars.h"
-
+#include "../intern/compartment.h"
 
 intfloat callTester(var *args); // function called to test CALL bytecode
 

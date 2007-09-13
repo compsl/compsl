@@ -30,13 +30,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-
-/*
- * TODO: 
- *  1. write insert variable functions
- *  2. write insert constant functions
- *  3. write other stuff
- */
  
 COMPSL_EXPORT __attribute__ ((nonnull)) compart *createComp(VM *vm)
 {

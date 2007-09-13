@@ -26,6 +26,7 @@
 #include "intern/panic.h"
 #include "intern/vars.h"
 #include "intern/bytecode.h"
+#include "intern/compartment.h"
 
 #include <malloc.h>
 #include <stdlib.h>

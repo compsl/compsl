@@ -1,0 +1,506 @@
+<?xml version="1.0"?>
+<?fileVersion 4.0.0?>
+<cproject>
+  
+  
+
+  
+  <storageModule moduleId="org.eclipse.cdt.core.settings">
+    
+    
+
+    
+    <cconfiguration id="converted.config.1388182217">
+      
+      
+
+      
+      <storageModule moduleId="scannerConfiguration">
+        
+        
+
+        
+        <autodiscovery enabled="true" problemReportingEnabled="false" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
+        
+        
+
+        
+        <profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
+          
+          
+
+          
+          <buildOutputProvider>
+            
+            
+
+            
+            <openAction enabled="true" filePath=""/>
+            
+            
+
+            
+            <parser enabled="true"/>
+            
+            
+
+          
+          </buildOutputProvider>
+          
+          
+
+          
+          <scannerInfoProvider id="specsFile">
+            
+            
+
+            
+            <runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+            
+            
+
+            
+            <parser enabled="true"/>
+            
+            
+
+          
+          </scannerInfoProvider>
+          
+          
+
+        
+        </profile>
+        
+        
+
+        
+        <profile id="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile">
+          
+          
+
+          
+          <buildOutputProvider>
+            
+            
+
+            
+            <openAction enabled="true" filePath=""/>
+            
+            
+
+            
+            <parser enabled="false"/>
+            
+            
+
+          
+          </buildOutputProvider>
+          
+          
+
+          
+          <scannerInfoProvider id="makefileGenerator">
+            
+            
+
+            
+            <runAction arguments="-f ${project_name}_scd.mk" command="make" useDefault="true"/>
+            
+            
+
+            
+            <parser enabled="false"/>
+            
+            
+
+          
+          </scannerInfoProvider>
+          
+          
+
+        
+        </profile>
+        
+        
+
+        
+        <profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+          
+          
+
+          
+          <buildOutputProvider>
+            
+            
+
+            
+            <openAction enabled="false" filePath=""/>
+            
+            
+
+            
+            <parser enabled="true"/>
+            
+            
+
+          
+          </buildOutputProvider>
+          
+          
+
+          
+          <scannerInfoProvider id="specsFile">
+            
+            
+
+            
+            <runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+            
+            
+
+            
+            <parser enabled="false"/>
+            
+            
+
+          
+          </scannerInfoProvider>
+          
+          
+
+        
+        </profile>
+        
+        
+
+        
+        <profile id="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile">
+          
+          
+
+          
+          <buildOutputProvider>
+            
+            
+
+            
+            <openAction enabled="false" filePath=""/>
+            
+            
+
+            
+            <parser enabled="true"/>
+            
+            
+
+          
+          </buildOutputProvider>
+          
+          
+
+          
+          <scannerInfoProvider id="specsFile">
+            
+            
+
+            
+            <runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+            
+            
+
+            
+            <parser enabled="false"/>
+            
+            
+
+          
+          </scannerInfoProvider>
+          
+          
+
+        
+        </profile>
+        
+        
+
+      
+      </storageModule>
+      
+      
+
+
+      
+      
+
+      
+      <storageModule moduleId="cdt_resolver">
+        
+        
+
+        
+        <custom value="false"/>
+        
+        
+
+      
+      </storageModule>
+      
+      
+
+      
+      <storageModule moduleId="org.eclipse.cdt.core.settings" name="convertedConfig" id="converted.config.1388182217" buildSystemId="org.eclipse.cdt.core.defaultConfigDataProvider">
+        
+        
+        <externalSettings/>
+        <extensions>
+          <extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.ELF"/>
+          <extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.PE"/>
+          <extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.GNU_ELF">
+            <attribute key="c++filt" value="c++filt"/>
+            <attribute key="addr2line" value="addr2line"/>
+          </extension>
+          <extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.SOM">
+            <attribute key="c++filt" value="c++filt"/>
+            <attribute key="addr2line" value="addr2line"/>
+          </extension>
+          <extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.XCOFF32">
+            <attribute key="c++filt" value="c++filt"/>
+            <attribute key="addr2line" value="addr2line"/>
+          </extension>
+          <extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.MachO">
+            <attribute key="c++filt" value="c++filt"/>
+          </extension>
+          <extension point="org.eclipse.cdt.core.CIndexer" id="org.eclipse.cdt.core.domsourceindexer"/>
+        </extensions>
+      </storageModule>
+      
+      
+
+      
+      <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+      
+      
+      <storageModule moduleId="org.eclipse.cdt.core.language.mapping">
+        
+        
+        <project-mappings>
+          
+          
+          <content-type-mapping content-type="org.eclipse.cdt.core.cHeader" configuration="" language="org.eclipse.cdt.core.parser.c99.c99"/>
+          
+          
+          <content-type-mapping content-type="org.eclipse.cdt.core.cSource" configuration="" language="org.eclipse.cdt.core.parser.c99.c99"/>
+          
+        
+        </project-mappings>
+        
+      
+      </storageModule>
+      
+      
+      <storageModule moduleId="org.eclipse.cdt.core.pathentry">
+        
+        
+        <pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+        
+        
+        <pathentry kind="src" path=""/>
+        
+        
+        <pathentry kind="out" path=""/>
+        
+      
+      </storageModule>
+      
+    
+      <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+        <buildTargets>
+          <target name="all" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="doc/latex">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>all</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>false</useDefaultCommand>
+          </target>
+          <target name="clean" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="doc/latex">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>docs</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="test" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>test</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="clean" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>clean</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="all" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>all</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="all DEBUG" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k DEBUG=1</buildArguments>
+            <buildTarget>all DEBUG=1 OPTIMIZE=0</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="debug test" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k DEBUG='1' -j2</buildArguments>
+            <buildTarget>test DEBUG=1 OPTIMIZE=0</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="cleantest" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>cleantest DEBUG=1</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="test-valgrind" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>test-valgrind DEBUG=1 OPTIMIZE=0</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="trace test" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>cleantest DEBUG=1 TRACE_INTERP=1 DEBUG_COMP=1 OPTIMIZE=0</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="test DEBUG_COMP" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>test DEBUG=1 DEBUG_COMP=1 OPTIMIZE=0</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="test athlon64" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>test SSE=2 CPUTYPE=athlon64</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="dumper" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>bin/dumper DEBUG=1</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="test DEBUG" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>test DEBUG=1 OPTIMIZE=0</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="package" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-e</buildArguments>
+            <buildTarget>package</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>false</useDefaultCommand>
+          </target>
+          <target name="docs" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>docs</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="dumper No Optimize" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>dumper DEBUG=1 OPTIMIZE=0</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="perf-test" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>bin/perf-test</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="perf-test athlon64" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>bin/perf-test SSE=2 CPUTYPE=athlon64</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="perf-test Debug" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>bin/perf-test DEBUG=1</buildTarget>
+            <stopOnError>false</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="help" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>help</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="all Athlon64" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments>-k -j2</buildArguments>
+            <buildTarget>all CPUTYPE=athlon64 MMX=1 SSE=2</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="statmsg" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>statmsg</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="autoconfig" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>autoconfig</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+          <target name="distclean" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+            <buildCommand>make</buildCommand>
+            <buildArguments></buildArguments>
+            <buildTarget>distclean</buildTarget>
+            <stopOnError>true</stopOnError>
+            <useDefaultCommand>true</useDefaultCommand>
+          </target>
+        </buildTargets>
+      </storageModule>
+    </cconfiguration>
+    
+    
+
+  
+  </storageModule>
+  
+  
+
+
+</cproject>

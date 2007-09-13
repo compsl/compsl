@@ -23,10 +23,42 @@
 #define COMPARTMENT_H_
 
 #include "../extern/compsl.h"
-
+#include "vars.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+ 
+///< Maximum # of local variables, note cannot be increased since variables 
+///< are internaly addressed by bytes currently
+#define COMPART_MAX_VARS 256
+
+///< Maximum # of constant values, note cannot be increased since values 
+///< are internaly addressed by bytes currently
+#define COMPART_MAX_CONSTS 256
+
+///< Maximum # of cubbyholes per compartment
+#define COMPART_MAX_CUBBYS 16
+
+struct _COMPART_t
+{
+    varTable vt; ///< local variables
+    var cons[COMPART_MAX_CONSTS]; ///< constants
+    uint16_t numConst; ///< current # of constants
+    uint16_t numCubbys; ///< number of cubbyholes 
+    
+    ///< represents one cubbyhole
+    struct _CUBBY_t
+    {
+    	void *code; ///< pointer to the bytecode of this cubby
+    	char *name; ///< name of this cubby
+    } cubbys[COMPART_MAX_CUBBYS];
+    
+    VM *vm; ///< the vm this compartment was compiled with
+    
+    COMPSL_ERROR errorno; ///< error code of last error produced by this compartment
+};
+	
 /* Takes compartment and adds a cubby, with bytecode
  * pointed at by code, and named name
  * return true on success, false otherwise

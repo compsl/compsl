@@ -70,11 +70,20 @@ else
 	APPSTATMSG += OFF\\n
 endif
 
+APPSTATMSG += Mudflap pointer debuging is
+ifeq ($(MUDFLAP_ENABLE),yes)
+	MUDFLAP_FLAGS += -fmudflap
+	PLATLIBS += -lmudflap 
+	APPSTATMSG += ON\\n
+else
+	APPSTATMSG += OFF\\n
+endif
+
 ifdef DEBUG
 	# -fmudflap is some pointer debuging stuff
 	# -fno-builtins since we can't set breakpoints on calls to builtin functions
 	# -fstack-protector checks for stack overruns
-	CFLAGS += -fmudflap -fno-builtin -fstack-protector
+	CFLAGS += -fno-builtin -fstack-protector
 else
 	CFLAGS += -fbuiltin
 	DEFFLAGS += -DNDEBUG
@@ -135,7 +144,7 @@ endif
 DEFFLAGS +=-D_GNU_SOURCE -DBUILDING_COMPSL
 ALL_CFLAGS = -std=gnu99 $(CPUFLAGS) $(OPTFLAGS) $(MATH_FLAGS) $(CFLAGS) $(DEFFLAGS)
 
-override ALL_CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(ALL_CFLAGS))
+override ALL_CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(ALL_CFLAGS)) $(MUDFLAP_FLAGS)
 
 STATMSG  = Compiling with $(CC) version $(shell $(CC) -dumpversion)
 STATMSG += targeting $(TARGET_CPU) on $(TARGET_OS) for

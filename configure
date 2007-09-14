@@ -236,6 +236,7 @@ Debugging Options
   --enable-trace-interpreter  Enable printing of each bytecode before running it
   --enable-trace-optimizer    Trace the bytecode optimizer (Also generates an awful lot of output)
   --enable-trace-compile      Cause the compiler to output each line number as it is compiled
+  --enable-mudflap            Build with mudflap enabled (requires gcc with mudflap)
 
 Advanced options:
   --enable-mmx           build with MMX support [autodetect]
@@ -248,7 +249,6 @@ Advanced options:
   --enable-altivec       build with Altivec support (PowerPC) [autodetect]
   --enable-armv5te       build with DSP extensions support (ARM) [autodetect]
   --enable-iwmmxt        build with iWMMXt support (ARM) [autodetect]
-  --disable-fastmemcpy   disable 3DNow!/SSE/MMX optimized memcpy() [enable]
   --enable-big-endian    Force byte order to big-endian [autodetect]
   --enable-debug[=1-3]   compile debugging information into compsl [disable]
   --optimization-level=  gcc optimization level, default FULL, (-03 plus extra flags)
@@ -1333,6 +1333,7 @@ _debug_compiler=no
 _trace_interpreter=no
 _trace_optimizer=no
 _trace_compile=no
+_mudflap=no
 test -z "$_debug" && _optimize_code=FULL || _optimize_code=0
 _ieee_floats=no
 
@@ -1411,6 +1412,12 @@ for ac_option do
   ;;
   --disable-trace-compile)
   	_trace_compile=no
+  ;;
+  --enable-mudflap)
+  	_mudflap=yes
+  ;;
+  --disable-mudflap)
+  	_mudflap=no
   ;;
   --optimization-level=*)
   	_optimize_code=`echo $ac_option | cut -d '=' -f 2`
@@ -2497,6 +2504,7 @@ DEBUG_COMP=$_debug_compiler
 TRACE_INTERP=$_trace_interpreter
 TRACE_OPTIM=$_trace_optimizer
 TRACE_COMPILE=$_trace_compile
+MUDFLAP_ENABLE=$_mudflaps
 OPTIMIZE=$_optimize_code
 IEEE_FLOATS=$_ieee_floats
 EOF

@@ -34,10 +34,11 @@ CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/interp/run.c  src/vars.c src/vm.c \
+REG_SRCS:=src/api/compartment.c src/api/error.c  src/api/gen.c  src/interp/run.c \
+	src/api/vars.c src/api/vm.c src/api/mt.c src/api/userspace.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
 	$(CMPATH)/var.c $(CMPATH)/comp.c $(CMPATH)/control.c $(CMPATH)/compglobals.c \
-	src/mt.c src/userspace.c $(CMPATH)/stackcheck.c $(CMPATH)/optimize.c
+	$(CMPATH)/stackcheck.c $(CMPATH)/optimize.c
 
 DERIVED_SRCS=$(CMPATH)/lex.yy.c $(CMPATH)/compsl.tab.c
 DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h 

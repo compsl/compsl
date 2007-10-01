@@ -24,7 +24,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include "interncomp.h"
+#include "compiler/interncomp.h"
 #include "intern/gen.h"
 
 

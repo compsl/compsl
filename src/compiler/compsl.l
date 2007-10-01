@@ -26,8 +26,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
-#include "interncomp.h"
-#include "node.h"
+#include "compiler/interncomp.h"
+#include "compiler/node.h"
 #include "compsl.h"
 #include "intern/compartment.h"
 #include "intern/gen.h"

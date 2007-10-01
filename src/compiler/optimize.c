@@ -20,7 +20,7 @@
 */
 
 
-#include "interncomp.h"
+#include "compiler/interncomp.h"
 #include "intern/bytecode.h"
 #include "intern/gen.h"
 #include <stdio.h>

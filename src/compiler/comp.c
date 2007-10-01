@@ -23,9 +23,9 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "node.h"
+#include "compiler/node.h"
 #include "intern/vars.h"
-#include "interncomp.h"
+#include "compiler/interncomp.h"
 
 
 list* list_new(void) {

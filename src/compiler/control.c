@@ -21,7 +21,7 @@
 
 #include <string.h>
 #include <assert.h>
-#include "interncomp.h"
+#include "compiler/interncomp.h"
 
 
 bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {

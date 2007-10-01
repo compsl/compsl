@@ -23,8 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "node.h"
-#include "interncomp.h"
+#include "compiler/node.h"
+#include "compiler/interncomp.h"
 
 #include "compsl.tab.h"
 

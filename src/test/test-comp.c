@@ -5,8 +5,8 @@
 
 // For DPRINTF
 #include "intern/debug.h"
-#include "../compiler/node.h"
-#include "../compiler/interncomp.h"
+#include "compiler/node.h"
+#include "compiler/interncomp.h"
 
 #if defined(WIN32) || defined(DJGPP)
 #define BIT_BUCKET "NUL"

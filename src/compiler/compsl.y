@@ -34,8 +34,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
-#include "node.h"
-#include "interncomp.h"
+#include "compiler/node.h"
+#include "compiler/interncomp.h"
 #include "compsl.tab.h"
 #include "compsl.h"
 #include "intern/gen.h"

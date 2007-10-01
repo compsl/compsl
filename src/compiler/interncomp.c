@@ -22,7 +22,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "interncomp.h"
+#include "compiler/interncomp.h"
 
 
 int bc_len(bytecode* bc) {

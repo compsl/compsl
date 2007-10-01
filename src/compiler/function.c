@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "interncomp.h"
+#include "compiler/interncomp.h"
 
 expression *function_call(const char* name, list *params) {
   expression *ex = malloc(sizeof(expression));

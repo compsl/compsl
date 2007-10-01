@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "interncomp.h"
+#include "compiler/interncomp.h"
 
 expression *assignVar(const char *name, expression *ex) {
   return assignArray(name, NULL, ex);

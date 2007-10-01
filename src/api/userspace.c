@@ -1,4 +1,4 @@
-// $Id$
+// $Id:userspace.c 543 2007-10-01 01:31:02Z tomj $
 
 /*
     CompSL scripting language 
@@ -22,7 +22,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "compsl.h"
-#include "intern/vars.h"
+#include "intern/syms.h"
 
 ///////////////////////////
 // Test lib stuff        //

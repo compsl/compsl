@@ -1,4 +1,4 @@
-// $Id$
+// $Id:vm.c 543 2007-10-01 01:31:02Z tomj $
 
 /*
     CompSL scripting language 
@@ -20,7 +20,7 @@
 */
 
 #include "compsl.h"
-#include "intern/vars.h"
+#include "intern/vm.h"
 #include <stdlib.h>
 #include <malloc.h>
 #include <ctype.h>

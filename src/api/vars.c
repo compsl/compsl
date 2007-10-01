@@ -1,4 +1,4 @@
-// $Id$
+// $Id:vars.c 543 2007-10-01 01:31:02Z tomj $
 
 /*
     CompSL scripting language 
@@ -21,7 +21,7 @@
 
 #include "compsl.h"
 #include "intern/gen.h"
-#include "intern/vars.h"
+#include "intern/syms.h"
 #include <inttypes.h>
 #include <malloc.h>
 #include <string.h>

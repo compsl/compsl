@@ -1,4 +1,4 @@
-// $Id$
+// $Id:gen.c 543 2007-10-01 01:31:02Z tomj $
 
 /*
     CompSL scripting language 
@@ -20,7 +20,7 @@
 */
 
 #include "intern/gen.h"
-#include "intern/vars.h"
+#include "intern/syms.h"
 #include "intern/panic.h"
 #include "intern/compartment.h"
 #include "compsl.h"

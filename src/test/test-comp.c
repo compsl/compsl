@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "intern/compartment.h"
 #include "compsl.h"
-#include "intern/vars.h"
+#include "intern/syms.h"
 
 // For DPRINTF
 #include "intern/debug.h"

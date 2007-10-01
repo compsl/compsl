@@ -1,4 +1,4 @@
-// $Id$
+// $Id:interncomp.h 542 2007-10-01 01:25:23Z tomj $
 
 /*
     CompSL scripting language 
@@ -27,10 +27,10 @@
 
 #include "node.h"
 #include "compsl.h"
-#include "intern/bytecode.h"
-#include "intern/vars.h"
-#include "intern/builtins.h"
 #include "intern/gen.h"
+#include "intern/bytecode.h"
+#include "intern/syms.h"
+#include "intern/builtins.h"
 #include "intern/compartment.h"
 
 

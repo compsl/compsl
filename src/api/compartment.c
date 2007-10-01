@@ -1,4 +1,4 @@
-// $Id$
+// $Id:compartment.c 543 2007-10-01 01:31:02Z tomj $
 
 /*
     CompSL scripting language 
@@ -19,10 +19,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include "compiler/node.h"
 #include "compsl.h"
 #include "intern/compartment.h"
-#include "intern/vars.h"
-#include "compiler/node.h"
+#include "intern/syms.h"
 
 #include <malloc.h>
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-// $Id$
+// $Id:debug.h 541 2007-10-01 01:19:09Z tomj $
 
 /*
     CompSL scripting language 
@@ -34,8 +34,8 @@
 // #define xxx_DPRINTF(...) dbg_noop()
 // #endif
 
-#ifndef DEBUG_H
-#define DEBUG_H 
+#ifndef COMPSL_DEBUG_H
+#define COMPSL_DEBUG_H 
 
 #ifdef DEBUG_COMP
 #define COMP_DPRINTF(...) fprintf(stderr,"%24s,%4d:\t",__FILE__,__LINE__); fprintf(stderr, __VA_ARGS__)

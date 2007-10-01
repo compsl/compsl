@@ -24,7 +24,7 @@
 #include <assert.h>
 
 #include "node.h"
-#include "../intern/vars.h"
+#include "intern/vars.h"
 #include "interncomp.h"
 
 

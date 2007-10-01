@@ -142,9 +142,12 @@ else
 endif
 
 DEFFLAGS +=-D_GNU_SOURCE -DBUILDING_COMPSL
+
+PP_FLAGS = -I $(abspath src/include)
+
 ALL_CFLAGS = -std=gnu99 $(CPUFLAGS) $(OPTFLAGS) $(MATH_FLAGS) $(CFLAGS) $(DEFFLAGS)
 
-override ALL_CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(ALL_CFLAGS)) $(MUDFLAP_FLAGS)
+override ALL_CFLAGS := $(shell CC=$(CC) ./gcc-optioncheck $(ALL_CFLAGS)) $(PP_FLAGS) $(MUDFLAP_FLAGS)
 
 STATMSG  = Compiling with $(CC) version $(shell $(CC) -dumpversion)
 STATMSG += targeting $(TARGET_CPU) on $(TARGET_OS) for

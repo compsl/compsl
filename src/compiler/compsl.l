@@ -28,9 +28,9 @@
 #include <ctype.h>
 #include "interncomp.h"
 #include "node.h"
-#include "../extern/compsl.h"
-#include "../intern/compartment.h"
-#include "../intern/gen.h"
+#include "compsl.h"
+#include "intern/compartment.h"
+#include "intern/gen.h"
 #include "compsl.tab.h"
 
 extern VM *cvm;

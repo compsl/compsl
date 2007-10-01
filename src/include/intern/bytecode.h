@@ -22,7 +22,7 @@
 #ifndef BYTECODE_H_
 #define BYTECODE_H_
 
-#include "../extern/compsl.h"
+#include "compsl.h"
 
 
 // all instructions working with variables take address in a1 unless otherwise

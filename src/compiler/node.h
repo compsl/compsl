@@ -20,10 +20,10 @@
 */
 
 #include <stdbool.h>
-#include "../intern/bytecode.h"
-#include "../extern/compsl.h"
+#include "intern/bytecode.h"
+#include "compsl.h"
 
-#include "../intern/debug.h"
+#include "intern/debug.h"
 
 #ifndef NODE_H_
 #define NODE_H_

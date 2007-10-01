@@ -22,7 +22,7 @@
 #ifndef VARS_H_
 #define VARS_H_
 
-#include "../extern/compsl.h"
+#include "compsl.h"
 #include <stdbool.h>
 
 

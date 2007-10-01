@@ -34,7 +34,7 @@ CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/run.c  src/vars.c src/vm.c \
+REG_SRCS:=src/compartment.c src/error.c  src/gen.c  src/interp/run.c  src/vars.c src/vm.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
 	$(CMPATH)/var.c $(CMPATH)/comp.c $(CMPATH)/control.c $(CMPATH)/compglobals.c \
 	src/mt.c src/userspace.c $(CMPATH)/stackcheck.c $(CMPATH)/optimize.c
@@ -181,7 +181,7 @@ statmsg:
 -include $(DDEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
-src/run.o: src/run.c config.mak Makefile
+src/interp/run.o: src/interp/run.c config.mak Makefile
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 

@@ -1,8 +1,8 @@
-#include "../extern/compsl.h"
+#include "compsl.h"
 
-#include "../intern/gen.h"
-#include "../intern/vars.h"
-#include "../intern/compartment.h"
+#include "intern/gen.h"
+#include "intern/vars.h"
+#include "intern/compartment.h"
 
 #include <stdio.h>
 #include <assert.h>

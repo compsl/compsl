@@ -25,7 +25,7 @@
 #include <stdbool.h>
 
 #include "interncomp.h"
-#include "../intern/gen.h"
+#include "intern/gen.h"
 
 
 /* stackcheck: 

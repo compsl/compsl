@@ -21,7 +21,7 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include "extern/compsl.h"
+#include "compsl.h"
 #include "intern/vars.h"
 
 ///////////////////////////

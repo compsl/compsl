@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../extern/compsl.h"
+#include "compsl.h"
 
 static const char *test = 
 "declare \n\

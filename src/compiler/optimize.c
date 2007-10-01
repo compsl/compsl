@@ -21,8 +21,8 @@
 
 
 #include "interncomp.h"
-#include "../intern/bytecode.h"
-#include "../intern/gen.h"
+#include "intern/bytecode.h"
+#include "intern/gen.h"
 #include <stdio.h>
 
 // "Your User can't help you now, my little program!" - Master Control Program, 'Tron'

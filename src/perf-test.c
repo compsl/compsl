@@ -1,4 +1,4 @@
-/*              TSCTest.cpp                            © 2006-06-01 Agner Fog
+/*              TSCTest.cpp                             2006-06-01 Agner Fog
 
 
 Test program to measure how many clock cycles a little piece of code takes.
@@ -15,12 +15,12 @@ Insert the code to test at the place marked "### Test code here ###"
 Compile and link for console mode under Windows, Linux or Mac OS X 
 on x86 platform, 32 or 64 bits.
 
-© 2005-2006 GNU General Public License www.gnu.org/copyleft/gpl.html
+ 2005-2006 GNU General Public License www.gnu.org/copyleft/gpl.html
 
 */
 
 #include <stdio.h>
-#include "extern/compsl.h"
+#include "compsl.h"
 
 // ###################### DEFINE CONSTANTS ######################
 

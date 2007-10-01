@@ -1,4 +1,4 @@
-#include "../extern/compsl.h"
+#include "compsl.h"
 
 #include <stdio.h>
 

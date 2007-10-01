@@ -22,7 +22,7 @@
 #ifndef COMPARTMENT_H_
 #define COMPARTMENT_H_
 
-#include "../extern/compsl.h"
+#include "compsl.h"
 #include "vars.h"
 #ifdef __cplusplus
 extern "C" {

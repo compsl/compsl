@@ -21,7 +21,7 @@
 
 #include "intern/config.h"
 
-#include "extern/compsl.h"
+#include "compsl.h"
 
 #include "intern/panic.h"
 #include "intern/vars.h"

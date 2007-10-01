@@ -21,9 +21,9 @@
 
 #ifndef GEN_H_
 #define GEN_H_
-#include "../extern/compsl.h"
-#include "../intern/vars.h"
-#include "../intern/bytecode.h"
+#include "compsl.h"
+#include "vars.h"
+#include "bytecode.h"
 #include <stdbool.h>
 
 typedef struct

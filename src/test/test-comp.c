@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "../intern/compartment.h"
-#include "../extern/compsl.h"
-#include "../intern/vars.h"
+#include "intern/compartment.h"
+#include "compsl.h"
+#include "intern/vars.h"
 
 // For DPRINTF
-#include "../intern/debug.h"
+#include "intern/debug.h"
 #include "../compiler/node.h"
 #include "../compiler/interncomp.h"
 

@@ -27,7 +27,7 @@
  
 #include <stdio.h>
 #include <stdlib.h>
-#include "extern/compsl.h"
+#include "compsl.h"
 
 #include "intern/gen.h"
 #include "intern/bytecode.h"

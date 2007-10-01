@@ -26,12 +26,12 @@
 #include <stdio.h>
 
 #include "node.h"
-#include "../extern/compsl.h"
-#include "../intern/bytecode.h"
-#include "../intern/vars.h"
-#include "../intern/builtins.h"
-#include "../intern/gen.h"
-#include "../intern/compartment.h"
+#include "compsl.h"
+#include "intern/bytecode.h"
+#include "intern/vars.h"
+#include "intern/builtins.h"
+#include "intern/gen.h"
+#include "intern/compartment.h"
 
 
 #define CONTINUE_NOOP_IDEN 89

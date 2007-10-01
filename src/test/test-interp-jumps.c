@@ -4,10 +4,10 @@
 #include <float.h>
 #include <math.h>
 
-#include "../intern/bytecode.h"
-#include "../extern/compsl.h"
-#include "../intern/vars.h"
-#include "../intern/compartment.h"
+#include "intern/bytecode.h"
+#include "compsl.h"
+#include "intern/vars.h"
+#include "intern/compartment.h"
 
 intfloat callTester(var *args); // function called to test CALL bytecode
 

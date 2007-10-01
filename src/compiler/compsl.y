@@ -37,10 +37,10 @@
 #include "node.h"
 #include "interncomp.h"
 #include "compsl.tab.h"
-#include "../extern/compsl.h"
-#include "../intern/gen.h"
-#include "../intern/compartment.h"
-#include "../intern/builtins.h"
+#include "compsl.h"
+#include "intern/gen.h"
+#include "intern/compartment.h"
+#include "intern/builtins.h"
 
 #define YYERROR_VERBOSE 1
   

@@ -15,7 +15,7 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-COMPSL_VERSION := 0.2.1
+COMPSL_VERSION := 0.2.2
 
 .SUFFIXES:
 
@@ -142,6 +142,7 @@ package: distclean headers
 		--exclude "*/.cvsignore" --exclude "*/.*project*" \
 		--exclude "*~" --exclude "*/latex*" --exclude "*/config.*" \
 		--exclude "*/compsl-${COMPSL_VERSION}/compsl-${COMPSL_VERSION}" \
+		--exclude "config.opts" \
 		--transform 's,^,compsl-${COMPSL_VERSION}/,' \
 		-cjvf compsl-${COMPSL_VERSION}.tar.bz2 *
 

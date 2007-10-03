@@ -34,6 +34,10 @@ CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
+GEN_HEADERS:=src/include/interp/bcstrings.h \
+	src/include/interp/jumptbl.h src/include/compiler/bc_info.h \
+	src/include/intern/bytecode.h
+
 REG_SRCS:=src/api/compartment.c src/api/error.c  src/api/gen.c  src/interp/run.c \
 	src/api/vars.c src/api/vm.c src/api/mt.c src/api/userspace.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
@@ -115,6 +119,8 @@ docs: $(DOXYFILE)
 	make -C doc/latex
 	mv doc/latex/refman.pdf doc/compsl.pdf
 
+headers: $(GEN_HEADERS)
+
 help: 
 	@printf "\nMakefile for CompSL\n"
 	@printf "***************************************************\n"
@@ -130,7 +136,7 @@ help:
 static: statmsg $(STATIC_LIB_OUT) ;
 dynamic: statmsg $(DYN_LIB_OUT) ;
 
-package: distclean
+package: distclean headers
 	rm -f compsl-${COMPSL_VERSION}.tar.bz2
 	tar --exclude "*/.svn*" --exclude "*/.settings*" \
 		--exclude "*/.cvsignore" --exclude "*/.*project*" \
@@ -182,9 +188,25 @@ statmsg:
 -include $(DDEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
-src/interp/run.o: src/interp/run.c config.mak Makefile
+src/interp/run.o: src/interp/run.c config.mak Makefile headers
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
+
+src/include/interp/bcstrings.h: src/interp/bytecodes gen-bcstrings.sh
+	@echo GEN $@
+	@./gen-bcstrings.sh $< > $@
+
+src/include/interp/jumptbl.h: src/interp/bytecodes gen-jumptbl.sh
+	@echo GEN $@
+	@./gen-jumptbl.sh $< > $@
+
+src/include/compiler/bc_info.h: src/interp/bytecodes gen-bc-info.sh
+	@echo GEN $@
+	@./gen-bc-info.sh $< > $@
+
+src/include/intern/bytecode.h: src/interp/bytecodes gen-bytecodeh.sh
+	@echo GEN $@
+	@./gen-bytecodeh.sh $< > $@
 
 $(CMPATH)/compsl.tab.o: $(CMPATH)/compsl.tab.c
 	@echo CC $<
@@ -196,7 +218,7 @@ $(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
 	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/lex.yy.ddp
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
-%.o: %.c config.mak Makefile
+%.o: %.c config.mak Makefile headers
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 

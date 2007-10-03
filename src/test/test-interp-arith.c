@@ -6,7 +6,6 @@
 
 #include "intern/bytecode.h"
 #include "compsl.h"
-#include "intern/vars.h"
 #include "intern/compartment.h"
 
 /*******************************************************

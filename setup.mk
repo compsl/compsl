@@ -94,7 +94,7 @@ ifeq ($(OPTIMIZE),FULL)
 	OPTFLAGS += -funit-at-a-time -funroll-loops -finline-functions -funswitch-loops
 	OPTFLAGS += -fsched-spec-load -maccumulate-outgoing-args
 	OPTFLAGS += -minline-all-stringops -fomit-frame-pointer
-	OPTFLAGS += -finline-limit=2000
+	#OPTFLAGS += -finline-limit=2000
 	OPTFLAGS += -fno-stack-limit
 	
 	#OPTFLAGS +=-fdata-sections -ffunction-sections
@@ -108,9 +108,9 @@ ifeq ($(OPTIMIZE),FULL)
 	#OPTFLAGS += -fprefetch-loop-arrays
 	OPTFLAGS += -freorder-blocks-and-partition
 	
-	OPTFLAGS += -fbranch-target-load-optimize 
+	#OPTFLAGS += -fbranch-target-load-optimize 
 	#OPTFLAGS += -fbranch-target-load-optimize2
-	OPTFLAGS += -floop-optimize2 -fmove-all-movables
+	#OPTFLAGS += -floop-optimize2 -fmove-all-movables
 	
 	###################################################
 	# potentially bad optimizations

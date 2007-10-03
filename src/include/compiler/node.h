@@ -1,4 +1,4 @@
-// $Id$
+// $Id:node.h 542 2007-10-01 01:25:23Z tomj $
 
 /*
     CompSL scripting language 

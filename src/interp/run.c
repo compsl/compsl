@@ -79,106 +79,7 @@
 double genrand_real1(void);
 
 #if defined DEBUG || defined _COMPSL_TRACE
-static const char *tractbl[] = 
-{
-	"NOOP",
-//stack operations with local vars
-	"PUSH",
-	"PSHT",
- 	"APUSH",
- 	"CPUSH",
- 	"GPSH",
- 	"GAPS",
- 	"POP",
- 	"POPT", 
- 	"APOP",
- 	"DPOP",
- 	"GPOP",
- 	"GAPP",
- 	"DUP",
- // native function call
- 	"CALL", 
- // integer operations
- 	"ADD", 
- 	"SUB", 
- 	"MUL", 
- 	"DIV", 
- 	"LE",
- 	"LS",
-	"EQ",
-	"NE",
- 	"GR",
- 	"GE",
- //mod
- 	"MOD", 
- 	"FMOD",
- //boolean 
- 	"AND",
- 	"OR",
- 	"NOT",
- //bitwise
- 	"BAND",
- 	"BOR",
- 	"BXOR",
- 	"BNOT",
- //bit shifting
- 	"SFTL",
- 	"SFTR",
- // float operations 
- 	"FADD", 
- 	"FSUB", 
- 	"FMUL",
- 	"FDIV", 
- 	"FLE",
- 	"FLS",
-	"FEQ",
-	"FNE",
- 	"FGR",
- 	"FGE",
- // jumps 
- 	"JMP",
- 	"JMZ",
- 	"JMN",
- //type conversion
- 	"FLIN", 
- 	"INFL",
- 	"SAVE",
- 	"STO",
- 	"GSTO",
- 	"INC",
-	"DEC",
- 	"FINC",
-	"FDEC",
-//builtins
-	"ABS",
-	"ABSF",
-	"SIN",
-	"COS",
-	"TAN",
-	"ASIN",
-	"ACOS",
-	"ATAN",
-	"SQRT",
-	"LN",
-	"FLOOR",
-	"CEIL",
-	"RAND",
-	"ATAN2",
-	"POW",
-	"MIN",
-	"MAX",
-	"MINF",
-	"MAXF",
-	"HYPOT",
-	"FEQUAL",
-//misc
- 	"PYES",
- 	"NONO",
- 	"END",
- 	"HLT",
- 	"DBG"
-
- };
+#include "interp/bcstrings.h"
 #endif
 
 #ifdef DEBUG
@@ -215,114 +116,13 @@ void dumpBytecode2(compart *com, bytecode *code)
 #endif
 
 COMPSL_EXPORT void runCubbyhole(compart *com, int id)
-{
-static const int jmptbl[] = 
-{
-	CSL_JTE(NOOP),
-//stack operations
-	CSL_JTE(PUSH),
-	CSL_JTE(PSHT),
- 	CSL_JTE(APUSH),
- 	CSL_JTE(CPUSH),
- 	CSL_JTE(GPSH),
- 	CSL_JTE(GAPS),
- 	CSL_JTE(POP),
- 	CSL_JTE(POPT),
- 	CSL_JTE(APOP),
- 	CSL_JTE(DPOP),
- 	CSL_JTE(GPOP),
- 	CSL_JTE(GAPP),
- 	CSL_JTE(DUP),
- // native function call
- 	CSL_JTE(CALL),
- // integer operations
- 	CSL_JTE(ADD),
- 	CSL_JTE(SUB),
- 	CSL_JTE(MUL),
- 	CSL_JTE(DIV),
- //compares
- 	CSL_JTE(LE),
- 	CSL_JTE(LS),
-	CSL_JTE(EQ),
-	CSL_JTE(NE),
- 	CSL_JTE(GR),
- 	CSL_JTE(GE),
- //mod
- 	CSL_JTE(MOD),
- 	CSL_JTE(FMOD),
- //boolean 
- 	CSL_JTE(AND),
- 	CSL_JTE(OR),
- 	CSL_JTE(NOT),
- //bitwise
- 	CSL_JTE(BAND),
- 	CSL_JTE(BOR),
- 	CSL_JTE(BXOR),
- 	CSL_JTE(BNOT),
- //bit shifting
- 	CSL_JTE(SFTL),
- 	CSL_JTE(SFTR),
- // float operations 
- 	CSL_JTE(FADD),
- 	CSL_JTE(FSUB),
- 	CSL_JTE(FMUL),
- 	CSL_JTE(FDIV),
- //float compares
- 	CSL_JTE(FLE),
- 	CSL_JTE(FLS),
-	CSL_JTE(FEQ),
-	CSL_JTE(FNE),
- 	CSL_JTE(FGR),
- 	CSL_JTE(FGE),
- // jumps 
- 	CSL_JTE(JMP),
- 	CSL_JTE(JMZ),
- 	CSL_JTE(JMN),
- //type conversion
- 	CSL_JTE(FLIN),
- 	CSL_JTE(INFL),
- 	CSL_JTE(SAVE),
- 	CSL_JTE(STO),
- 	CSL_JTE(GSTO),
- 	CSL_JTE(INC),
- 	CSL_JTE(DEC),
- 	CSL_JTE(FINC),
- 	CSL_JTE(FDEC),
-//builtins
-	CSL_JTE(ABS),
-	CSL_JTE(ABSF),
-	CSL_JTE(SIN),
-	CSL_JTE(COS),
-	CSL_JTE(TAN),
-	CSL_JTE(ASIN),
-	CSL_JTE(ACOS),
-	CSL_JTE(ATAN),
-	CSL_JTE(SQRT),
-	CSL_JTE(LN),
-	CSL_JTE(FLOOR),
-	CSL_JTE(CEIL),
-	CSL_JTE(RAND),
-	CSL_JTE(ATAN2),
-	CSL_JTE(POW),
-	CSL_JTE(MIN),
-	CSL_JTE(MAX),
-	CSL_JTE(MINF),
-	CSL_JTE(MAXF),
-	CSL_JTE(HYPOT),
-	CSL_JTE(FEQUAL),
-//misc
- 	CSL_JTE(PYES),
- 	CSL_JTE(NONO),
- 	CSL_JTE(END),
- 	CSL_JTE(HLT),
- 	CSL_JTE(DBG)
-
- };
+{	
+ #ifdef _COMPSL_TRACE
+ 	long int tractmp,sppos;
+ #endif
  
- 	#ifdef _COMPSL_TRACE
- 		long int tractmp,sppos;
- 	#endif
- 
+#include "interp/jumptbl.h"
+ 		
 	intfloat stack[VM_STACK_SIZE];
 	intfloat temp; // temp register
 	register intfloat *sp = stack; // stack pointer
@@ -473,7 +273,7 @@ static const int jmptbl[] =
  		(sp - 1)->i = (sp - 1)->i <= sp->i;
  		COMPSL_END_INST;
  	LS:
- 	FLS:
+ 	FL:
  		sp--;	
  		(sp - 1)->i = (sp - 1)->i < sp->i;
  		COMPSL_END_INST;
@@ -790,7 +590,7 @@ static const int jmptbl[] =
 #endif
 	END:
  	HLT:
- 	
+ 	UNIMP:
  	
  	return;
 }

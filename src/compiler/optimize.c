@@ -21,6 +21,7 @@
 
 
 #include "compiler/interncomp.h"
+#include "compiler/bc_info.h"
 #include "intern/bytecode.h"
 #include "intern/gen.h"
 #include <stdio.h>
@@ -39,6 +40,101 @@ static void removeBytecode(bytecode *code, int ind, int codelen)
 }
 
 static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
+{
+	int sp = 1;
+	
+	for(int i = 0; i < codelen; i++)
+	{
+		if(BC_NOOP > code[i].code || code[i].code > BC_DBG)
+			internalCompileError("BAD OPCODE found while optimizing bytecode");
+		bc_info *info = &(bcinfos[code[i].code]);
+		
+		sp -= info->consumes;
+		
+		if(info->bc_class == CALL_BC)
+		{ // function call
+			if(code[i].a1 >= vm->ncnt) {
+				fprintf(stderr,"BAD NATIVE CALL! instruction %d of expression on line %d", i, lineNo);
+				internalCompileError("BAD NATIVE CALL GENERATED!");
+			}
+			sp -= vm->natives[code[i].a1].numParam;
+		}
+		
+		if(info->bc_class == JUMP_BC || (sp == 0 && i < codelen -1))
+			return -1;
+		
+		if(sp < 0) break;
+		
+		sp += info->produces;
+	}
+	return sp;
+}
+
+bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
+{
+	#ifdef COMPSL_TRACE_OPTIM
+	puts("\nBegining optimize");
+	dumpBytecode2(com,code);
+	puts("Running redundant DPOP remover");
+	#endif
+	
+	for(int i = 0; i < codelen; i++)
+	{
+		if(code[i].code == BC_DPOP)
+			// loop backwards and look for a DUP
+			for(int j = i; j >= 0; j--)
+				if(code[j].code == BC_DUP && stackpos(&code[j + 1],i - j - 1,vm,com) == 0)
+				{
+					removeBytecode(code,i,codelen);
+					removeBytecode(code,j,codelen);
+					i-=2;
+					break;
+				}
+	}
+	#ifdef COMPSL_TRACE_OPTIM
+	dumpBytecode2(com,code);
+	puts("Running POP->STO");
+	#endif
+	
+	for(int i = 0; i < codelen; i++)
+	{
+		if(code[i].code == BC_DUP)
+			// loop backwards and look for a DUP
+			for(int j = i; j < codelen; j++)
+			{
+				int bc = code[j].code;
+				bc_info info = bcinfos[bc];
+				//if(code[j].code == BC_CALL || (code[j].code >= BC_FLIN && code[j].code <= BC_FDEC)) break;
+				//if(bc == BC_CALL || info.bc_class == NORMAL_BC) break;
+				if(info.bc_class == CALL_BC || info.bc_class == JUMP_BC
+						|| info.produces == info.consumes) 
+					break;
+				else if(code[j].code == BC_POP && stackpos(&code[i+1],j - i-1,vm,com) == 1)
+				{
+					code[j].code = BC_STO;
+					removeBytecode(code,i,codelen);
+					i--;
+					break;
+				}
+				else if(code[j].code == BC_GPOP && stackpos(&code[i+1],j - i-1,vm,com) == 1)
+				{
+					code[j].code = BC_GSTO;
+					removeBytecode(code,i,codelen);
+					i--;
+					break;
+				}
+			}
+	}
+	#ifdef COMPSL_TRACE_OPTIM
+	dumpBytecode2(com,code);
+	puts("Done Optimize");
+	#endif
+	
+	return code;
+}
+
+/* The old stackpos, kept in case the new one has undiscovered bugs
+ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 {
 	int sp = 0;
 	for(int i = 0; i < codelen && i > -1; i++)
@@ -95,60 +191,4 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 	}
 	return sp;
 }
-
-bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
-{
-	#ifdef COMPSL_TRACE_OPTIM
-	puts("\nBegining optimize");
-	dumpBytecode2(com,code);
-	puts("Running redundant DPOP remover");
-	#endif
-	
-	for(int i = 0; i < codelen; i++)
-	{
-		if(code[i].code == BC_DPOP)
-			// loop backwards and look for a DUP
-			for(int j = i; j >= 0; j--)
-				if(code[j].code == BC_DUP && stackpos(&code[j],i - j,vm,com) == 0)
-				{
-					removeBytecode(code,i,codelen);
-					removeBytecode(code,j,codelen);
-					i-=2;
-					break;
-				}
-	}
-	#ifdef COMPSL_TRACE_OPTIM
-	dumpBytecode2(com,code);
-	puts("Running POP->STO");
-	#endif
-	
-	for(int i = 0; i < codelen; i++)
-	{
-		if(code[i].code == BC_DUP)
-			// loop backwards and look for a DUP
-			for(int j = i; j < codelen; j++)
-			{
-				if(code[j].code == BC_CALL || (code[j].code >= BC_FLIN && code[j].code <= BC_FDEC)) break;
-				else if(code[j].code == BC_POP && stackpos(&code[i],j - i,vm,com) == 1)
-				{
-					code[j].code = BC_STO;
-					removeBytecode(code,i,codelen);
-					i--;
-					break;
-				}
-				else if(code[j].code == BC_GPOP && stackpos(&code[i],j - i,vm,com) == 1)
-				{
-					code[j].code = BC_GSTO;
-					removeBytecode(code,i,codelen);
-					i--;
-					break;
-				}
-			}
-	}
-	#ifdef COMPSL_TRACE_OPTIM
-	dumpBytecode2(com,code);
-	puts("Done Optimize");
-	#endif
-	
-	return code;
-}
+*/

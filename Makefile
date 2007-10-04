@@ -189,7 +189,7 @@ statmsg:
 -include $(DDEPS)
 
 #gcc manual says computed goto's may perform better with -fno-gcse
-src/interp/run.o: src/interp/run.c config.mak Makefile headers
+src/interp/run.o: src/interp/run.c config.mak Makefile
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
@@ -219,7 +219,7 @@ $(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
 	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/lex.yy.ddp
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
-%.o: %.c config.mak Makefile headers
+%.o: %.c config.mak Makefile
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 

@@ -11,9 +11,14 @@ static const char *test2 =
 { \n\
    global int foo; \n\
    int x,y,z;\n\
+   float a,b,c;\n\
 }\n\
  cubbyhole init {\n\
- 	 foo = 1;\n\
+ 	test_reset(); foo = 1;\n\
+	b=c=(float)foo;testeqf(1.0,b); testeqf(1.0,c);\n\
+	a = 2.0;\n\
+	x = y = (int)(c=a); testeqf(2.0,c);testeqi(2,x);testeqi(2,y);\n\
+	test_summary();\n\
  }\
  cubby foo { \n\
  	x=0;\n\

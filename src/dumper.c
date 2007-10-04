@@ -31,50 +31,23 @@
 
 #include "intern/gen.h"
 #include "intern/bytecode.h"
+#include "interp/bcstrings.h"
+#include "intern/compartment.h"
 
-#ifdef DEBUG
-#define DUMP(com,id) dumpBytecode((com), (id));
-#else
-#define DUMP(com,id) ;
-#endif
+static void dmp(compart *com, int id)
+{	
+	bytecode *pc= (bytecode *)(com->cubbys[id].code); // init program counter
+	
+	while(pc->code != BC_END && pc->code != BC_HLT && pc->code != BC_DBG)
+	{
+		long int tractmp = ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode);
+		printf("%4ld: %5s  sa=%- 8d  a1= %u\n",
+			tractmp,tractbl[pc->code],pc->sa,pc->a1);
+		pc++;
+	}
+}
 
 const char *src =
-"declare {int a,b,c,d; int stat;}\n\
- cubby foo {\n\
- 	a=b=c=0;\n\
- 	d=3;\n\
- 	if(a < 1)\n\
- 	{\n\
- 		sqrt(d);\n\
- 	} else\n\
- 		pow(d,2);\n\
- 	while(a < 3) {\n\
- 		if(b<a)\n\
- 			c=a + b;\n\
- 		else\n\
- 			c= a - b;\n\
- 		a = a + 1;\n\
- 	}\n\
- }\n\
- cubby pp { a=2; testeqi(2,a++);}\n\
- cubby bar { \n\
- 	    a=8;\n\
-	while ( 1+a) {\n\
-        a = a++;\n\
-        if(a-16) continue;\n\
-		break;\n\
-	}\n\
- }\n\
- cubby baz {\n\
- 	a=5;\n\
-	while (a) {\n\
-    	a = a - 1;\n\
-    	b=3;\n\
-    	while(b) b = b-1;\n\
-	}\n\
-}";
-
-char *src2=
 "declare {int a,b,c,d; int stat; float xx;}\n\
 cubby foo {\n\
 	test_reset();\n\
@@ -90,14 +63,13 @@ cubby foo {\n\
 
 int main()
 {
-	VM *vm=createVM();
+	VM *vm = createVM();
 	if(vm == NULL) { fprintf(stderr,"Error initializing compsl"); exit(1);}
 	
 	addPrintLibToVm(vm);
 	addDebugLibToVm(vm);
 	
-	compart *com=createComp(vm);
-	compart *com2 = createComp(vm);
+	compart *com = createComp(vm);
 	int compret; // return code of compiler
 	if(com == NULL)
 	{
@@ -107,52 +79,10 @@ int main()
 	
 	
 	//compret = fileCompile("src/test/decls.csl",com2);
-	compret = stringCompile(src2,com2);
-	int16_t cubbyid2 = getCubbyID(com2,"foo");
-	dumpBytecode(com2,cubbyid2);
-	
-	compret = stringCompile(src, com);
-	
+	compret = stringCompile(src,com);
 	int16_t cubbyid = getCubbyID(com,"foo");
-	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
-	dumpBytecode(com,cubbyid);
+	dmp(com,cubbyid);
 	
-	printf("\nSecond\n\n");
-	
-	cubbyid = getCubbyID(com,"bar");
-	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
-	dumpBytecode(com,cubbyid);
-	
-	printf("\nThird\n\n");
-	
-	cubbyid = getCubbyID(com,"baz");
-	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
-	dumpBytecode(com,cubbyid);
-	
-	printf("\nINC\n\n");
-	
-	cubbyid = getCubbyID(com,"pp");
-	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
-	dumpBytecode(com,cubbyid);
-	
-	
-//	setvbuf(stdout,NULL,_IONBF,0);
-//	runCubbyhole(com,cubbyid);
-	
-	destroyComp(com);
-//	printf("Tring flow-control");
-//	com = createComp(vm);
-//	if(com == NULL)
-//	{
-//		fprintf(stderr,"Error initializing compsl");
-//		exit(1);
-//	}
-//	compret = fileCompile("src/test/flow.csl", vm, com);
-//	
-//	cubbyid = getCubbyID(com,"init");
-//	if(cubbyid < 0) {fprintf(stderr,"WTF?"); exit(1); }
-//	dumpBytecode(com,cubbyid);
-//	runCubbyhole(com,cubbyid);
-	
+	destroyComp(com);	
 	destroyVM(vm);
 }

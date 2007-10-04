@@ -1,54 +1,54 @@
 NOOP: {0,0,NORMAL_BC}: do nothing
 # stack operations 
-PUSH: {0,1,NORMAL_BC}: push local var
-PSHT: {0,1,NORMAL_BC}: push temp register
-APUSH: {1,1,NORMAL_BC}: push element from local array (index on stack)
-CPUSH: {0,1,NORMAL_BC}: push constant
-GPSH: {0,1,NORMAL_BC}: same as PUSH but for global
-GAPS: {1,1,NORMAL_BC}: samp as APUSH but for global
+PUSH: {0,1,PUSH_BC}: push local var
+PSHT: {0,1,PUSH_BC}: push temp register
+APUSH: {1,1,PUSH_BC}: push element from local array (index on stack)
+CPUSH: {0,1,PUSH_BC}: push constant
+GPSH: {0,1,PUSH_BC}: same as PUSH but for global
+GAPS: {1,1,PUSH_BC}: samp as APUSH but for global
 
-POP: {1,0,NORMAL_BC}: pop to local var
-POPT: {1,0,NORMAL_BC}: pop to local temp register
-APOP: {2,0,NORMAL_BC}: pop into local array (index on top of stack, value is next)
-DPOP: {1,0,NORMAL_BC}: pop and discard value
-GPOP: {1,0,NORMAL_BC}: same as POP but for global
-GAPP: {2,0,NORMAL_BC}: same as APOP but for global
+POP: {1,0,POP_BC}: pop to local var
+POPT: {1,0,POP_BC}: pop to local temp register
+APOP: {2,0,POP_BC}: pop into local array (index on top of stack, value is next)
+DPOP: {1,0,POP_BC}: pop and discard value
+GPOP: {1,0,POP_BC}: same as POP but for global
+GAPP: {2,0,POP_BC}: same as APOP but for global
 
-DUP: {1,2,NORMAL_BC}: duplicate top of stack
+DUP: {1,2,OTHER_BC}: duplicate top of stack
 
 CALL: {0,1,CALL_BC}: call native (native ID in a1, args on stack, ltr w/rightmost @ top)
 # arithmetic
-ADD: {2,1,NORMAL_BC}: add top 2 stack elements (integer)
-SUB: {2,1,NORMAL_BC}: subtract top 2 stack elements b = pop; a = pop; push a - b;
-MUL: {2,1,NORMAL_BC}: multiply top 2 stack elements 
-DIV: {2,1,NORMAL_BC}: divide top 2 stack elements b = pop; a = pop; push a / b;
-LE: {2,1,NORMAL_BC}: <=
-LS: {2,1,NORMAL_BC}: <
-EQ: {2,1,NORMAL_BC}: ==
-NE: {2,1,NORMAL_BC}: !=
-GR: {2,1,NORMAL_BC}: >
-GE: {2,1,NORMAL_BC}: >=
-MOD: {2,1,NORMAL_BC}: modulus of top 2 stack b = pop; a = pop; push a % b;
-FMOD: {2,1,NORMAL_BC}: same as MOD only for float
-AND: {2,1,NORMAL_BC}: boolean and of top two stack elements
-OR: {2,1,NORMAL_BC}: boolean or of top two stack elements
-NOT: {1,1,NORMAL_BC}: boolean not of top stack element
-BAND: {2,1,NORMAL_BC}: bitwise and of top two stack elements
-BOR: {2,1,NORMAL_BC}: bitwise or of top two stack elements
-BXOR: {2,1,NORMAL_BC}: bitwise xor of top two stack elements
-BNOT: {1,1,NORMAL_BC}: bitwise not of top stack element
-SFTL: {2,1,NORMAL_BC}: shift left, top of stack is shift, next is value
-SFTR: {2,1,NORMAL_BC}: shift right, top of stack is shift, next is value
-FADD: {2,1,NORMAL_BC}: same as ADD but for float
-FSUB: {2,1,NORMAL_BC}: same as SUB but for float
-FMUL: {2,1,NORMAL_BC}: same as MUL but for float
-FDIV: {2,1,NORMAL_BC}: same as DIV but for float
-FLE: {2,1,NORMAL_BC}: <=
-FL: {2,1,NORMAL_BC}: <
-FEQ: {2,1,NORMAL_BC}: ==
-FNE: {2,1,NORMAL_BC}: !=
-FGR: {2,1,NORMAL_BC}: >
-FGE: {2,1,NORMAL_BC}: >=
+ADD: {2,1,ARITH_BC}: add top 2 stack elements (integer)
+SUB: {2,1,ARITH_BC}: subtract top 2 stack elements b = pop; a = pop; push a - b;
+MUL: {2,1,ARITH_BC}: multiply top 2 stack elements 
+DIV: {2,1,ARITH_BC}: divide top 2 stack elements b = pop; a = pop; push a / b;
+LE: {2,1,ARITH_BC}: <=
+LS: {2,1,ARITH_BC}: <
+EQ: {2,1,ARITH_BC}: ==
+NE: {2,1,ARITH_BC}: !=
+GR: {2,1,ARITH_BC}: >
+GE: {2,1,ARITH_BC}: >=
+MOD: {2,1,ARITH_BC}: modulus of top 2 stack b = pop; a = pop; push a % b;
+FMOD: {2,1,ARITH_BC}: same as MOD only for float
+AND: {2,1,ARITH_BC}: boolean and of top two stack elements
+OR: {2,1,ARITH_BC}: boolean or of top two stack elements
+NOT: {1,1,ARITH_BC}: boolean not of top stack element
+BAND: {2,1,ARITH_BC}: bitwise and of top two stack elements
+BOR: {2,1,ARITH_BC}: bitwise or of top two stack elements
+BXOR: {2,1,ARITH_BC}: bitwise xor of top two stack elements
+BNOT: {1,1,ARITH_BC}: bitwise not of top stack element
+SFTL: {2,1,ARITH_BC}: shift left, top of stack is shift, next is value
+SFTR: {2,1,ARITH_BC}: shift right, top of stack is shift, next is value
+FADD: {2,1,ARITH_BC}: same as ADD but for float
+FSUB: {2,1,ARITH_BC}: same as SUB but for float
+FMUL: {2,1,ARITH_BC}: same as MUL but for float
+FDIV: {2,1,ARITH_BC}: same as DIV but for float
+FLE: {2,1,ARITH_BC}: <=
+FL: {2,1,ARITH_BC}: <
+FEQ: {2,1,ARITH_BC}: ==
+FNE: {2,1,ARITH_BC}: !=
+FGR: {2,1,ARITH_BC}: >
+FGE: {2,1,ARITH_BC}: >=
 #Jumps
 JMP: {0,0,JUMP_BC}: jump to offeset in sa from current positon
 JMZ: {1,0,JUMP_BC}: if top of stack is zero, jump, always pop and discard top of stack

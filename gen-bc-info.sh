@@ -17,7 +17,7 @@ typedef struct {
 	//net effect on stack is produces - consumes
 	
 	enum _bc_class_t { //what kind of bytecode is it?
-		NORMAL_BC, CALL_BC, JUMP_BC, BUILTIN_BC, END_BC, OTHER_BC, INVALID_BC
+		NORMAL_BC, PUSH_BC, POP_BC, ARITH_BC, CALL_BC, JUMP_BC, BUILTIN_BC, END_BC, OTHER_BC, INVALID_BC
 	} bc_class;
 }bc_info;
 

@@ -56,9 +56,13 @@ int main()
 	  
 	  com[i] = createComp(veem);
 	  ret = fileCompile(files[i], com[i]);
+	  fflush(stdout);
+	  fflush(stderr);
 	  if(ret==0){
 	    printf("\tCompile: OK, Run: ");
 	    runCubbyhole(com[i], 0); 
+	    fflush(stdout);
+	    fflush(stderr);
 	    if(i==0)
 	      printf("OK\n");
 	  } else {
@@ -68,7 +72,7 @@ int main()
 	}
 	destroyVM(veem);
 	
-	puts("Beggining error testing");
+	puts("Beginning error testing");
 	comp_out=fopen(BIT_BUCKET,"w");
 	
 	VM *evm = createVM();
@@ -87,16 +91,20 @@ int main()
 		ecom = createComp(evm);
 		if(ecom  == NULL) 
 		{
-			printf("Error creating compartment");
-			return 1;
+		  printf("Error creating compartment");
+		  return 1;
 		}
 	  	ret = fileCompile(err_files[i], ecom);
+		fflush(stdout);
+		fflush(stderr);
 	  	if(ret==0){
-	    	printf("\tFAIL\n");
-	    	return 2;
+		  printf("\tFAIL\n");
+		  return 2;
 	  	} else {
-	    	printf("\tPASS\n");
+		  printf("\tPASS\n");
 	  	}
+		fflush(stdout);
+		fflush(stderr);
 	  	destroyComp(ecom);
 	  	ecom = NULL;
 	}

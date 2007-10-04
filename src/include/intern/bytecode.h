@@ -66,6 +66,7 @@ COMPSL_INTERN typedef enum  {
 	BC_DEC,
 	BC_FINC,
 	BC_FDEC,
+	BC_CHOOSE,
 	BC_ABS,
 	BC_ABSF,
 	BC_SIN,

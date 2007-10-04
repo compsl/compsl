@@ -368,6 +368,10 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		if((--sp)->i) pc += pc->sa - 1; // compensate for pc++ at top
  #endif
  		COMPSL_END_INST;
+ 	CHOOSE:
+ 		sp-=2;
+ 		*(sp-1) = (sp-1)->i?*sp:*(sp+1);
+ 		COMPSL_END_INST;
  	FLIN: 
  		(sp-1)->i = (int)((sp-1)->f);
  		COMPSL_END_INST;

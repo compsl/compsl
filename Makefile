@@ -149,6 +149,9 @@ package: distclean headers
 bin/dumper: src/dumper.o $(OBJECTS)
 	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
+bin/runner: src/runner.o $(OBJECTS)
+	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
+
 bin/perf-test: src/perf-test.o $(OBJECTS)
 	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 

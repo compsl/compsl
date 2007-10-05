@@ -4,6 +4,7 @@ PUSH: {0,1,PUSH_BC}: push local var
 PSHT: {0,1,PUSH_BC}: push temp register
 APUSH: {1,1,PUSH_BC}: push element from local array (index on stack)
 CPUSH: {0,1,PUSH_BC}: push constant
+#PUSHI: {0,1,PUSH_BC}: push immediate (ish)
 GPSH: {0,1,PUSH_BC}: same as PUSH but for global
 GAPS: {1,1,PUSH_BC}: samp as APUSH but for global
 

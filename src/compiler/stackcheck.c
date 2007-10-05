@@ -38,6 +38,57 @@
  * 
  * return value: stack offest at end of code.
  */
+int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
+{
+	int sp = 0;
+	bool badStack=false;
+	
+	for(int i = 0; i < codelen && i > -1; i++)
+	{
+		if(BC_NOOP > code[i].code || code[i].code > BC_DBG)
+			internalCompileError("BAD OPCODE found while checking stack");
+		bc_info *info = &(bcinfos[code[i].code]);
+		
+		sp -= info->consumes;
+		
+		if(info->bc_class == CALL_BC)
+		{ // function call
+			if(code[i].a1 >= vm->ncnt) {
+				fprintf(stderr,"BAD NATIVE CALL! instruction %d of expression on line %d", i, lineNo);
+				internalCompileError("BAD NATIVE CALL GENERATED!");
+			}
+			sp -= vm->natives[code[i].a1].numParam;
+		}
+		else if(code[i].code == BC_JMP)
+		{ // gotta follow it!
+			i += code[i].sa -1;
+			return sp;
+		}
+		
+		if(sp < 0) {
+			badStack = true;
+			fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", 
+				i, lineNo, sp);
+		}
+		
+		sp += info->produces;
+		
+		if(sp >= VM_STACK_SIZE)
+		{
+			badStack = true;
+			fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d\n", 
+				i, lineNo, sp);
+		}
+	}
+	if(badStack)
+	{
+		dumpBytecode2(com,code);
+		internalCompileError("Stack bounds exceeded");
+	}
+	return sp;
+}
+
+
 //int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 //{
 //	int sp = 0;
@@ -133,53 +184,3 @@
 //	return sp;
 //}
 //
-
-int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
-{
-	int sp = 0;
-	bool badStack=false;
-	
-	for(int i = 0; i < codelen && i > -1; i++)
-	{
-		if(BC_NOOP > code[i].code || code[i].code > BC_DBG)
-			internalCompileError("BAD OPCODE found while checking stack");
-		bc_info *info = &(bcinfos[code[i].code]);
-		
-		sp -= info->consumes;
-		
-		if(info->bc_class == CALL_BC)
-		{ // function call
-			if(code[i].a1 >= vm->ncnt) {
-				fprintf(stderr,"BAD NATIVE CALL! instruction %d of expression on line %d", i, lineNo);
-				internalCompileError("BAD NATIVE CALL GENERATED!");
-			}
-			sp -= vm->natives[code[i].a1].numParam;
-		}
-		else if(code[i].code == BC_JMP)
-		{ // gotta follow it!
-			i += code[i].sa -1;
-			return sp;
-		}
-		
-		if(sp < 0) {
-			badStack = true;
-			fprintf(stderr,"Stack underflow at %d instrunctions into expression on line %d, underflow by %d\n", 
-				i, lineNo, sp);
-		}
-		
-		sp += info->produces;
-		
-		if(sp >= VM_STACK_SIZE)
-		{
-			badStack = true;
-			fprintf(stderr,"Stack overflow at %d instrunctions into expression on line %d, overflow by %d\n", 
-				i, lineNo, sp);
-		}
-	}
-	if(badStack)
-	{
-		dumpBytecode2(com,code);
-		internalCompileError("Stack bounds exceeded");
-	}
-	return sp;
-}

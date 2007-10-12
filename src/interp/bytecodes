@@ -85,7 +85,8 @@ MAX: {2,1,BUILTIN_BC}:
 MINF: {2,1,BUILTIN_BC}:
 MAXF: {2,1,BUILTIN_BC}:
 HYPOT: {2,1,BUILTIN_BC}:
-FEQUAL: {2,1,BUILTIN_BC}:
+FEQUAL: {2,1,BUILTIN_BC}: equality within a certain relative error
+FMA: {3,1, BUILTIN_BC}: floating point fused multiply-add, unlike a real fma this MAY round if there is no fast fma available
 #misc
 PYES: {0,0,BUILTIN_BC}:
 NONO: {0,0,OTHER_BC}:

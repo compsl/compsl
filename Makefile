@@ -15,7 +15,7 @@
 # versions of the static lib, one with debug stuff and not optimization, and the other
 # with no debug info and -O2
 
-COMPSL_VERSION := 0.2.2
+COMPSL_VERSION := 0.2.3
 
 .SUFFIXES:
 
@@ -55,7 +55,7 @@ TESTSRCS := $(addprefix src/test/test-,interp-base.c interp-jumps.c \
 
 TESTOBJS := $(TESTSRCS:.c=.o)
 
-OTHERSRC := src/dumper.c src/perf-test.c
+OTHERSRC := src/dumper.c src/perf-test.c src/runner.c
 OTHEROBJ := $(OTHERSRC:.c=.o)
 
 DEPS := $(SOURCES:.c=.dep) $(OTHERSRC:.c=.dep) $(TESTSRCS:.c=.dep)
@@ -108,7 +108,7 @@ clean:
 	@-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(DEPS) $(DDEPS)
 	-rm -f -- $(DYN_LIB_OUT) $(STATIC_LIB_OUT) $(TEST_EXES:=*)
 	-rm -f -- $(CMPATH)/compsl.output $(CMPATH)/compsl.tab.h 
-	-rm -f -- bin/perf-test* bin/dumper* 
+	-rm -f -- bin/perf-test* bin/dumper* bin/runner*
 	-rm -f -- $(DEFFILE) $(LIBFILE) $(IMPLIB)
 	-rm -rf   doc/html doc/latex doc/man
 	-rm -f compsl.tab.h
@@ -191,11 +191,6 @@ statmsg:
 -include $(DEPS)
 -include $(DDEPS)
 
-#gcc manual says computed goto's may perform better with -fno-gcse
-src/interp/run.o: src/interp/run.c config.mak Makefile
-	@echo CC $<
-	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
-
 src/include/interp/bcstrings.h: src/interp/bytecodes gen-bcstrings.sh
 	@echo GEN $@
 	@./gen-bcstrings.sh $< > $@
@@ -221,6 +216,11 @@ $(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
 	@echo CC $<
 	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/lex.yy.ddp
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
+
+#gcc manual says computed goto's may perform better with -fno-gcse
+src/interp/run.o: src/interp/run.c config.mak Makefile
+	@echo CC $<
+	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -falign-labels -Wno-unused-label $< -o $@
 
 %.o: %.c config.mak Makefile
 	@echo CC $<

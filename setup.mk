@@ -90,9 +90,10 @@ else
 endif
 
 ifeq ($(OPTIMIZE),FULL)
-	OPTFLAGS += -O3 -frename-registers 
-	OPTFLAGS += -funit-at-a-time -funroll-loops -finline-functions -funswitch-loops
+	OPTFLAGS += -O3 -frename-registers -fmodulo-sched 
+	OPTFLAGS += -funroll-loops -finline-functions -funswitch-loops
 	OPTFLAGS += -fsched-spec-load -maccumulate-outgoing-args
+	OPTFLAGS += -fsched2-use-superblocks
 	OPTFLAGS += -minline-all-stringops -fomit-frame-pointer
 	#OPTFLAGS += -finline-limit=2000
 	OPTFLAGS += -fno-stack-limit
@@ -101,9 +102,9 @@ ifeq ($(OPTIMIZE),FULL)
 	# TODO: make sure none of these breaks the library for linking....
 	OPTFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
 	
-	OPTFLAGS += -fgcse-sm -fgcse-las -fgcse-after-reload
-	OPTFLAGS += -ftree-vectorize
-	OPTFLAGS += -ftracer
+	OPTFLAGS += -fgcse-sm -fgcse-las
+	OPTFLAGS += -ftree-vectorize -ftree-loop-linear -ftree-loop-im -fivopts
+	OPTFLAGS += -ftracer -fsched2-use-traces -fsplit-ivs-in-unroller
 	OPTFLAGS += -fvariable-expansion-in-unroller
 	#OPTFLAGS += -fprefetch-loop-arrays
 	OPTFLAGS += -freorder-blocks-and-partition
@@ -124,13 +125,13 @@ else
 endif
 
 MATH_FLAGS =-fsingle-precision-constant -fno-math-errno
-MATH_FLAGS += -fno-trapping-math -ffast-math
+MATH_FLAGS += -fno-trapping-math -ffast-math 
 
 APPSTATMSG += IEEE compliant floating point is
 ifeq ($(IEEE_FLOATS),yes)
 	APPSTATMSG += ON\\n
 else
-	MATH_FLAGS += -ffinite-math-only -mno-ieee-fp
+	MATH_FLAGS += -ffinite-math-only -mno-ieee-fp -funsafe-math-optimizations
 	APPSTATMSG += OFF\\n
 endif
 

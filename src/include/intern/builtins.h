@@ -1,4 +1,4 @@
-// $Id$
+// $Id:builtins.h 541 2007-10-01 01:19:09Z tomj $
 
 /*
     CompSL scripting language 
@@ -60,6 +60,7 @@ static const builtin builtins[] =
 	{.name = "maxf", .ac=2, .isFloat=true, .code=BC_MAXF},
 	{.name = "hypot", .ac=2, .isFloat=true, .code=BC_HYPOT},
 	{.name = "equalf", .ac=2, .isFloat=true, .code=BC_FEQUAL},
+	{.name = "fma", .ac=3, .isFloat=true, .code=BC_FMA},
 	{.name = "yes", .ac=0, .isFloat=false, .code=BC_PYES}
 };
 #endif /*BULTINS_H_*/

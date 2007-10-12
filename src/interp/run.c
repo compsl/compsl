@@ -552,6 +552,14 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
 		(sp - 1)->i = (((7+diff)|(7-diff)) >= 0);
 	}
  		COMPSL_END_INST;
+ 	FMA:
+ 		sp-=2;
+#ifdef FP_FAST_FMAF
+ 		(sp-1)->f = fmaf((sp-1)->f, sp->f, (sp+1)->f);
+#else
+ 		(sp-1)->f = (sp-1)->f * sp->f + (sp+1)->f;
+#endif
+ 		COMPSL_END_INST;
 //misc	
  	PYES:
  		if(pc->a1) {puts("YES");}

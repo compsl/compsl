@@ -121,6 +121,9 @@ docs: $(DOXYFILE)
 
 headers: $(GEN_HEADERS)
 
+clean-headers:
+	rm -f $(GEN_HEADERS)
+
 help: 
 	@printf "\nMakefile for CompSL\n"
 	@printf "***************************************************\n"
@@ -191,19 +194,19 @@ statmsg:
 -include $(DEPS)
 -include $(DDEPS)
 
-src/include/interp/bcstrings.h: src/interp/bytecodes gen-bcstrings.sh
+src/include/interp/bcstrings.h: src/interp/bytecodes gen-bcstrings.sh Makefile
 	@echo GEN $@
 	@./gen-bcstrings.sh $< > $@
 
-src/include/interp/jumptbl.h: src/interp/bytecodes gen-jumptbl.sh
+src/include/interp/jumptbl.h: src/interp/bytecodes gen-jumptbl.sh Makefile
 	@echo GEN $@
 	@./gen-jumptbl.sh $< > $@
 
-src/include/compiler/bc_info.h: src/interp/bytecodes gen-bc-info.sh
+src/include/compiler/bc_info.h: src/interp/bytecodes gen-bc-info.sh Makefile
 	@echo GEN $@
 	@./gen-bc-info.sh $< > $@
 
-src/include/intern/bytecode.h: src/interp/bytecodes gen-bytecodeh.sh
+src/include/intern/bytecode.h: src/interp/bytecodes gen-bytecodeh.sh Makefile
 	@echo GEN $@
 	@./gen-bytecodeh.sh $< > $@
 
@@ -226,7 +229,7 @@ src/interp/run.o: src/interp/run.c config.mak Makefile
 	@echo CC $<
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 
-%.dep: %.c config.mak Makefile
+%.dep: %.c config.mak Makefile $(GEN_HEADERS)
 	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< -MF $*.dep
 
 ifeq ($(TARGET_WIN32),yes)

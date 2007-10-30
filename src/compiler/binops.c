@@ -38,7 +38,7 @@
  * This happens near the end of b -> Caller assumes we won't write the scretch register between b
  * and the end of the returned bytecode string. 
  */
-expression* bin_bc_op(int op,expression* a, expression* b) {
+COMPSL_INTERN COMPSL_NONNULL expression* bin_bc_op(int op,expression* a, expression* b) {
   assert((a!=(expression*)0) && (b!=(expression*)0));
   bool isFloat;
   int alen,blen, endi;
@@ -150,7 +150,7 @@ expression* bin_bc_op(int op,expression* a, expression* b) {
 }
 
 // OPTIMIZE TODO: add more operators in bin_lit_op - would precalculate more stuff at compile time 
-expression* bin_lit_op(int op, expression* a, expression* b) {
+COMPSL_INTERN COMPSL_NONNULL expression* bin_lit_op(int op, expression* a, expression* b) {
   if(!a->isFloat && !b->isFloat) {
     int n1 = a->val.in;
     int n2 = b->val.in;

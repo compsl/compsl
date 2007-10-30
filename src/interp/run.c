@@ -83,7 +83,7 @@ double genrand_real1(void);
 #endif
 
 #ifdef DEBUG
-void dumpBytecode(compart *com, int id)
+COMPSL_INTERN COMPSL_NONNULL void dumpBytecode(compart *com, int id)
 {
 	//var *lvs = com->vt.vars;
 	//var *lcs = com->cons;
@@ -102,7 +102,7 @@ void dumpBytecode(compart *com, int id)
 	}
 }
 
-void dumpBytecode2(compart *com, bytecode *code)
+COMPSL_INTERN COMPSL_NONNULL void dumpBytecode2(compart *com, bytecode *code)
 {	
 	bytecode *pc= code;
 	while(pc->code != BC_END && pc->code != BC_HLT && pc->code != BC_DBG && pc->code != BC_NONO)

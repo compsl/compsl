@@ -24,7 +24,7 @@
 #include <string.h>
 #include "compiler/interncomp.h"
 
-COMPSL_INTERN COMPSL_NONNULL expression *assignVar(const char *name, expression *ex) {
+COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE expression *assignVar(const char *name, expression *ex) {
   return assignArray(name, NULL, ex);
 }
 
@@ -103,7 +103,7 @@ COMPSL_INTERN __attribute__((__nonnull__(1,3))) expression *assignArray(const ch
 }
 
 
-COMPSL_INTERN COMPSL_NONNULL expression *readVar(const char* name) {
+COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE expression *readVar(const char* name) {
   return readArray(name, NULL);
 }
 
@@ -166,7 +166,7 @@ COMPSL_INTERN __attribute__((__nonnull__(1))) expression *readArray(const char* 
 }
 
 
-COMPSL_INTERN COMPSL_NONNULL expression *incVar(const char *name, bool plus, bool post) {
+COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE expression *incVar(const char *name, bool plus, bool post) {
   return incArray(name, NULL, plus, post);
 }
 

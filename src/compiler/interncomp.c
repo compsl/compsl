@@ -40,14 +40,14 @@ COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode* bc) {
 }
 
 
-COMPSL_INTERN COMPSL_NONNULL void expr_ensureLit(expression* exp) {
+COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_ensureLit(expression* exp) {
   if(exp->isLiteral) {
     exp->val.bcode = expr_toBc(exp);
     exp->isLiteral = false;
   }
 }
 
-COMPSL_INTERN COMPSL_NONNULL void expr_autocast(bool toFloat,expression *e) {
+COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_autocast(bool toFloat,expression *e) {
 
   if(toFloat == e->isFloat) {
     // no cast needed
@@ -98,7 +98,7 @@ COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp) {
 }
 
 
-COMPSL_INTERN COMPSL_NONNULL void expr_free(expression* expr) {
+COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_free(expression* expr) {
   if(!expr->isLiteral) {
     assert(expr->val.bcode != NULL);      
     free(expr->val.bcode);

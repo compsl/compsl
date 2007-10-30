@@ -64,15 +64,17 @@
 #if (__GNUC__ > 3)
 #define COMPSL_PURE __attribute__ ((__pure__))
 #define COMPSL_CONST_FUNC __attribute__ ((__const__))
-#define COMPSL_INLINE __attribute__ ((__inline__))
-#define COMPSL_ALWAYS_INLINE __attribute__ ((__always_inline__))
+#ifdef __GNUC_GNU_INLINE__
+#define COMPSL_INLINE inline __attribute__((__gnu_inline__,__always_inline__))
+#else
+#define COMPSL_INLINE inline __attribute__((__always_inline__))
+#endif
 #define COMPSL_NONNULL __attribute__((__nonnull__))
 #define COMPSL_PURE_NONNULL __attribute__((__pure__,__nonnull__))
 #else
 #define COMPSL_PURE 
 #define COMPSL_CONST_FUNC
 #define COMPSL_INLINE
-#define COMPSL_ALWAYS_INLINE
 #define COMPSL_NONNULL
 #endif
 

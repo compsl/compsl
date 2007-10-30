@@ -64,9 +64,9 @@ struct _COMPART_t
  * pointed at by code, and named name
  * return true on success, false otherwise
  */
-COMPSL_INTERN int com_addCubby(compart *, void *code, const char *name);
-COMPSL_LOCAL void com_prStats(compart *);
-COMPSL_INTERN int16_t com_addConst(compart *com, intfloat val);
+COMPSL_INTERN int com_addCubby(compart *, void *code, const char *name) COMPSL_NONNULL;
+COMPSL_LOCAL void com_prStats(compart *) COMPSL_NONNULL;
+COMPSL_INTERN int16_t com_addConst(compart *com, intfloat val) COMPSL_NONNULL;
 
 #ifdef __cplusplus
 }

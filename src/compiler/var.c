@@ -24,13 +24,13 @@
 #include <string.h>
 #include "compiler/interncomp.h"
 
-expression *assignVar(const char *name, expression *ex) {
+COMPSL_INTERN COMPSL_NONNULL expression *assignVar(const char *name, expression *ex) {
   return assignArray(name, NULL, ex);
 }
 
 
 // TODO: free mem
-expression *assignArray(const char *name, bytecode *arrayIndex, expression *ex) {
+COMPSL_INTERN __attribute__((__nonnull__(1,3))) expression *assignArray(const char *name, bytecode *arrayIndex, expression *ex) {
   int len;
   
   symbolinfo var = searchSym(name,ccompart);
@@ -103,11 +103,11 @@ expression *assignArray(const char *name, bytecode *arrayIndex, expression *ex) 
 }
 
 
-expression *readVar(const char* name) {
+COMPSL_INTERN COMPSL_NONNULL expression *readVar(const char* name) {
   return readArray(name, NULL);
 }
 
-expression *readArray(const char* name, bytecode *arrayIndex) {
+COMPSL_INTERN __attribute__((__nonnull__(1))) expression *readArray(const char* name, bytecode *arrayIndex) {
   symbolinfo var = searchSym(name,ccompart);
   
   if(var.id<0) {
@@ -166,11 +166,11 @@ expression *readArray(const char* name, bytecode *arrayIndex) {
 }
 
 
-expression *incVar(const char *name, bool plus, bool post) {
+COMPSL_INTERN COMPSL_NONNULL expression *incVar(const char *name, bool plus, bool post) {
   return incArray(name, NULL, plus, post);
 }
 
-expression *incArray(const char *name, bytecode *arrayIndex, bool plus, bool post) {
+COMPSL_INTERN __attribute__((__nonnull__(1))) expression *incArray(const char *name, bytecode *arrayIndex, bool plus, bool post) {
   expression *ex = malloc(sizeof(expression));
   bytecode *bc;
   symbolinfo var = searchSym(name,ccompart);

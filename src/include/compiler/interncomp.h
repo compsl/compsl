@@ -66,34 +66,34 @@ typedef struct _expression_t {
 
 
 // binops.c
-expression* bin_op(int op,expression* a, expression* b);
+COMPSL_INTERN COMPSL_NONNULL expression* bin_op(int op,expression* a, expression* b);
 
 // functions.c
-expression* function_call(const char* name, list *params);
+COMPSL_INTERN COMPSL_NONNULL expression* function_call(const char* name, list *params);
 
 // interncomp.c
-bytecode* expr_toBc(expression *exp);
-void expr_free(expression* exp);
-void expr_ensureLit(expression* exp);
-void expr_autocast(bool toFloat,expression *e);
-int bc_len(bytecode *);
+COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp);
+COMPSL_INTERN COMPSL_NONNULL void expr_free(expression* exp);
+COMPSL_INTERN COMPSL_NONNULL void expr_ensureLit(expression* exp);
+COMPSL_INTERN COMPSL_NONNULL void expr_autocast(bool toFloat,expression *e);
+COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode *);
 
 // var.c
-expression *assignVar(const char *str, expression *e);
-expression *assignArray(const char *str, bytecode *arrayIndex, expression *e);
-expression *readVar(const char* name);
-expression *readArray(const char* name, bytecode *arrayIndex);
-expression *incVar(const char *name, bool plus, bool post);
-expression *incArray(const char *name, bytecode *arIndex, bool plus, bool post);
+COMPSL_INTERN COMPSL_NONNULL expression *assignVar(const char *str, expression *e);
+COMPSL_INTERN __attribute__((__nonnull__(1,3))) expression *assignArray(const char *str, bytecode *arrayIndex, expression *e);
+COMPSL_INTERN COMPSL_NONNULL expression *readVar(const char* name);
+COMPSL_INTERN __attribute__((__nonnull__(1))) expression *readArray(const char* name, bytecode *arrayIndex);
+COMPSL_INTERN COMPSL_NONNULL expression *incVar(const char *name, bool plus, bool post);
+COMPSL_INTERN __attribute__((__nonnull__(1))) expression *incArray(const char *name, bytecode *arIndex, bool plus, bool post);
 
 // control.c
-bytecode *ctrlWhile(expression *cond, bytecode *block);
-bytecode *ctrlIf(expression *cond, bytecode *block, bytecode *elseBlock);
+COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *cond, bytecode *block);
+COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *cond, bytecode *block, bytecode *elseBlock);
 
 // err.c
-void internalCompileError(const char* str);
-void compileError(const char *str);
-void compileWarning(const char *str);
+COMPSL_INTERN COMPSL_NONNULL void internalCompileError(const char* str);
+COMPSL_INTERN COMPSL_NONNULL void compileError(const char *str);
+COMPSL_INTERN COMPSL_NONNULL void compileWarning(const char *str);
 
 
 /* stackcheck: 
@@ -106,8 +106,8 @@ void compileWarning(const char *str);
  * 
  * return value: stack offest at end of code.
  */
-int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com);
+COMPSL_INTERN COMPSL_PURE_NONNULL int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com);
 
-bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com);
+COMPSL_INTERN COMPSL_NONNULL bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com);
 
 #endif //INTERNCOMP_H_

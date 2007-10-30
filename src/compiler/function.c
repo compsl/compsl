@@ -26,7 +26,7 @@
 
 #include "compiler/interncomp.h"
 
-expression *function_call(const char* name, list *params) {
+COMPSL_INTERN COMPSL_NONNULL expression *function_call(const char* name, list *params) {
   expression *ex = malloc(sizeof(expression));
   if(ex == NULL) internalCompileError("Out of Memory");
   bytecode *mcode=NULL;

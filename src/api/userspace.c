@@ -31,7 +31,7 @@ int testCnt=1;
 int failCnt=0;
 
 
-COMPSL_INTERN intfloat compsl_testEqf(var *args) { 
+COMPSL_INTERN_NOREGP intfloat compsl_testEqf(var *args) { 
 
   if(!var_testEqf(&args[0],&args[1])) {
     printf("TEST #%i FAILED (%f,%f)\n",testCnt, args[0].v.f, args[1].v.f); 
@@ -41,7 +41,7 @@ COMPSL_INTERN intfloat compsl_testEqf(var *args) {
   return (intfloat)0;
 }
 
-COMPSL_INTERN intfloat compsl_testEqi(var *args) { 
+COMPSL_INTERN_NOREGP intfloat compsl_testEqi(var *args) { 
 
   if(!var_testEqi(&args[0],&args[1])) {
     printf("TEST #%i FAILED (%i,%i)\n",testCnt, args[0].v.i,args[1].v.i); 
@@ -51,13 +51,13 @@ COMPSL_INTERN intfloat compsl_testEqi(var *args) {
   return (intfloat)0;
 }
 
-COMPSL_INTERN intfloat compsl_testReset(var *args) { 
+COMPSL_INTERN_NOREGP intfloat compsl_testReset(var *args) { 
   testCnt=1; 
   failCnt=0;
   return (intfloat)0;
 }
 
-COMPSL_INTERN intfloat compsl_testSummary(var *args) { 
+COMPSL_INTERN_NOREGP intfloat compsl_testSummary(var *args) { 
   if(failCnt==0)
     printf("PASS (%i tests)\n",testCnt-1);
   else 
@@ -69,9 +69,9 @@ COMPSL_INTERN intfloat compsl_testSummary(var *args) {
 ///////////////////////
 // Print lib stuff   //
 ///////////////////////
-COMPSL_INTERN intfloat compsl_printFloat(var *args) { printf("Value: %f\n", args[0].v.f); return (intfloat)0;}
-COMPSL_INTERN intfloat compsl_printInt(var *args) { printf("Value: %i\n", args[0].v.i); return (intfloat)0;}	
-COMPSL_INTERN intfloat compsl_printHello(var *args) { printf("Hello world\n"); return (intfloat)0;}	
+COMPSL_INTERN_NOREGP intfloat compsl_printFloat(var *args) { printf("Value: %f\n", args[0].v.f); return (intfloat)0;}
+COMPSL_INTERN_NOREGP intfloat compsl_printInt(var *args) { printf("Value: %i\n", args[0].v.i); return (intfloat)0;}	
+COMPSL_INTERN_NOREGP intfloat compsl_printHello(var *args) { printf("Hello world\n"); return (intfloat)0;}	
 
 
 

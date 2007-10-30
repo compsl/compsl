@@ -24,19 +24,19 @@
 #include <stdio.h>
 
 
-void compileError(const char *str) {
+COMPSL_INTERN COMPSL_NONNULL void compileError(const char *str) {
 	fprintf(comp_out,"%s:%i: error: %s\n",csl_name,lineNo,str);
 	fflush(comp_out);
 }
 
-void compileWarning(const char *str) {
+COMPSL_INTERN COMPSL_NONNULL void compileWarning(const char *str) {
 	fprintf(comp_out,"%s:%i: warning: %s\n",csl_name,lineNo,str);
 	fflush(comp_out);
 }
 
 char foo[1024];
 
-void internalCompileError(const char* str) {
+COMPSL_INTERN COMPSL_NONNULL void internalCompileError(const char* str) {
   DPRINTF("internal Compile error\n");
   fprintf(stderr,"%s:%i: error: INTERNAL ERROR: %s\n",csl_name,lineNo,str);	
   abort();

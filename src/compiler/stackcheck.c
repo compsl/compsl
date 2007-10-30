@@ -38,7 +38,7 @@
  * 
  * return value: stack offest at end of code.
  */
-int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
+COMPSL_INTERN COMPSL_PURE_NONNULL int stackcheck(const bytecode *code, int codelen, VM *vm, compart * com)
 {
 	int sp = 0;
 	bool badStack=false;

@@ -70,7 +70,7 @@ static int stackpos(const bytecode *code, int codelen, VM *vm, compart * com)
 	return sp;
 }
 
-bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
+COMPSL_INTERN COMPSL_NONNULL bytecode *remUselessDUPs(bytecode *code, int codelen, VM *vm, compart * com)
 {
 	#ifdef COMPSL_TRACE_OPTIM
 	puts("\nBegining optimize");

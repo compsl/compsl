@@ -196,7 +196,7 @@ expression* bin_lit_op(int op, expression* a, expression* b) {
 
 // Post: dont use a or b, they're freed if need be
 
-expression* bin_op(int op,expression* a, expression* b) {
+COMPSL_INTERN COMPSL_NONNULL expression* bin_op(int op,expression* a, expression* b) {
   assert((a!=NULL) && (b!=NULL));
   expression *ret;
   if(a->isLiteral && b->isLiteral) {

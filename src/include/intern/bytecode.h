@@ -88,6 +88,7 @@ COMPSL_INTERN typedef enum  {
 	BC_MAXF,
 	BC_HYPOT,
 	BC_FEQUAL,
+	BC_FMA,
 	BC_PYES,
 	BC_NONO,
 	BC_END,

@@ -28,7 +28,7 @@
 #include <float.h>
 #include <math.h>
 
-void varTableCreate(varTable *vt, uint16_t size)//FIXME uh what did I put this here for
+COMPSL_INTERN COMPSL_NONNULL void varTableCreate(varTable *vt, uint16_t size)//FIXME uh what did I put this here for
 {
 	vt->cnt = 0;
 	vt->capacity = size;
@@ -36,7 +36,7 @@ void varTableCreate(varTable *vt, uint16_t size)//FIXME uh what did I put this h
 	vt->vars = malloc(sizeof(var) * size);
 }
 
-void varTableDestroy(varTable *vt)
+COMPSL_INTERN COMPSL_NONNULL void varTableDestroy(varTable *vt)
 {
 	int i;
 	for(i = 0; i < vt->cnt; i++)
@@ -53,7 +53,7 @@ void varTableDestroy(varTable *vt)
 	free(vt->vars); vt->vars = NULL;
 }
 
-__attribute__ ((pure)) int16_t findVar(const varTable *vt, const char *name)
+COMPSL_INTERN COMPSL_PURE_NONNULL int16_t findVar(const varTable *vt, const char *name)
 {
 	for(int i = 0; i < vt->cnt; i++)
 	{
@@ -64,7 +64,7 @@ __attribute__ ((pure)) int16_t findVar(const varTable *vt, const char *name)
 	return -1; //didn't find it
 }
 
-var *addVar(varTable *vt, uint8_t typeflags, const char *name)
+COMPSL_INTERN COMPSL_PURE_NONNULL var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 {	
 	if(vt->cnt >= vt->capacity) return NULL;
 	
@@ -91,7 +91,7 @@ var *addVar(varTable *vt, uint8_t typeflags, const char *name)
 	return NULL;
 }
 
-bool var_testEqi(var* a, var* b) {
+COMPSL_INTERN bool var_testEqi(var* a, var* b) {
   if(a->size!=b->size) return false;
 
   if(a->size>0) {
@@ -103,7 +103,8 @@ bool var_testEqi(var* a, var* b) {
   } else 
     return (a->v.i==b->v.i);
 }
-bool var_testEqf(var* a, var* b) {
+
+COMPSL_INTERN bool var_testEqf(var* a, var* b) {
   if(a->size!=b->size) return false;
 
   if(a->size>0) {

@@ -27,35 +27,53 @@
 #include <malloc.h>
 
 
-// deal with symbol visibilitys
+/* deal with symbol visibilitys */
 #ifdef _MSC_VER
-	// can assume that we are NOT build library
-	// since that would generate errors anyway, (gcc specific code)
-	#define COMPSL_EXPORT __declspec(dllimport) __cdecl
-	#define COMPSL_LOCAL
-	#define COMPSL_INTERN
+/* can assume that we are NOT build library
+ * since that would generate errors anyway, (gcc specific code) 
+ */
+#define COMPSL_EXPORT __declspec(dllimport) __cdecl
+#define COMPSL_LOCAL
+#define COMPSL_INTERN
 #elif defined(BUILDING_COMPSL)
-	#ifdef WIN32
-		#define COMPSL_EXPORT __declspec(dllexport) _cdecl
-		#define COMPSL_LOCAL
-		#define COMPSL_INTERN
-	#elif (__GNUC__ > 3)
-		#define COMPSL_EXPORT __attribute__ ((visibility("default")))
-		#define COMPSL_LOCAL __attribute__ ((visibility("hidden")))
-		#define COMPSL_INTERN __attribute__ ((visibility("internal")))
-	#else
-		#define COMPSL_EXPORT
-		#define COMPSL_LOCAL
-		#define COMPSL_INTERN
-	#endif
-#elif defined(WIN32)
-	#define COMPSL_EXPORT __declspec(dllimport) _cdecl
-	#define COMPSL_LOCAL
-	#define COMPSL_INTERN
+#ifdef WIN32
+#define COMPSL_EXPORT __declspec(dllexport) _cdecl
+#define COMPSL_LOCAL
+#define COMPSL_INTERN
+#elif (__GNUC__ > 3)
+#define COMPSL_EXPORT __attribute__ ((visibility("default")))
+#define COMPSL_LOCAL __attribute__ ((visibility("hidden")))
+#define COMPSL_INTERN __attribute__ ((visibility("internal"),__regparm__(3)))
+#define COMPSL_INTERN_NOREGP __attribute__ ((visibility("internal")))
 #else
-	#define COMPSL_EXPORT
-	#define COMPSL_LOCAL
-	#define COMPSL_INTERN
+#define COMPSL_EXPORT
+#define COMPSL_LOCAL
+#define COMPSL_INTERN
+#endif
+#elif defined(WIN32)
+#define COMPSL_EXPORT __declspec(dllimport) _cdecl
+#define COMPSL_LOCAL
+#define COMPSL_INTERN
+#else
+#define COMPSL_EXPORT
+#define COMPSL_LOCAL
+#define COMPSL_INTERN
+#endif
+
+/* function attribute stuff if we're in gcc */
+#if (__GNUC__ > 3)
+#define COMPSL_PURE __attribute__ ((__pure__))
+#define COMPSL_CONST_FUNC __attribute__ ((__const__))
+#define COMPSL_INLINE __attribute__ ((__inline__))
+#define COMPSL_ALWAYS_INLINE __attribute__ ((__always_inline__))
+#define COMPSL_NONNULL __attribute__((__nonnull__))
+#define COMPSL_PURE_NONNULL __attribute__((__pure__,__nonnull__))
+#else
+#define COMPSL_PURE 
+#define COMPSL_CONST_FUNC
+#define COMPSL_INLINE
+#define COMPSL_ALWAYS_INLINE
+#define COMPSL_NONNULL
 #endif
 
 #ifdef __cplusplus
@@ -109,7 +127,7 @@ typedef enum _COMPSL_ERROR_TYPE_
  * @param err the error code
  * @return a string describing the error
  */
-COMPSL_EXPORT const char *compsl_getErrstr(COMPSL_ERROR err);
+COMPSL_EXPORT const char *compsl_getErrstr(COMPSL_ERROR err) COMPSL_PURE;
 /**
  * Print the message for the error code to stderr
  * @param err the error code
@@ -168,7 +186,7 @@ COMPSL_EXPORT VM *createVM(void);
  * Free up any memory allocated for a VM, and the VM itself
  * @param vm the VM to destroy
  */
-COMPSL_EXPORT void destroyVM(VM *vm);
+COMPSL_EXPORT COMPSL_NONNULL void destroyVM(VM *vm);
 
 //NOTE: the string of the name of new vars is copied and the copy is retained by the VM
 //      for the purpose of identifying the variable. Same goes for native functions.
@@ -190,7 +208,7 @@ COMPSL_EXPORT void destroyVM(VM *vm);
  * @param name the name of the new variable 
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT int32_t *vm_addInt(VM *vm, const char *name);
+COMPSL_EXPORT int32_t *vm_addInt(VM *vm, const char *name) COMPSL_NONNULL;
 
 /** 
  * Add a new floating point global variable, if a variable of the same name and 
@@ -200,7 +218,7 @@ COMPSL_EXPORT int32_t *vm_addInt(VM *vm, const char *name);
  * @param name the name of the new variable
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT float *vm_addFloat(VM *vm, const char *name);
+COMPSL_EXPORT float *vm_addFloat(VM *vm, const char *name) COMPSL_NONNULL;
 
 /**
  * Return a pointer to the named global variable so that
@@ -211,7 +229,7 @@ COMPSL_EXPORT float *vm_addFloat(VM *vm, const char *name);
  * @param name the name of the variable
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT float *vm_getFloat(VM *vm, const char *name);
+COMPSL_EXPORT float *vm_getFloat(VM *vm, const char *name) COMPSL_PURE_NONNULL;
 
 /**
  * Return a pointer to the named global variable so that
@@ -222,7 +240,7 @@ COMPSL_EXPORT float *vm_getFloat(VM *vm, const char *name);
  * @param name the name of the variable
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT int32_t *vm_getInt(VM *vm, const char *name);
+COMPSL_EXPORT int32_t *vm_getInt(VM *vm, const char *name) COMPSL_PURE_NONNULL;
 
 
 
@@ -263,7 +281,7 @@ typedef struct _COMPART_t compart;
  * @param vm the VM to use
  * @return a new compartment, or NULL on error
  */
-COMPSL_EXPORT compart *createComp(VM *vm);
+COMPSL_EXPORT compart *createComp(VM *vm) COMPSL_NONNULL;
 
 /**
  * Clean up the compartment
@@ -280,7 +298,7 @@ COMPSL_EXPORT void destroyComp(compart *com);
  * @param name the name of the new variable 
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT float *com_addFloat(compart *com, const char *name);
+COMPSL_EXPORT float *com_addFloat(compart *com, const char *name) COMPSL_NONNULL;
 
 /** 
  * Add a new integer variable to the compartment, if a variable of the same 
@@ -290,7 +308,7 @@ COMPSL_EXPORT float *com_addFloat(compart *com, const char *name);
  * @param name the name of the new variable 
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name);
+COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name) COMPSL_NONNULL;
 
 /**
  * Return a pointer to the named local variable so that
@@ -301,7 +319,7 @@ COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name);
  * @param name the name of the variable
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT float *com_getFloat(compart *com, const char *name);
+COMPSL_EXPORT float *com_getFloat(compart *com, const char *name) COMPSL_PURE_NONNULL;
 
 /**
  * Return a pointer to the named local variable so that
@@ -312,7 +330,7 @@ COMPSL_EXPORT float *com_getFloat(compart *com, const char *name);
  * @param name the name of the variable
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name);
+COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name) COMPSL_PURE_NONNULL;
 
 /**
  * Get the id of the named cubbyhole, for use with runCubbyhole
@@ -322,7 +340,7 @@ COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name);
  * 
  * @return the id of the cubby or -1 on error
  */
-COMPSL_EXPORT int16_t getCubbyID(compart *com, const char *name);
+COMPSL_EXPORT int16_t getCubbyID(compart *com, const char *name) COMPSL_PURE_NONNULL;
 
 
 // **************************************
@@ -339,7 +357,7 @@ COMPSL_EXPORT int16_t getCubbyID(compart *com, const char *name);
  * 
  * @param vm the VM to add the functions to
  */
-COMPSL_EXPORT void addDebugLibToVm(VM *vm);
+COMPSL_EXPORT void addDebugLibToVm(VM *vm) COMPSL_NONNULL;
 
 /**
  * Adds some handy native functions to the VM, output stuff.
@@ -349,7 +367,7 @@ COMPSL_EXPORT void addDebugLibToVm(VM *vm);
  * 
  * @param vm the VM to add the functions to
  */
-COMPSL_EXPORT void addPrintLibToVm(VM *vm);
+COMPSL_EXPORT void addPrintLibToVm(VM *vm) COMPSL_NONNULL;
 
 /**
  * compile a compartment from a file
@@ -357,7 +375,7 @@ COMPSL_EXPORT void addPrintLibToVm(VM *vm);
  * @param filename the name of the file to read source from
  * @param out the compartment to put the cubbyholes and variables in
  */
-COMPSL_EXPORT int fileCompile(const char *filename , compart *out);
+COMPSL_EXPORT int fileCompile(const char *filename , compart *out) COMPSL_NONNULL;
 
 /**
  * compile a compartment from a string in memory
@@ -365,7 +383,7 @@ COMPSL_EXPORT int fileCompile(const char *filename , compart *out);
  * @param code the string containing the sourcecode
  * @param out the compartment to put the cubbyholes and variables in
  */
-COMPSL_EXPORT int stringCompile(const char *code, compart *out);
+COMPSL_EXPORT int stringCompile(const char *code, compart *out) COMPSL_NONNULL;
 
 /**
  * Run a cubbyhole
@@ -373,7 +391,7 @@ COMPSL_EXPORT int stringCompile(const char *code, compart *out);
  * @param com the compartment the cubbyhole is in
  * @param id the id of the cubbyhole
  */
-COMPSL_EXPORT inline void runCubbyhole(compart *com, int id); // runs 
+COMPSL_EXPORT inline void runCubbyhole(compart *com, int id) COMPSL_NONNULL; // runs 
 
 #ifdef __cplusplus
 }

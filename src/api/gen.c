@@ -32,7 +32,7 @@
 #include <time.h>
 
 
-__attribute__ ((pure,nonnull)) symbolinfo searchSym(const char *name, compart *com) 
+COMPSL_INTERN COMPSL_PURE_NONNULL symbolinfo searchSym(const char *name, compart *com) 
 {
 	symbolinfo res;
 	

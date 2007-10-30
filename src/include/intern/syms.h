@@ -89,7 +89,7 @@ typedef struct
  * Post: if symbol doesn't exist returns a symbolinfo with id=-1
  * 		 else returns info on symbol
  */
-COMPSL_INTERN symbolinfo searchSym(const char *name, compart *com) __attribute__ ((pure));
+COMPSL_INTERN COMPSL_PURE_NONNULL symbolinfo searchSym(const char *name, compart *com);
 
 /**
  * search for a variable in the specified list
@@ -97,7 +97,7 @@ COMPSL_INTERN symbolinfo searchSym(const char *name, compart *com) __attribute__
  * list = list to search
  * name = name of var
  */
-COMPSL_INTERN int16_t findVar(const varTable *vt,const char *name) __attribute__ ((pure));
+COMPSL_INTERN COMPSL_PURE_NONNULL int16_t findVar(const varTable *vt,const char *name);
 
 /**
  * add avariable to a varTable
@@ -106,16 +106,16 @@ COMPSL_INTERN int16_t findVar(const varTable *vt,const char *name) __attribute__
  * typeflags = holds type info about the variable
  * name = the name of the variable
  */
-COMPSL_INTERN var *addVar(varTable *vt, uint8_t typeflags, const char *name);
+COMPSL_INTERN COMPSL_NONNULL var *addVar(varTable *vt, uint8_t typeflags, const char *name);
 
 
-COMPSL_INTERN void varTableCreate(varTable *vt, uint16_t size);
+COMPSL_INTERN COMPSL_NONNULL void varTableCreate(varTable *vt, uint16_t size);
 
 /**
  * free up the symbol table and variable values also free the names of the vars
  * vt = the varTable to free
  */
-COMPSL_INTERN void varTableDestroy(varTable *vt);
+COMPSL_INTERN COMPSL_NONNULL void varTableDestroy(varTable *vt);
 
 COMPSL_INTERN bool var_testEqi(var* a, var* b);
 COMPSL_INTERN bool var_testEqf(var* a, var* b);

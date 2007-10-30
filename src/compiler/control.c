@@ -24,7 +24,7 @@
 #include "compiler/interncomp.h"
 
 
-bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
+COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   // Plan: condition, cjmp on 0, block, jmp to end, else
   int len, cpos; 
   
@@ -96,9 +96,9 @@ bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
 }
 
 
-void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen);
+static void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen);
 
-bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
+COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   // Plan: 
   //
   //   condition
@@ -178,7 +178,7 @@ bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
  * Foreach NOOP bytecode we need to transform into a JMP to the correct place
  * CONTINUE_NOOP_IDEN, BREAK_NOOP_IDEN
  */
-void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen) {
+static void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen) {
   assert(bc[len].code == BC_NONO || bc[len].code == BC_END);
 
   for(int i=0;i<len;i++) {

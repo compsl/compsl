@@ -26,8 +26,8 @@
 #include <stdbool.h>
 
 #ifdef DEBUG
-void dumpBytecode(compart *com, int id);
-void dumpBytecode2(compart *com, bytecode *pc);
+COMPSL_INTERN COMPSL_PURE_NONNULL void dumpBytecode(compart *com, int id);
+COMPSL_INTERN COMPSL_PURE_NONNULL void dumpBytecode2(compart *com, const bytecode *pc);
 #else
 #define dumpBytecode(...) 
 #define dumpBytecode2(...)

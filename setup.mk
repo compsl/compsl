@@ -90,12 +90,15 @@ else
 endif
 
 ifeq ($(OPTIMIZE),FULL)
-	OPTFLAGS += -O3 -frename-registers -fmodulo-sched 
-	OPTFLAGS += -funroll-loops -finline-functions -funswitch-loops
+	# don't use O3 since we really probably don't need it and we don't
+	# know if it really procuces better code for us
+	OPTFLAGS += -O2 -fomit-frame-pointer -fmodulo-sched -fgcse-after-reload
+	#these are what -O3 turns on
+	#-finline-functions -funswitch-loops -fgcse-after-reload
+	
+	OPTFLAGS += -funroll-loops -fsee -fipa-pta
 	OPTFLAGS += -fsched-spec-load -maccumulate-outgoing-args
-	OPTFLAGS += -fsched2-use-superblocks
-	OPTFLAGS += -minline-all-stringops -fomit-frame-pointer
-	#OPTFLAGS += -finline-limit=2000
+	OPTFLAGS += -minline-all-stringops 
 	OPTFLAGS += -fno-stack-limit
 	
 	#OPTFLAGS +=-fdata-sections -ffunction-sections
@@ -103,11 +106,12 @@ ifeq ($(OPTIMIZE),FULL)
 	OPTFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
 	
 	OPTFLAGS += -fgcse-sm -fgcse-las
-	OPTFLAGS += -ftree-vectorize -ftree-loop-linear -ftree-loop-im -fivopts
-	OPTFLAGS += -ftracer -fsched2-use-traces -fsplit-ivs-in-unroller
-	OPTFLAGS += -fvariable-expansion-in-unroller
-	#OPTFLAGS += -fprefetch-loop-arrays
+	OPTFLAGS += -ftree-vectorize -ftree-loop-linear -ftree-loop-im -fivopts -ftree-loop-ivcanon
+	#according to gentoo wiki tracer may not work... 
+	#OPTFLAGS += -ftracer -fsched2-use-traces
+	OPTFLAGS += -fsplit-ivs-in-unroller -fvariable-expansion-in-unroller
 	OPTFLAGS += -freorder-blocks-and-partition
+	#OPTFLAGS += -fprefetch-loop-arrays
 	
 	#OPTFLAGS += -fbranch-target-load-optimize 
 	#OPTFLAGS += -fbranch-target-load-optimize2
@@ -120,6 +124,13 @@ ifeq ($(OPTIMIZE),FULL)
 	# This option is experimental, as not all machine descriptions used by GCC 
 	# model the CPU closely enough to avoid unreliable results from the algorithm.
 	OPTFLAGS += -fsched2-use-superblocks
+	
+	#can we use this?
+	#-fmerge-all-constants Attempt to merge identical constants and identical variables.
+	#  This option implies -fmerge-constants. In addition to -fmerge-constants this considers 
+	#  e.g. even constant initialized arrays or initialized constant variables with integral or 
+	#  floating point types. Languages like C or C++ require each non-automatic variable to have 
+	#  distinct location, so using this option will result in non-conforming behavior.
 else
 	OPTFLAGS += -O$(OPTIMIZE)
 endif

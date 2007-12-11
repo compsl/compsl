@@ -31,7 +31,7 @@
 
 #include "intern/gen.h"
 #include "intern/bytecode.h"
-#include "interp/bcstrings.h"
+#include "intern/bcstrings.h"
 #include "intern/compartment.h"
 
 static void dmp(compart *com, int id)

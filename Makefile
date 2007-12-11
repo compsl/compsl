@@ -150,13 +150,16 @@ package: distclean headers
 		-cjvf compsl-${COMPSL_VERSION}.tar.bz2 *
 
 bin/dumper: src/dumper.o $(OBJECTS)
-	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
+	@echo LINK $@
+	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
 bin/runner: src/runner.o $(OBJECTS)
-	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
+	@echo LINK $@
+	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
 bin/perf-test: src/perf-test.o $(OBJECTS)
-	$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
+	@echo LINK $@
+	@$(CC) $(ALL_CFLAGS) -MD $< $(OBJECTS) $(PLATLIBS) -o $@
 
 cleantest: clean test ;
 

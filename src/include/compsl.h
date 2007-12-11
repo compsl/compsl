@@ -82,13 +82,12 @@
 extern "C" {
 #endif
 
-// **************************************
-// * Portability Stuff
-// **************************************
+/**************************************
+ * Portability Stuff
+ **************************************/
 
 #include <limits.h>
-// DJGPP has no inttypes.h, or at least did not when I 
-// tried building compsl for it
+/* DJGPP has no inttypes.h, or at least did not when I tried building compsl for it */
 #ifndef  DJGPP
 #	include <inttypes.h>
 #else
@@ -102,9 +101,9 @@ extern "C" {
 	typedef int            int32_t;
 #  endif
 
-// **************************************
-// * Error handling stuff               *
-// **************************************
+/**************************************
+ * Error handling stuff               *
+ **************************************/
 
 /** 
  * holds an error code, is the type of the errorno in VMs and compartments 
@@ -121,7 +120,9 @@ typedef enum _COMPSL_ERROR_TYPE_
 	COMPSL_NO_SUCH_VAR,
 	COMPSL_NO_SUCH_FUNC,
 	COMPSL_BAD_PARM_FRMT,	//invalid native function parameter spec
-	COMPSL_NULL_POINTER		//got passed a NULL pointer
+	COMPSL_NULL_POINTER,	//got passed a NULL pointer
+	COMPSL_COMPART_COMPILED,// got something that's already compiled when we shouldn't
+	COMPSL_UNDEF_ERR		// undefined error, used for bounds checking, must be last entry
 } COMPSL_ERROR;
 
 /**
@@ -136,15 +137,15 @@ COMPSL_EXPORT const char *compsl_getErrstr(COMPSL_ERROR err) COMPSL_PURE;
  */
 COMPSL_EXPORT void compsl_printErr(COMPSL_ERROR err);
 
-// **************************************
-// * Vars                               *
-// **************************************
+/**************************************
+ * Vars                               *
+ **************************************/
 
 /**
  * for variables (the actual value)
  */
 typedef union {int32_t i; float f;} intfloat; 
-  // TODO: it would be nice if we could guarantee sizeof(intfloat) == 32 bits
+  /* TODO: it would be nice if we could guarantee sizeof(intfloat) == 32 bits */
 
 /**
  * Internal representation of variables, also used to pass to functions
@@ -161,9 +162,9 @@ typedef struct _var_t
     int size; ///< for the size of the array, -1 if scalar
 } var;
 
-// **************************************
-// * VM                                 *
-// **************************************
+/**************************************
+ * VM                                 *
+ **************************************/
 
 /**
  * the type of functions that the compsl code can call, 
@@ -190,11 +191,12 @@ COMPSL_EXPORT VM *createVM(void);
  */
 COMPSL_EXPORT COMPSL_NONNULL void destroyVM(VM *vm);
 
-//NOTE: the string of the name of new vars is copied and the copy is retained by the VM
-//      for the purpose of identifying the variable. Same goes for native functions.
-
-// note that when adding vars if an identical var is already present a pointer to it 
-// is simply returned, and no new var is added to the table. 
+/*NOTE: the string of the name of new vars is copied and the copy is retained by the VM
+ *      for the purpose of identifying the variable. Same goes for native functions.
+ *
+ * note that when adding vars if an identical var is already present a pointer to it 
+ * is simply returned, and no new var is added to the table.
+ */ 
 
 
 /* they return a pointer to the variable so that
@@ -265,9 +267,9 @@ COMPSL_EXPORT bool addFunc(VM *vm, compsl_nat func, const char *name,
 			const char *params, bool retFloat, bool isVoid);
 
 
-// **************************************
-// * Compartment                        *
-// **************************************
+/**************************************
+ * Compartment                        *
+ **************************************/
 
 /**
  * represents a compartment, holds bytecode, local variables and constants
@@ -283,14 +285,14 @@ typedef struct _COMPART_t compart;
  * @param vm the VM to use
  * @return a new compartment, or NULL on error
  */
-COMPSL_EXPORT compart *createComp(VM *vm) COMPSL_NONNULL;
+COMPSL_EXPORT COMPSL_NONNULL compart *createComp(VM *vm);
 
 /**
  * Clean up the compartment
  * 
  * @param com the compartment to clean up
  */
-COMPSL_EXPORT void destroyComp(compart *com);
+COMPSL_EXPORT COMPSL_NONNULL void destroyComp(compart *com);
 
 /** 
  * Add a new float variable to the compartment, if a variable of the same 
@@ -300,7 +302,7 @@ COMPSL_EXPORT void destroyComp(compart *com);
  * @param name the name of the new variable 
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT float *com_addFloat(compart *com, const char *name) COMPSL_NONNULL;
+COMPSL_EXPORT COMPSL_NONNULL float *com_addFloat(compart *com, const char *name);
 
 /** 
  * Add a new integer variable to the compartment, if a variable of the same 
@@ -310,7 +312,7 @@ COMPSL_EXPORT float *com_addFloat(compart *com, const char *name) COMPSL_NONNULL
  * @param name the name of the new variable 
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name) COMPSL_NONNULL;
+COMPSL_EXPORT COMPSL_NONNULL int32_t *com_addInt(compart *com, const char *name);
 
 /**
  * Return a pointer to the named local variable so that
@@ -321,7 +323,7 @@ COMPSL_EXPORT int32_t *com_addInt(compart *com, const char *name) COMPSL_NONNULL
  * @param name the name of the variable
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT float *com_getFloat(compart *com, const char *name) COMPSL_PURE_NONNULL;
+COMPSL_EXPORT COMPSL_PURE_NONNULL float *com_getFloat(compart *com, const char *name);
 
 /**
  * Return a pointer to the named local variable so that
@@ -332,7 +334,7 @@ COMPSL_EXPORT float *com_getFloat(compart *com, const char *name) COMPSL_PURE_NO
  * @param name the name of the variable
  * @return pointer to the value of the variable, NULL on error
  */
-COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name) COMPSL_PURE_NONNULL;
+COMPSL_EXPORT COMPSL_PURE_NONNULL int32_t *com_getInt(compart *com, const char *name);
 
 /**
  * Get the id of the named cubbyhole, for use with runCubbyhole
@@ -342,12 +344,12 @@ COMPSL_EXPORT int32_t *com_getInt(compart *com, const char *name) COMPSL_PURE_NO
  * 
  * @return the id of the cubby or -1 on error
  */
-COMPSL_EXPORT int16_t getCubbyID(compart *com, const char *name) COMPSL_PURE_NONNULL;
+COMPSL_EXPORT COMPSL_PURE_NONNULL int16_t getCubbyID(compart *com, const char *name);
 
 
-// **************************************
-// * General stuff                      *
-// **************************************
+/**************************************
+ * General stuff                      *
+ **************************************/
 
 /**
  * Adds some handy native functions to the VM, assert type stuff.

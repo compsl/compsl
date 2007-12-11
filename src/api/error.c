@@ -35,6 +35,8 @@ static const char *emessgs[] =
 	"No Such Function: the specified name does not exist",
 	"Cannot add function: Bad Function Parameter Format",
 	"Unexpected NULL pointer",
+	"Cannot modify: Compartment already compiled",
+	"Undefined Error!",
 	NULL
 };
 
@@ -42,13 +44,13 @@ static const char *emessgs[] =
 
 COMPSL_EXPORT const char *compsl_getErrstr(COMPSL_ERROR err)
 {
-	//TODO: find some way to bounds check this
+	err=(err > COMPSL_UNDEF_ERR && err >= 0)?COMPSL_UNDEF_ERR:err; // bounds check
 	return emessgs[err];
 }
 
 COMPSL_EXPORT void compsl_printErr(COMPSL_ERROR err)
 {
-	//TODO: find some way to bounds check this
-	fprintf(stderr, "ERROR %i: %s", err, emessgs[err]);
+	err=(err > COMPSL_UNDEF_ERR && err >= 0) ? COMPSL_UNDEF_ERR: err; // bounds check
+	fprintf(stderr, "ERROR %i: %s\n", err, emessgs[err]);
 }
 

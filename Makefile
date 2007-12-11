@@ -34,8 +34,8 @@ CMPATH=src/compiler
 SHORTLIB=compsl
 LIBNAME := lib$(SHORTLIB)
 
-GEN_HEADERS:=src/include/interp/bcstrings.h \
-	src/include/interp/jumptbl.h src/include/compiler/bc_info.h \
+GEN_HEADERS:=src/include/intern/bcstrings.h \
+	src/interp/jumptbl.h src/include/compiler/bc_info.h \
 	src/include/intern/bytecode.h
 
 REG_SRCS:=src/api/compartment.c src/api/error.c  src/api/gen.c  src/interp/run.c \
@@ -194,11 +194,11 @@ statmsg:
 -include $(DEPS)
 -include $(DDEPS)
 
-src/include/interp/bcstrings.h: src/interp/bytecodes gen-bcstrings.sh Makefile
+src/include/intern/bcstrings.h: src/interp/bytecodes gen-bcstrings.sh Makefile
 	@echo GEN $@
 	@./gen-bcstrings.sh $< > $@
 
-src/include/interp/jumptbl.h: src/interp/bytecodes gen-jumptbl.sh Makefile
+src/interp/jumptbl.h: src/interp/bytecodes gen-jumptbl.sh Makefile
 	@echo GEN $@
 	@./gen-jumptbl.sh $< > $@
 

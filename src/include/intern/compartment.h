@@ -23,6 +23,8 @@
 #define COMPSL_COMPARTMENT_H_
 
 #include "compsl.h"
+#include <stdbool.h>
+#include "bytecode.h"
 #include "syms.h"
 #include "vm.h"
 #ifdef __cplusplus
@@ -51,11 +53,13 @@ struct _COMPART_t
     ///< represents one cubbyhole
     struct _CUBBY_t
     {
-    	void *code; ///< pointer to the bytecode of this cubby
+    	bytecode *code; ///< pointer to the bytecode of this cubby
     	char *name; ///< name of this cubby
     } cubbys[COMPART_MAX_CUBBYS];
     
     VM *vm; ///< the vm this compartment was compiled with
+    
+    bool compiled; ///< Weather or not it's been compiled
     
     COMPSL_ERROR errorno; ///< error code of last error produced by this compartment
 };

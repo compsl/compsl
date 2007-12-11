@@ -59,7 +59,7 @@
 #endif
 
 #ifndef COMPSL_INTERP_USE_DIRECT_JMPTBL
-#define COMPSL_NEXT_INSTRUCTION goto *(&&NOOP + jmptbl[(++pc)->code])
+#define COMPSL_NEXT_INSTRUCTION goto *(&&TOP + jmptbl[(++pc)->code])
 #define CSL_JTE(x) &&x - &&NOOP
 #else
 #define COMPSL_NEXT_INSTRUCTION goto *(jmptbl[(++pc)->code])
@@ -79,7 +79,7 @@
 double genrand_real1(void);
 
 #if defined DEBUG || defined _COMPSL_TRACE
-#include "interp/bcstrings.h"
+#include "intern/bcstrings.h"
 #endif
 
 #ifdef DEBUG
@@ -121,7 +121,7 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  	long int tractmp,sppos;
  #endif
  
-#include "interp/jumptbl.h"
+#include "jumptbl.h"
  		
 	intfloat stack[VM_STACK_SIZE];
 	intfloat temp; // temp register

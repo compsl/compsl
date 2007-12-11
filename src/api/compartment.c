@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <stdbool.h>
  
-COMPSL_EXPORT __attribute__ ((nonnull)) compart *createComp(VM *vm)
+COMPSL_EXPORT COMPSL_NONNULL compart *createComp(VM *vm)
 {
 	compart *tmp = (compart *)malloc(sizeof(compart));
     if(tmp == NULL)
@@ -49,13 +49,13 @@ COMPSL_EXPORT __attribute__ ((nonnull)) compart *createComp(VM *vm)
     }
     
     tmp->vm = vm;
-    
+    tmp->compiled = false;
     tmp->errorno = COMPSL_NOERR;
     
     return tmp;
 }
 
-COMPSL_EXPORT  __attribute__ ((nonnull)) void destroyComp(compart *c)
+COMPSL_EXPORT COMPSL_NONNULL void destroyComp(compart *c)
 {
 	varTableDestroy(&(c->vt));
 	//varTableDestroy(&(c->ct));
@@ -69,7 +69,7 @@ COMPSL_EXPORT  __attribute__ ((nonnull)) void destroyComp(compart *c)
 	free(c);
 }
 
-COMPSL_EXPORT __attribute__ ((pure,nonnull)) int16_t getCubbyID(compart *com, const char *name)
+COMPSL_EXPORT COMPSL_PURE_NONNULL int16_t getCubbyID(compart *com, const char *name)
 {
 	int i;
 	
@@ -83,7 +83,7 @@ COMPSL_EXPORT __attribute__ ((pure,nonnull)) int16_t getCubbyID(compart *com, co
 	return -1; // not found
 }
 
-COMPSL_EXPORT __attribute__ ((nonnull)) float *com_getFloat(compart *com, const char *name)
+COMPSL_EXPORT COMPSL_PURE_NONNULL float *com_getFloat(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -92,7 +92,7 @@ COMPSL_EXPORT __attribute__ ((nonnull)) float *com_getFloat(compart *com, const 
     return NULL;	
 }
 
-COMPSL_EXPORT  __attribute__ ((nonnull)) int32_t *com_getInt(compart *com, const char *name)
+COMPSL_EXPORT COMPSL_PURE_NONNULL int32_t *com_getInt(compart *com, const char *name)
 {
 	int i = findVar(&(com->vt), name);
 	if(i >= 0)
@@ -101,37 +101,37 @@ COMPSL_EXPORT  __attribute__ ((nonnull)) int32_t *com_getInt(compart *com, const
     return NULL;	
 }
 
-COMPSL_EXPORT  __attribute__ ((nonnull)) float *com_addFloat(compart *com, const char *name)
+COMPSL_EXPORT COMPSL_NONNULL float *com_addFloat(compart *com, const char *name)
 {
-	var *tmp;
-	if(com->vt.cnt < COMPART_MAX_VARS)
+	var *tmp = NULL;
+	if(!com->compiled && com->vt.cnt < COMPART_MAX_VARS)
 	{
 		tmp = addVar(&(com->vt), FLOAT_VAR, name);
 		return &(tmp->v.f);
 	}
+	else if(com->compiled)
+		com->errorno = COMPSL_COMPART_COMPILED;
 	else
-	{
 		com->errorno = COMPSL_VARS_FULL;
-		return NULL;
-	}
+	return NULL;
 }
 
-COMPSL_EXPORT  __attribute__ ((nonnull)) int32_t *com_addInt(compart *com, const char *name)
+COMPSL_EXPORT COMPSL_NONNULL int32_t *com_addInt(compart *com, const char *name)
 {
-	var *tmp;
-	if(com->vt.cnt < COMPART_MAX_VARS)
+	var *tmp = NULL;
+	if(!com->compiled && com->vt.cnt < COMPART_MAX_VARS)
 	{
 		tmp = addVar(&(com->vt), INT_VAR, name);
 		return &(tmp->v.i);
 	}
+	else if(com->compiled)
+		com->errorno = COMPSL_COMPART_COMPILED;
 	else
-	{
 		com->errorno = COMPSL_VARS_FULL;
-		return NULL;
-	}
+	return NULL;
 }
 
-COMPSL_INTERN int16_t  __attribute__ ((nonnull)) com_addConst(compart *com, intfloat val)
+COMPSL_INTERN COMPSL_NONNULL int16_t com_addConst(compart *com, intfloat val)
 {
 	if(com->numConst >= COMPART_MAX_CONSTS)
 	{
@@ -149,7 +149,7 @@ COMPSL_INTERN int16_t  __attribute__ ((nonnull)) com_addConst(compart *com, intf
 	return com->numConst - 1;
 }
 
-COMPSL_INTERN int  __attribute__ ((nonnull)) com_addCubby(compart *com, void *code, const char *name) 
+COMPSL_INTERN COMPSL_NONNULL int com_addCubby(compart *com, void *code, const char *name) 
 {
 	if(com->numCubbys >= COMPART_MAX_CUBBYS)
 	{
@@ -168,9 +168,9 @@ COMPSL_INTERN int  __attribute__ ((nonnull)) com_addCubby(compart *com, void *co
 	return true;
 }
 
-COMPSL_INTERN int bc_len(bytecode *);
+COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode *);
 
-COMPSL_LOCAL void com_prStats(compart *com){
+COMPSL_LOCAL COMPSL_NONNULL void com_prStats(compart *com){
 	for(int i=0;i<com->numCubbys;i++) {
 		printf("(%s, %i) ",com->cubbys[i].name, bc_len(com->cubbys[i].code));
 	}	

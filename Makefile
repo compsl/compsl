@@ -226,7 +226,7 @@ $(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c $(GEN_HEADERS)
 #gcc manual says computed goto's may perform better with -fno-gcse
 src/interp/run.o: src/interp/run.c config.mak Makefile $(GEN_HEADERS)
 	@echo CC $<
-	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) -Wno-unused-label $< -MF $*.dep
+	@$(CC) -MM -MG -MQ $@ $(ALL_CFLAGS) -Wno-unused-label $< -MF src/interp/run.dep
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -falign-labels -Wno-unused-label $< -o $@
 
 %.o: %.c config.mak Makefile $(GEN_HEADERS)

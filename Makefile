@@ -231,7 +231,7 @@ src/interp/run.o: src/interp/run.c config.mak Makefile $(GEN_HEADERS)
 
 %.o: %.c config.mak Makefile $(GEN_HEADERS)
 	@echo CC $<
-	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< -MF $*.dep
+	@$(CC) -MM -MG -MQ $@ $(ALL_CFLAGS) $< -MF $*.dep
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
 	
 

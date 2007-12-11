@@ -1980,104 +1980,104 @@ fi
 echores "$_alloca"
 
 
-echocheck "mman.h"
-cat > $TMPC << EOF
-#include <sys/types.h>
-#include <sys/mman.h>
-int main(void) { (void) mmap(0, 0, 0, 0, 0, 0); return 0; }
-EOF
-_mman=no
-cc_check && _mman=yes
-if test "$_mman" = yes ; then
-  _def_mman='#define HAVE_SYS_MMAN_H 1'
-else
-  _def_mman='#undef HAVE_SYS_MMAN_H'
-fi
-echores "$_mman"
+#~ echocheck "mman.h"
+#~ cat > $TMPC << EOF
+#~ #include <sys/types.h>
+#~ #include <sys/mman.h>
+#~ int main(void) { (void) mmap(0, 0, 0, 0, 0, 0); return 0; }
+#~ EOF
+#~ _mman=no
+#~ cc_check && _mman=yes
+#~ if test "$_mman" = yes ; then
+  #~ _def_mman='#define HAVE_SYS_MMAN_H 1'
+#~ else
+  #~ _def_mman='#undef HAVE_SYS_MMAN_H'
+#~ fi
+#~ echores "$_mman"
 
-cat > $TMPC << EOF
-#include <sys/types.h>
-#include <sys/mman.h>
-int main(void) { void *p = MAP_FAILED; return 0; }
-EOF
-_mman_has_map_failed=no
-cc_check && _mman_has_map_failed=yes
-if test "$_mman_has_map_failed" = yes ; then
-  _def_mman_has_map_failed=''
-else
-  _def_mman_has_map_failed='#define MAP_FAILED ((void *) -1)'
-fi
+#~ cat > $TMPC << EOF
+#~ #include <sys/types.h>
+#~ #include <sys/mman.h>
+#~ int main(void) { void *p = MAP_FAILED; return 0; }
+#~ EOF
+#~ _mman_has_map_failed=no
+#~ cc_check && _mman_has_map_failed=yes
+#~ if test "$_mman_has_map_failed" = yes ; then
+  #~ _def_mman_has_map_failed=''
+#~ else
+  #~ _def_mman_has_map_failed='#define MAP_FAILED ((void *) -1)'
+#~ fi
 
-_def_threads='#undef HAVE_THREADS'
+#~ _def_threads='#undef HAVE_THREADS'
 
-echocheck "pthread"
-if test "$_pthreads" = auto ; then
-cat > $TMPC << EOF
-#include <pthread.h>
-void* func(void *arg) { return arg; }
-int main(void) { pthread_t tid; return pthread_create (&tid, 0, func, 0) == 0 ? 0 : 1; }
-EOF
-_pthreads=no
-if not hpux ; then
-  for _ld_tmp in "-lpthreadGC2" "" "-lpthread" "-pthread" ; do
-    # for crosscompilation, we cannot execute the program, be happy if we can link statically
-    cc_check $_ld_tmp && (tmp_run || test "$_ld_static") && _ld_pthread="$_ld_tmp" && _pthreads=yes && break
-  done
-fi
-fi
-if test "$_pthreads" = yes ; then
-  _res_comment="using $_ld_pthread"
-  _def_pthreads='#define HAVE_PTHREADS 1'
-  _def_threads='#define HAVE_THREADS 1'
-else
-  _def_pthreads='#undef HAVE_PTHREADS'
-  _macosx=no
-  if not mingw32 ; then
-    _win32=no
-  fi
-fi
-echores "$_pthreads"
+#~ echocheck "pthread"
+#~ if test "$_pthreads" = auto ; then
+#~ cat > $TMPC << EOF
+#~ #include <pthread.h>
+#~ void* func(void *arg) { return arg; }
+#~ int main(void) { pthread_t tid; return pthread_create (&tid, 0, func, 0) == 0 ? 0 : 1; }
+#~ EOF
+#~ _pthreads=no
+#~ if not hpux ; then
+  #~ for _ld_tmp in "-lpthreadGC2" "" "-lpthread" "-pthread" ; do
+    #~ # for crosscompilation, we cannot execute the program, be happy if we can link statically
+    #~ cc_check $_ld_tmp && (tmp_run || test "$_ld_static") && _ld_pthread="$_ld_tmp" && _pthreads=yes && break
+  #~ done
+#~ fi
+#~ fi
+#~ if test "$_pthreads" = yes ; then
+  #~ _res_comment="using $_ld_pthread"
+  #~ _def_pthreads='#define HAVE_PTHREADS 1'
+  #~ _def_threads='#define HAVE_THREADS 1'
+#~ else
+  #~ _def_pthreads='#undef HAVE_PTHREADS'
+  #~ _macosx=no
+  #~ if not mingw32 ; then
+    #~ _win32=no
+  #~ fi
+#~ fi
+#~ echores "$_pthreads"
 
-echocheck "rpath"
-netbsd &&_rpath=yes
-if test "$_rpath" = yes ; then
-  for I in `echo $_ld_extra | sed 's/-L//g'` ; do
-    tmp="$tmp ` echo $I | sed 's/.*/ -L& -Wl,-R&/'`"
-  done
-_ld_extra=$tmp
-fi
-echores "$_rpath"
+#~ echocheck "rpath"
+#~ netbsd &&_rpath=yes
+#~ if test "$_rpath" = yes ; then
+  #~ for I in `echo $_ld_extra | sed 's/-L//g'` ; do
+    #~ tmp="$tmp ` echo $I | sed 's/.*/ -L& -Wl,-R&/'`"
+  #~ done
+#~ _ld_extra=$tmp
+#~ fi
+#~ echores "$_rpath"
 
-echocheck "shm"
-if test "$_shm" = auto ; then
-  cat > $TMPC << EOF
-#include <sys/types.h>
-#include <sys/shm.h>
-int main(void) { shmget(0, 0, 0); shmat(0, 0, 0); shmctl(0, 0, 0); return 0; }
-EOF
-  _shm=no
-  cc_check && _shm=yes
-fi
-if test "$_shm" = yes ; then
-  _def_shm='#define HAVE_SHM 1'
-else
-  _def_shm='#undef HAVE_SHM'
-fi
-echores "$_shm"
+#~ echocheck "shm"
+#~ if test "$_shm" = auto ; then
+  #~ cat > $TMPC << EOF
+#~ #include <sys/types.h>
+#~ #include <sys/shm.h>
+#~ int main(void) { shmget(0, 0, 0); shmat(0, 0, 0); shmctl(0, 0, 0); return 0; }
+#~ EOF
+  #~ _shm=no
+  #~ cc_check && _shm=yes
+#~ fi
+#~ if test "$_shm" = yes ; then
+  #~ _def_shm='#define HAVE_SHM 1'
+#~ else
+  #~ _def_shm='#undef HAVE_SHM'
+#~ fi
+#~ echores "$_shm"
 
-echocheck "swab()"
-cat > $TMPC << EOF
-#include <unistd.h>
-int main(void) { swab(0, 0, 0); return 0; }
-EOF
-_swab=no
-cc_check && _swab=yes
-if test "$_swab" = yes ; then
-  _def_swab='#define HAVE_SWAB 1'
-else
-  _def_swab='#undef HAVE_SWAB'
-fi
-echores "$_swab"
+#~ echocheck "swab()"
+#~ cat > $TMPC << EOF
+#~ #include <unistd.h>
+#~ int main(void) { swab(0, 0, 0); return 0; }
+#~ EOF
+#~ _swab=no
+#~ cc_check && _swab=yes
+#~ if test "$_swab" = yes ; then
+  #~ _def_swab='#define HAVE_SWAB 1'
+#~ else
+  #~ _def_swab='#undef HAVE_SWAB'
+#~ fi
+#~ echores "$_swab"
 
 if sunos; then
 echocheck "sysi86()"

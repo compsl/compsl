@@ -36,7 +36,7 @@ LIBNAME := lib$(SHORTLIB)
 
 GEN_HEADERS:=src/include/intern/bcstrings.h \
 	src/interp/jumptbl.h src/include/compiler/bc_info.h \
-	src/include/intern/bytecode.h
+	src/include/intern/bytecode.h $(CMPATH)/compsl.tab.h
 
 REG_SRCS:=src/api/compartment.c src/api/error.c  src/api/gen.c  src/interp/run.c \
 	src/api/vars.c src/api/vm.c src/api/mt.c src/api/userspace.c \
@@ -213,27 +213,31 @@ src/include/intern/bytecode.h: src/interp/bytecodes gen-bytecodeh.sh Makefile
 	@echo GEN $@
 	@./gen-bytecodeh.sh $< > $@
 
-$(CMPATH)/compsl.tab.o: $(CMPATH)/compsl.tab.c
+$(CMPATH)/compsl.tab.o: $(CMPATH)/compsl.tab.c $(GEN_HEADERS)
 	@echo CC $<
 	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/compsl.tab.ddp
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
-$(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c
+$(CMPATH)/lex.yy.o: $(CMPATH)/lex.yy.c $(GEN_HEADERS)
 	@echo CC $<
 	@$(CC) -MM -MQ $@ $(ALL_CFLAGS) $< > $(CMPATH)/lex.yy.ddp
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -Wno-unused-label $< -o $@
 
 #gcc manual says computed goto's may perform better with -fno-gcse
-src/interp/run.o: src/interp/run.c config.mak Makefile
+src/interp/run.o: src/interp/run.c config.mak Makefile $(GEN_HEADERS)
 	@echo CC $<
+	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) -Wno-unused-label $< -MF $*.dep
 	@$(CC) -c  $(ALL_CFLAGS) -fno-gcse -falign-labels -Wno-unused-label $< -o $@
 
-%.o: %.c config.mak Makefile
+%.o: %.c config.mak Makefile $(GEN_HEADERS)
 	@echo CC $<
-	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
-
-%.dep: %.c config.mak Makefile $(GEN_HEADERS)
 	@$(CC) -MM -MG -MQ $*.o $(ALL_CFLAGS) $< -MF $*.dep
+	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
+	
+
+#%.dep: %.c config.mak Makefile $(GEN_HEADERS)
+#	@echo DEP $<
+#	
 
 ifeq ($(TARGET_WIN32),yes)
 $(DYN_LIB_OUT) $(DEFFILE) $(IMPLIB): $(OBJECTS)
@@ -259,18 +263,12 @@ $(STATIC_LIB_OUT): $(OBJECTS)
 # FLEX/BISON TARGETS           #
 ################################
 
-#dummy file since dep generation is dumb
-compsl.tab.h: $(CMPATH)/compsl.tab.h
-	@touch compsl.tab.h
-
-$(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.tab.h
-
-$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile
+$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile 
 	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
 	@echo BISON $<
 	@$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c
 
-$(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h config.mak Makefile
+$(CMPATH)/lex.yy.c: $(CMPATH)/compsl.l $(CMPATH)/compsl.tab.h config.mak Makefile $(GEN_HEADERS)
 	@rm -f $(CMPATH)/lex.yy.c
 	@echo FLEX $<
 	@$(FLEX) -o$@ $<

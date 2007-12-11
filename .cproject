@@ -409,6 +409,7 @@
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 </storageModule>
+
 <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
 <target name="test" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -534,6 +535,13 @@
 <buildCommand>make</buildCommand>
 <buildArguments></buildArguments>
 <buildTarget>headers</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
+</target>
+<target name="clean-headers" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>clean-headers</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>

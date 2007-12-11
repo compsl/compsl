@@ -1799,61 +1799,61 @@ else
 fi
 echores "$_builtin_expect"
 
-echocheck "posix4"
-# required for nanosleep on some systems
-cat > $TMPC << EOF
-#include <time.h>
-int main(void) { (void) nanosleep(0, 0); return 0; }
-EOF
-_posix4=no
-cc_check -lposix4 && _posix4=yes
-if test "$_posix4" = yes ; then
-  _ld_arch="-lposix4 $_ld_arch"
-fi
-echores "$_posix4"
+#~ echocheck "posix4"
+#~ # required for nanosleep on some systems
+#~ cat > $TMPC << EOF
+#~ #include <time.h>
+#~ int main(void) { (void) nanosleep(0, 0); return 0; }
+#~ EOF
+#~ _posix4=no
+#~ cc_check -lposix4 && _posix4=yes
+#~ if test "$_posix4" = yes ; then
+  #~ _ld_arch="-lposix4 $_ld_arch"
+#~ fi
+#~ echores "$_posix4"
 
-echocheck "lrintf"
-cat > $TMPC << EOF
-#include <math.h>
-int main(void) { long (*foo)(float); foo = lrintf; (void)(*foo)(0.0); return 0; }
-EOF
-_lrintf=no
-cc_check -D_GNU_SOURCE $_ld_lm && _lrintf=yes
-if test "$_lrintf" = yes ; then
-  _def_lrintf="#define HAVE_LRINTF 1"
-else
-  _def_lrintf="#undef HAVE_LRINTF"
-fi
-echores "$_lrintf"
+#~ echocheck "lrintf"
+#~ cat > $TMPC << EOF
+#~ #include <math.h>
+#~ int main(void) { long (*foo)(float); foo = lrintf; (void)(*foo)(0.0); return 0; }
+#~ EOF
+#~ _lrintf=no
+#~ cc_check -D_GNU_SOURCE $_ld_lm && _lrintf=yes
+#~ if test "$_lrintf" = yes ; then
+  #~ _def_lrintf="#define HAVE_LRINTF 1"
+#~ else
+  #~ _def_lrintf="#undef HAVE_LRINTF"
+#~ fi
+#~ echores "$_lrintf"
 
-echocheck "round"
-cat > $TMPC << EOF
-#include <math.h>
-int main(void) { (void) round(0.0); return 0; }
-EOF
-_round=no
-cc_check $_ld_lm && _round=yes
-if test "$_round" = yes ; then
-  _def_round="#define HAVE_ROUND 1"
-else
-  _def_round="#undef HAVE_ROUND"
-fi
-echores "$_round"
+#~ echocheck "round"
+#~ cat > $TMPC << EOF
+#~ #include <math.h>
+#~ int main(void) { (void) round(0.0); return 0; }
+#~ EOF
+#~ _round=no
+#~ cc_check $_ld_lm && _round=yes
+#~ if test "$_round" = yes ; then
+  #~ _def_round="#define HAVE_ROUND 1"
+#~ else
+  #~ _def_round="#undef HAVE_ROUND"
+#~ fi
+#~ echores "$_round"
 
-echocheck "nanosleep"
-# also check for nanosleep
-cat > $TMPC << EOF
-#include <time.h>
-int main(void) { (void) nanosleep(0, 0); return 0; }
-EOF
-_nanosleep=no
-cc_check $_ld_arch && _nanosleep=yes
-if test "$_nanosleep" = yes ; then
-  _def_nanosleep='#define HAVE_NANOSLEEP 1'
-else
-  _def_nanosleep='#undef HAVE_NANOSLEEP'
-fi
-echores "$_nanosleep"
+#~ echocheck "nanosleep"
+#~ # also check for nanosleep
+#~ cat > $TMPC << EOF
+#~ #include <time.h>
+#~ int main(void) { (void) nanosleep(0, 0); return 0; }
+#~ EOF
+#~ _nanosleep=no
+#~ cc_check $_ld_arch && _nanosleep=yes
+#~ if test "$_nanosleep" = yes ; then
+  #~ _def_nanosleep='#define HAVE_NANOSLEEP 1'
+#~ else
+  #~ _def_nanosleep='#undef HAVE_NANOSLEEP'
+#~ fi
+#~ echores "$_nanosleep"
 
 echocheck "inttypes.h (required)"
 cat > $TMPC << EOF

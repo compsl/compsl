@@ -73,17 +73,17 @@ COMPSL_INTERN COMPSL_NONNULL expression* function_call(const char* name, list *p
 
 // interncomp.c
 COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp);
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_free(expression* exp);
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_ensureLit(expression* exp);
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_autocast(bool toFloat,expression *e);
+COMPSL_INTERN COMPSL_NONNULL void expr_free(expression* exp);
+COMPSL_INTERN COMPSL_NONNULL void expr_ensureLit(expression* exp);
+COMPSL_INTERN COMPSL_NONNULL void expr_autocast(bool toFloat,expression *e);
 COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode *);
 
 // var.c
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE expression *assignVar(const char *str, expression *e);
+COMPSL_INTERN COMPSL_NONNULL expression *assignVar(const char *str, expression *e);
 COMPSL_INTERN __attribute__((__nonnull__(1,3))) expression *assignArray(const char *str, bytecode *arrayIndex, expression *e);
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE expression *readVar(const char* name);
+COMPSL_INTERN COMPSL_NONNULL expression *readVar(const char* name);
 COMPSL_INTERN __attribute__((__nonnull__(1))) expression *readArray(const char* name, bytecode *arrayIndex);
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE expression *incVar(const char *name, bool plus, bool post);
+COMPSL_INTERN COMPSL_NONNULL expression *incVar(const char *name, bool plus, bool post);
 COMPSL_INTERN __attribute__((__nonnull__(1))) expression *incArray(const char *name, bytecode *arIndex, bool plus, bool post);
 
 // control.c

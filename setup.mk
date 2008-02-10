@@ -155,7 +155,8 @@ endif
 
 DEFFLAGS +=-D_GNU_SOURCE -DBUILDING_COMPSL
 
-PP_FLAGS = -I $(abspath src/include)
+#PP_FLAGS = -I $(abspath src/include)
+PP_FLAGS = -I "$(shell pwd)/src/include"
 
 ALL_CFLAGS = -std=gnu99 $(CPUFLAGS) $(OPTFLAGS) $(MATH_FLAGS) $(CFLAGS) $(DEFFLAGS)
 

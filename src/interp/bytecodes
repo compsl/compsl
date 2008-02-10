@@ -63,7 +63,7 @@ INC: {1,1,NORMAL_BC}: increment top of stack
 DEC: {1,1,NORMAL_BC}: decrement top of stack
 FINC: {1,1,NORMAL_BC}: increment top of stack
 FDEC: {1,1,NORMAL_BC}: decrement top of stack
-CHOOSE: {3,1,OTHER_BC}:
+CHOOSE: {3,1,OTHER_BC}: implemetns the ?: operator
 #builtins
 ABS: {1,1,BUILTIN_BC}:
 ABSF: {1,1,BUILTIN_BC}:

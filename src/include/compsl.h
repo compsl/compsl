@@ -35,11 +35,13 @@
 #define COMPSL_EXPORT __declspec(dllimport) __cdecl
 #define COMPSL_LOCAL
 #define COMPSL_INTERN
+#define COMPSL_INTERN_NOREGP
 #elif defined(BUILDING_COMPSL)
 #ifdef WIN32
 #define COMPSL_EXPORT __declspec(dllexport) _cdecl
 #define COMPSL_LOCAL
 #define COMPSL_INTERN
+#define COMPSL_INTERN_NOREGP
 #elif (__GNUC__ > 3)
 #define COMPSL_EXPORT __attribute__ ((visibility("default")))
 #define COMPSL_LOCAL __attribute__ ((visibility("hidden")))
@@ -49,15 +51,18 @@
 #define COMPSL_EXPORT
 #define COMPSL_LOCAL
 #define COMPSL_INTERN
+#define COMPSL_INTERN_NOREGP
 #endif
 #elif defined(WIN32)
 #define COMPSL_EXPORT __declspec(dllimport) _cdecl
 #define COMPSL_LOCAL
 #define COMPSL_INTERN
+#define COMPSL_INTERN_NOREGP
 #else
 #define COMPSL_EXPORT
 #define COMPSL_LOCAL
 #define COMPSL_INTERN
+#define COMPSL_INTERN_NOREGP
 #endif
 
 /* function attribute stuff if we're in gcc */

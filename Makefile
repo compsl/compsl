@@ -263,7 +263,7 @@ $(STATIC_LIB_OUT): $(OBJECTS)
 # FLEX/BISON TARGETS           #
 ################################
 
-$(CMPATH)/compsl.tab.h: $(CMPATH)/compsl.y config.mak Makefile 
+$(CMPATH)/compsl.tab.h $(CMPATH)/compsl.tab.c: $(CMPATH)/compsl.y config.mak Makefile 
 	@rm -f $(CMPATH)/compsl.tab.c $(CMPATH)/compsl.tab.h
 	@echo BISON $<
 	@$(BISON) --report all -d  $(CMPATH)/compsl.y -o $(CMPATH)/compsl.tab.c

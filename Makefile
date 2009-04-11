@@ -105,7 +105,7 @@ strip: all
 distclean: clean
 	-rm -f config.mak src/intern/config.h
 clean:
-	@-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(DEPS) $(DDEPS)
+	-rm -f -- $(OBJECTS) $(TESTOBJS) $(OTHEROBJ) $(DEPS) $(DDEPS)
 	-rm -f -- $(DYN_LIB_OUT) $(STATIC_LIB_OUT) $(TEST_EXES:=*)
 	-rm -f -- $(CMPATH)/compsl.output $(CMPATH)/compsl.tab.h 
 	-rm -f -- bin/perf-test* bin/dumper* bin/runner*
@@ -170,7 +170,7 @@ test-exes: statmsg $(TEST_EXES) ;
 test-valgrind: $(TEST_EXES)
 	@for test in $^; do \
 		echo Running $$test; \
-		valgrind $$test ; \
+		valgrind -v $$test ; \
 		echo DONE; \
 	done
 

@@ -1,7 +1,7 @@
 // $Id$
 
 /*
-    CompSL scripting language 
+    CompSL scripting language
     Copyright (C) 2007  Thomas Jones & John Peberdy
 
     This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 
 
 COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode* bc) {
-  assert(bc!=NULL);
+  assert(bc);
   int len=0;
   while(bc->code!=BC_NONO&&bc->code!=BC_END) {
     bc++;
@@ -35,19 +35,19 @@ COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode* bc) {
       internalCompileError("Non null terminated bytecode string");
       exit(4);
     }
-  } 
+  }
   return len;
 }
 
 
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_ensureLit(expression* exp) {
+COMPSL_INTERN COMPSL_NONNULL void expr_ensureLit(expression* exp) {
   if(exp->isLiteral) {
     exp->val.bcode = expr_toBc(exp);
     exp->isLiteral = false;
   }
 }
 
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_autocast(bool toFloat,expression *e) {
+COMPSL_INTERN COMPSL_NONNULL void expr_autocast(bool toFloat,expression *e) {
 
   if(toFloat == e->isFloat) {
     // no cast needed
@@ -60,7 +60,7 @@ COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_autocast(bool toFloat,expre
     else {
       e->val.in = (int)e->val.fl;
       e->isFloat=false;
-    } 
+    }
   } else {
     int len;
     len = bc_len(e->val.bcode);
@@ -79,7 +79,7 @@ COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp) {
     bytecode* bc = malloc(sizeof(bytecode)*2);
     if(bc==NULL) internalCompileError("Out of memory");
     bc[0].code=BC_CPUSH;
-    
+
     intfloat tmp;
     if(exp->isFloat) {
 	tmp.f = exp->val.fl;
@@ -87,7 +87,7 @@ COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp) {
     else {
       tmp.i = exp->val.in;
     }
-    bc[0].a1 = com_addConst(ccompart , tmp); 
+    bc[0].a1 = com_addConst(ccompart , tmp);
     bc[1].code=BC_NONO;
     return bc;
   }
@@ -98,9 +98,9 @@ COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp) {
 }
 
 
-COMPSL_INTERN COMPSL_NONNULL COMPSL_INLINE void expr_free(expression* expr) {
+COMPSL_INTERN COMPSL_NONNULL void expr_free(expression* expr) {
   if(!expr->isLiteral) {
-    assert(expr->val.bcode != NULL);      
+    assert(expr->val.bcode != NULL);
     free(expr->val.bcode);
     expr->val.bcode = NULL;
   }

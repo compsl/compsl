@@ -6,7 +6,7 @@ cat <<EOF
 #ifndef COMPSL_JUMPTBL_H_
 #define COMPSL_JUMPTBL_H_
 
-static const int jmptbl[] =
+static const ptrdiff_t jmptbl[] =
 {
 EOF
 

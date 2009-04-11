@@ -1,7 +1,7 @@
 // $Id:vars.h 541 2007-10-01 01:19:09Z tomj $
 
 /*
-    CompSL scripting language 
+    CompSL scripting language
     Copyright (C) 2007  Thomas Jones & John Peberdy
 
     This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,9 @@
 
 struct SYMTABLE_T // don't bother with typedef, only here so I can sizeof it later
 {
+	char *name; // symbol name
 	uint16_t id;
 	uint8_t typeflags;// OR together the apropriat flags ex float array = FLOAT_VAR | IS_ARRAY
-	char *name; // symbol name
 };
 
 /**
@@ -42,13 +42,13 @@ struct SYMTABLE_T // don't bother with typedef, only here so I can sizeof it lat
  */
 typedef struct VAR_TABLE_T
 {
+	var *vars; ///< the variables themselves
+	struct SYMTABLE_T *symbols; ///< the symbol table for the vars
 	uint16_t capacity; ///< max variables for this table
 	uint16_t cnt; ///< number of variables currently in the table
-    var *vars; ///< the variables themselves
-    struct SYMTABLE_T *symbols; ///< the symbol table for the vars
 } varTable;
 
-/** 
+/**
  * Represents one paramenter to a native function.
  */
 typedef struct native_param_t
@@ -66,11 +66,12 @@ typedef struct _nativeFN_t
 	const char *name;   ///< name of this function
 	compsl_nat func;    ///< pointer the function to call
 
+	var *params;        ///< the list of paramaters to pass to it
+	uint8_t *paramFlags;///< OR together the apropriat flags ex float array = FLOAT_VAR | IS_ARRAY
+
 	bool isVoid;        ///<true iff function does not return a value
 	bool retFloat;      ///< true iff the return type is a float
 
-	var *params;        ///< the list of paramaters to pass to it
-	uint8_t *paramFlags;///< OR together the apropriat flags ex float array = FLOAT_VAR | IS_ARRAY
 	uint8_t numParam;   ///< how many paramaters to pass it
 } nativeFN;
 
@@ -85,11 +86,11 @@ typedef struct
 
 /**
  * search all symbol tables and return info on a symbol
- * 
+ *
  * Post: if symbol doesn't exist returns a symbolinfo with id=-1
  * 		 else returns info on symbol
  */
-COMPSL_INTERN COMPSL_PURE_NONNULL symbolinfo searchSym(const char *name, compart *com);
+COMPSL_INTERN symbolinfo searchSym(const char *name, compart *com);
 
 /**
  * search for a variable in the specified list
@@ -97,7 +98,7 @@ COMPSL_INTERN COMPSL_PURE_NONNULL symbolinfo searchSym(const char *name, compart
  * list = list to search
  * name = name of var
  */
-COMPSL_INTERN COMPSL_PURE_NONNULL int16_t findVar(const varTable *vt,const char *name);
+COMPSL_INTERN int16_t findVar(const varTable *vt,const char *name);
 
 /**
  * add avariable to a varTable

@@ -1,7 +1,7 @@
 // $Id$
 
 /*
-    CompSL scripting language 
+    CompSL scripting language
     Copyright (C) 2007  Thomas Jones & John Peberdy
 
     This program is free software; you can redistribute it and/or modify
@@ -26,30 +26,30 @@
 
 COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   // Plan: condition, cjmp on 0, block, jmp to end, else
-  int len, cpos; 
-  
+  int len, cpos;
+
   bytecode *cond = expr_toBc(condExpr);
   bytecode *tmp = NULL;
   assert(cond != NULL);
-  
+
   int testLen = 1;
   int jmpLen = 1;
   int condLen = bc_len(cond);
   int blockLen = bc_len(block);
-  int elseLen = ((elseBlock !=(bytecode*)0)?bc_len(elseBlock):0);
-  
+  int elseLen = elseBlock?bc_len(elseBlock):0;
+
   assert(condLen>0);
-  
+
   len = condLen+testLen+blockLen+1;
-  if(elseLen>0) 
+  if(elseLen>0)
     len+=jmpLen + elseLen;
-  
+
   cpos = 0;
-  
+
   // Calculate the condition value
   tmp = realloc(cond, sizeof(bytecode)*len);
   if(tmp == NULL)
-  { 
+  {
   	free(cond);
   	expr_free(condExpr);
  	free(block);
@@ -58,32 +58,32 @@ COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *condExpr, bytecode *bl
   }
   cond = tmp;
   cpos += condLen;
-  
+
   // Jump if false
   cond[cpos].code = BC_JMZ;
   cond[cpos].sa = blockLen +1;
-  
+
   // We need to jump past the second jump as well
   if(elseLen>0)
     cond[cpos].sa++;
-  
+
   cpos+=testLen;
-  
+
   memcpy(&cond[cpos], block, sizeof(bytecode)*blockLen);
   cpos+=blockLen;
-  
+
   if(elseLen>0) {
     cond[cpos].code = BC_JMP;
     cond[cpos].sa = elseLen+1;
     cpos++;
-    
+
     memcpy(&cond[cpos], elseBlock, sizeof(bytecode)*elseLen);
     cpos+=elseLen;
   }
-  
+
   cond[cpos].code = BC_NONO;
   cpos++;
-  
+
   assert(cpos == len);
 
   // Free parameters
@@ -91,7 +91,7 @@ COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *condExpr, bytecode *bl
   expr_free(condExpr);
   free(block);
   if(elseBlock!=NULL) free(elseBlock);
-  
+
   return cond;
 }
 
@@ -99,19 +99,19 @@ COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *condExpr, bytecode *bl
 static void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen);
 
 COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
-  // Plan: 
+  // Plan:
   //
   //   condition
   //   test: jmp on false +(blockLen+jmpLen+1)
   //   block
   //   jmp: jmp -(blocklen+condLen+testLen)
   //
-  int len, cpos; 
-  
+  int len, cpos;
+
   bytecode *cond = expr_toBc(condExpr);
   bytecode *tmp = NULL;
   assert(cond!=NULL);
-  
+
   int condLen = bc_len(cond);
   int testLen = 1;
   int blockLen = bc_len(block);
@@ -120,7 +120,7 @@ COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *condExpr, bytecode 
   assert(condLen>0);
 
   len = 2*condLen+testLen+blockLen+jmpLen+1;
-  
+
   // Calculate the condition value
   tmp = realloc(cond, sizeof(bytecode)*len);
   if(tmp == NULL)
@@ -133,17 +133,17 @@ COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *condExpr, bytecode 
   }
   cond = tmp;
   cpos = condLen;
-		  
+
   cond[cpos].code = BC_JMZ;
   cond[cpos].sa = blockLen+jmpLen+condLen+1;
   cpos+=testLen;
-  
+
   fixBreaksContinues(block, blockLen, condLen+testLen, jmpLen);
 
   // block
   memcpy(&cond[cpos], block, sizeof(bytecode)*blockLen);
   cpos+=blockLen;
-  
+
   memcpy(&cond[cpos], cond, sizeof(bytecode)*condLen);
   cpos += condLen;
   // jmp
@@ -160,7 +160,7 @@ COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *condExpr, bytecode 
 
 
   // Now we must search for break and continue keywords
-  
+
 
   // Free parameter
   condExpr->isLiteral = true;
@@ -201,5 +201,5 @@ static void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen) {
       }
     }
   }
-  
+
 }

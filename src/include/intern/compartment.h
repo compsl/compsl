@@ -1,7 +1,7 @@
 // $Id:compartment.h 541 2007-10-01 01:19:09Z tomj $
 
 /*
-    CompSL scripting language 
+    CompSL scripting language
     Copyright (C) 2007  Thomas Jones & John Peberdy
 
     This program is free software; you can redistribute it and/or modify
@@ -31,12 +31,12 @@
 extern "C" {
 #endif
 
- 
-///< Maximum # of local variables, note cannot be increased since variables 
+
+///< Maximum # of local variables, note cannot be increased since variables
 ///< are internaly addressed by bytes currently
 #define COMPART_MAX_VARS 256
 
-///< Maximum # of constant values, note cannot be increased since values 
+///< Maximum # of constant values, note cannot be increased since values
 ///< are internaly addressed by bytes currently
 #define COMPART_MAX_CONSTS 256
 
@@ -45,25 +45,26 @@ extern "C" {
 
 struct _COMPART_t
 {
-    varTable vt; ///< local variables
     var cons[COMPART_MAX_CONSTS]; ///< constants
-    uint16_t numConst; ///< current # of constants
-    uint16_t numCubbys; ///< number of cubbyholes 
-    
+    varTable vt; ///< local variables
+
     ///< represents one cubbyhole
     struct _CUBBY_t
     {
     	bytecode *code; ///< pointer to the bytecode of this cubby
     	char *name; ///< name of this cubby
     } cubbys[COMPART_MAX_CUBBYS];
-    
+
     VM *vm; ///< the vm this compartment was compiled with
-    
+
+    uint16_t numConst; ///< current # of constants
+    uint16_t numCubbys; ///< number of cubbyholes
+
     bool compiled; ///< Weather or not it's been compiled
-    
+
     COMPSL_ERROR errorno; ///< error code of last error produced by this compartment
 };
-	
+
 /* Takes compartment and adds a cubby, with bytecode
  * pointed at by code, and named name
  * return true on success, false otherwise

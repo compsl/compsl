@@ -1,7 +1,7 @@
 // $Id$
 
 /*
-    CompSL scripting language 
+    CompSL scripting language
     Copyright (C) 2007  Thomas Jones & John Peberdy
 
     This program is free software; you can redistribute it and/or modify
@@ -58,12 +58,14 @@
 #undef COMPSL_BRNCHLS_JMP
 #endif
 
+#define COMPSL_INTERP_USE_DIRECT_JMPTBL
+
 #ifndef COMPSL_INTERP_USE_DIRECT_JMPTBL
 #define COMPSL_NEXT_INSTRUCTION goto *(&&TOP + jmptbl[(++pc)->code])
-#define CSL_JTE(x) &&x - &&NOOP
+#define CSL_JTE(x) ((ptrdiff_t)(&&x - &&NOOP))
 #else
 #define COMPSL_NEXT_INSTRUCTION goto *(jmptbl[(++pc)->code])
-#define CSL_JTE(x) &&x
+#define CSL_JTE(x) ((ptrdiff_t)&&x)
 #endif
 
 
@@ -88,11 +90,11 @@ COMPSL_INTERN COMPSL_NONNULL void dumpBytecode(compart *com, int id)
 	//var *lvs = com->vt.vars;
 	//var *lcs = com->cons;
 	//var *gvs = com->vm->vt.vars;
-	
+
 	//nativeFN *natives = com->vm->natives;
-	
+
 	bytecode *pc= (bytecode *)(com->cubbys[id].code); // init program counter
-	
+
 	while(pc->code != BC_END && pc->code != BC_HLT && pc->code != BC_DBG)
 	{
 		long int tractmp = ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode);
@@ -103,7 +105,7 @@ COMPSL_INTERN COMPSL_NONNULL void dumpBytecode(compart *com, int id)
 }
 
 COMPSL_INTERN COMPSL_NONNULL void dumpBytecode2(compart *com, bytecode *code)
-{	
+{
 	bytecode *pc= code;
 	while(pc->code != BC_END && pc->code != BC_HLT && pc->code != BC_DBG && pc->code != BC_NONO)
 	{
@@ -116,38 +118,38 @@ COMPSL_INTERN COMPSL_NONNULL void dumpBytecode2(compart *com, bytecode *code)
 #endif
 
 COMPSL_EXPORT void runCubbyhole(compart *com, int id)
-{	
+{
  #ifdef _COMPSL_TRACE
  	long int tractmp,sppos;
  #endif
- 
+
 #include "jumptbl.h"
- 		
+
 	intfloat stack[VM_STACK_SIZE];
 	intfloat temp; // temp register
 	register intfloat *sp = stack; // stack pointer
-	
+
 	var *lvs = com->vt.vars;
 	var *lcs = com->cons;
 	var *gvs = com->vm->vt.vars;
-	
+
 	register bytecode *pc= (bytecode *)(com->cubbys[id].code) - 1; // init program counter
-	
+
 	nativeFN *natives = com->vm->natives;
-	
-	TOP: 
+
+	TOP:
 	NOOP:
-	
+
 		#ifdef _COMPSL_TRACE
-			
+
 			tractmp = ((long int)(pc+1) - (long int)(com->cubbys[id].code))/sizeof(bytecode);
 			sppos =  ((long int)sp - (long int)stack)/sizeof(intfloat);
 			printf("%4ld: %s\tsa=%- 8d\ta1=%- 8d\tsp=%ld\n",
 				tractmp,tractbl[(pc+1)->code],(pc+1)->sa,(pc+1)->a1,sppos);
 		#endif
-		
+
 		COMPSL_NEXT_INSTRUCTION; // highly unreabable, but it gets the bytecode,  and jumps to the correct instruction
-	
+
 	PUSH:
 		*sp = lvs[pc->a1].v;
 		sp++;
@@ -160,12 +162,12 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		}
  		else
  		{
- 			fprintf(stderr, 
- 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i", 
+ 			fprintf(stderr,
+ 				"ERROR: Index out of bounds! \n\tvar: %i %s\n\tsize: %i\n\tindex: %i",
  				pc->a1, com->vt.symbols[pc->a1].name, lvs[pc->a1].size, (sp - 1)->i);
  			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
 
-			STOPEXEC; 			
+			STOPEXEC;
  		}
  	CPUSH:
  		*sp = lcs[pc->a1].v;
@@ -184,8 +186,8 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  			COMPSL_END_INST;
  		}
  		else {
- 			fprintf(stderr, 
- 				"ERROR: Index out of bounds! (Local array) \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i\n", 
+ 			fprintf(stderr,
+ 				"ERROR: Index out of bounds! (Local array) \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i\n",
  				com->vt.symbols[pc->a1].name, pc->a1, lvs[pc->a1].size, (sp+1)->i);
 
 			STOPEXEC;
@@ -219,7 +221,7 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		sp--;
  		temp = *sp;
  		COMPSL_END_INST;
- 	CALL: 
+ 	CALL:
  		for(int i=0; i<natives[pc->a1].numParam; i++)
  		{
  			if(natives[pc->a1].paramFlags[i] & IS_ARRAY)
@@ -230,15 +232,15 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  			else
  				natives[pc->a1].params[i].v = *(--sp);
  		}
- 		
+
 		if(!natives[pc->a1].isVoid)
 		  *sp = (natives[pc->a1].func)(natives[pc->a1].params);
- 		else 
+ 		else
 		  (natives[pc->a1].func)(natives[pc->a1].params);
 		sp++;
-		
+
  		COMPSL_END_INST;
- 		
+
  	ADD:
  		sp--;
  		(sp - 1)->i = (sp - 1)->i + sp->i;
@@ -250,7 +252,7 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		(sp - 1)->f++;
  		COMPSL_END_INST;
  	SUB:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i - sp->i;
  		COMPSL_END_INST;
  	DEC:
@@ -264,40 +266,40 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		(sp - 1)->i = (sp - 1)->i * sp->i;
  		COMPSL_END_INST;
  	DIV:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i / sp->i;
  		COMPSL_END_INST;
 	LE:
 	FLE:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i <= sp->i;
  		COMPSL_END_INST;
  	LS:
  	FL:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i < sp->i;
  		COMPSL_END_INST;
 	EQ:
 	FEQ:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i == sp->i;
  		COMPSL_END_INST;
 	NE:
 	FNE:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i != sp->i;
  		COMPSL_END_INST;
  	GR:
  	FGR:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i > sp->i;
  		COMPSL_END_INST;
  	GE:
  	FGE:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i >= sp->i;
  		COMPSL_END_INST;
- 		
+
  	FADD:
 	 	sp--;
  		(sp - 1)->f = (sp - 1)->f + sp->f;
@@ -305,11 +307,11 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  	FSUB:
 	 	sp--;
  		(sp - 1)->f = (sp - 1)->f - sp->f;
- 		COMPSL_END_INST; 
+ 		COMPSL_END_INST;
  	FMUL:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f * sp->f;
- 		COMPSL_END_INST; 
+ 		COMPSL_END_INST;
  	FDIV:
  		sp--;
  		(sp - 1)->f = (sp - 1)->f / sp->f;
@@ -318,7 +320,7 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  	FLE:
  		sp--;
  		(sp - 1)->i = (sp - 1)->f <= sp->f;
- 		COMPSL_END_INST; 
+ 		COMPSL_END_INST;
  	FLS:
  		sp--;
  		(sp - 1)->i = (sp - 1)->f < sp->f;
@@ -332,7 +334,7 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
 		int ai = sp->i;
 		int bi = (sp-1)->i;
 		int test = (((unsigned int)(ai^bi))>>31)-1;
-		int diff = (((0x80000000 - ai)&(~test))|(ai&test))-bi; 
+		int diff = (((0x80000000 - ai)&(~test))|(ai&test))-bi;
 		(sp - 1)->i = (((7+diff)|(7-diff)) >= 0);
 	}
  		COMPSL_END_INST;
@@ -372,18 +374,18 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		sp-=2;
  		*(sp-1) = (sp-1)->i?*sp:*(sp+1);
  		COMPSL_END_INST;
- 	FLIN: 
+ 	FLIN:
  		(sp-1)->i = (int)((sp-1)->f);
  		COMPSL_END_INST;
  	INFL:
  		(sp-1)->f = (float)((sp-1)->i);
  		COMPSL_END_INST;
  	MOD:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i % sp->i;
  		COMPSL_END_INST;
  	FMOD:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->f = fmodf((sp - 1)->f, sp->f);
  		COMPSL_END_INST;
  	GPSH:
@@ -398,20 +400,20 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		}
  		else
  		{
- 			fprintf(stderr, 
- 				"ERROR: Index out of bounds! (global array)\n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i", 
+ 			fprintf(stderr,
+ 				"ERROR: Index out of bounds! (global array)\n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i",
  				com->vt.symbols[pc->a1].name, pc->a1, gvs[pc->a1].size, (sp - 1)->i);
  			(sp - 1)->i = 0;//hmmm what to do? index out of bounds!
 
 			STOPEXEC;
- 			
+
  		}
- 		
+
  	GPOP:
  		sp--;
  		gvs[pc->a1].v = *sp;
 		COMPSL_END_INST;
-		
+
  	GAPP:
  		sp -=2;
  		if(likely(gvs[pc->a1].size > (sp+1)->i && (sp+1)->i >= 0))
@@ -421,20 +423,20 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		}
  		else
  		{
- 			fprintf(stderr, 
- 				"ERROR: Index out of bounds! \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i", 
+ 			fprintf(stderr,
+ 				"ERROR: Index out of bounds! \n\tvar: %s (id=%i)\n\tsize: %i\n\tindex: %i",
  				com->vt.symbols[pc->a1].name, pc->a1, gvs[pc->a1].size, (sp+1)->i);
 
 			STOPEXEC;
  		}
 
- //boolean 
+ //boolean
  	AND:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i && sp->i;
  		COMPSL_END_INST;
  	OR:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i || sp->i;
  		COMPSL_END_INST;
  	NOT:
@@ -442,18 +444,18 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		COMPSL_END_INST;
  //bitwise
  	BAND:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i & sp->i;
  		COMPSL_END_INST;
  	BOR:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i | sp->i;
  		COMPSL_END_INST;
  	BXOR:
- 		sp--;	
+ 		sp--;
  		(sp - 1)->i = (sp - 1)->i ^ sp->i;
  		COMPSL_END_INST;
- 	BNOT: 
+ 	BNOT:
  		(sp - 1)->i = ~((sp - 1)->i);
  		COMPSL_END_INST;
  //bit shift
@@ -465,13 +467,13 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		sp--;
  		(sp - 1)->i = (sp - 1)->i >> sp->i;
  		COMPSL_END_INST;
-	
+
 //bultins
-	
+
 	ABS:
 		(sp - 1)->i = abs((sp - 1)->i);
  		COMPSL_END_INST;
-	
+
 	ABSF:
 		(sp - 1)->f = fabsf((sp - 1)->f);
 		COMPSL_END_INST;
@@ -548,7 +550,7 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
 		int ai = sp->i;
 		int bi = (sp-1)->i;
 		int test = (((unsigned int)(ai^bi))>>31)-1;
-		int diff = (((0x80000000 - ai)&(~test))|(ai&test))-bi; 
+		int diff = (((0x80000000 - ai)&(~test))|(ai&test))-bi;
 		(sp - 1)->i = (((7+diff)|(7-diff)) >= 0);
 	}
  		COMPSL_END_INST;
@@ -560,49 +562,49 @@ COMPSL_EXPORT void runCubbyhole(compart *com, int id)
  		(sp-1)->f = (sp-1)->f * sp->f + (sp+1)->f;
 #endif
  		COMPSL_END_INST;
-//misc	
+//misc
  	PYES:
  		if(pc->a1) {puts("YES");}
  		else { puts("NO"); }
  		COMPSL_END_INST;
- 		
+
  	NONO:
-		puts("OMG WTF NO!!!");	
-	//icky things	
+		puts("OMG WTF NO!!!");
+	//icky things
 // 	UNIMP:
-// 	
+//
 // 	panic("unimplemented instruction");
- 	
+
  	DBG: // dump some state info
 #ifdef DEBUG
  	{
  		var *t;
  		intfloat *st;
- 		
+
  		fprintf(stderr, "Program Counter: %lX", ((long int)pc - (long int)(com->cubbys[id].code))/sizeof(bytecode));
- 		
+
  		fprintf(stderr, "Stack Pointer: %lX\n", ((long int)sp - (long int)stack)/sizeof(intfloat)); // what does this do? index of sp?
  		fprintf(stderr, "Stack: \n");
  		st = stack;
  		for(unsigned int i = 0; i < VM_STACK_SIZE; i++, st++)
-	 		fprintf(stderr,"\t%X   %i %f\n", i, (int)(st->i), (st->f)); 
+	 		fprintf(stderr,"\t%X   %i %f\n", i, (int)(st->i), (st->f));
 
  		fprintf(stderr, "Local variables:\n");
  		t = lvs;
  		for(unsigned int i = 0 ; i < COMPART_MAX_VARS; i++, t++)
- 			if(t->size <= 0) 
+ 			if(t->size <= 0)
  				fprintf(stderr, "\t%X:   %i %f\n", i, (int)(t->v.i), t->v.f);
- 		
+
  		fprintf(stderr, "Global Vars:\n");
  		t = gvs;
  		for(unsigned int i = 0 ; i < VM_MAX_GVARS; i++, t++)
- 			if(t->size <= 0) 
+ 			if(t->size <= 0)
  				fprintf(stderr, "\t%X:   %i %f\n",i, (int)(t->v.i), t->v.f);
  	}
 #endif
 	END:
  	HLT:
  	UNIMP:
- 	
+
  	return;
 }

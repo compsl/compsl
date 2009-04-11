@@ -9,10 +9,10 @@ cat <<EOF
 // defines an array that can be used to classify bytecodes by their effect on the
 // stack
 
-// struct to hold info about bytecodes
+/// struct to hold info about bytecodes
 typedef struct {
-	int consumes; // uses this many stack elements
-	int produces; // pushes this many stack elements
+	int consumes; ///< uses this many stack elements
+	int produces; ///< pushes this many stack elements
 	
 	//net effect on stack is produces - consumes
 	

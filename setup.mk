@@ -92,7 +92,7 @@ endif
 ifeq ($(OPTIMIZE),FULL)
 	# don't use O3 since we really probably don't need it and we don't
 	# know if it really procuces better code for us
-	OPTFLAGS += -O1 -fmerge-all-constants
+	OPTFLAGS += -O2 -fmerge-all-constants
 	# -fmodulo-sched -fgcse-after-reload
 	#these are what -O3 turns on
 	#-finline-functions -funswitch-loops -fgcse-after-reload

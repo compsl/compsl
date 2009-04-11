@@ -95,7 +95,7 @@ install: all docs
 	$(INSTALL) src/extern/compsl.h $(includedir)/compsl.h
 	$(LDCONFIG) -n $(libdir)
 	$(RANLIB) $(libdir)/$(notdir $(STATIC_LIB_OUT))
-	
+
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
 
@@ -129,7 +129,7 @@ help:
 	@printf "***************************************************\n"
 	@printf "  Targets: all, clean, test, test-valgrind, static, dynamic, package,\n"
 	@printf "           docs, test-exes\n"
-	@printf
+	@printf ""
 	@printf "  Variables: DEBUG, TRACE_INTERP, DEBUG_COMP, STACK_CHECK(=1 by default)\n"
 	@printf "\n"
 	@printf "  Please run ./configure to set up compilation, for help with configure\n"
@@ -233,7 +233,7 @@ src/interp/run.o: src/interp/run.c config.mak Makefile $(GEN_HEADERS)
 	@echo CC $<
 	@$(CC) -MM -MG -MQ $@ $(ALL_CFLAGS) $< -MF $*.dep
 	@$(CC) -c  $(ALL_CFLAGS) $< -o $@
-	
+
 
 #%.dep: %.c config.mak Makefile $(GEN_HEADERS)
 #	@echo DEP $<

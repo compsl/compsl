@@ -66,29 +66,29 @@ typedef struct _expression_t {
 
 
 // binops.c
-COMPSL_INTERN COMPSL_NONNULL expression* bin_op(int op,expression* a, expression* b);
+COMPSL_INTERN expression* bin_op(int op,expression* a, expression* b);
 
 // functions.c
-COMPSL_INTERN COMPSL_NONNULL expression* function_call(const char* name, list *params);
+COMPSL_INTERN expression* function_call(const char* name, list *params);
 
 // interncomp.c
-COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp);
-COMPSL_INTERN COMPSL_NONNULL void expr_free(expression* exp);
-COMPSL_INTERN COMPSL_NONNULL void expr_ensureLit(expression* exp);
-COMPSL_INTERN COMPSL_NONNULL void expr_autocast(bool toFloat,expression *e);
-COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode *);
+COMPSL_INTERN bytecode* expr_toBc(expression *exp);
+COMPSL_INTERN void expr_free(expression* exp);
+COMPSL_INTERN void expr_ensureLit(expression* exp);
+COMPSL_INTERN void expr_autocast(bool toFloat,expression *e);
+COMPSL_INTERN int bc_len(bytecode *);
 
 // var.c
-COMPSL_INTERN COMPSL_NONNULL expression *assignVar(const char *str, expression *e);
-COMPSL_INTERN __attribute__((__nonnull__(1,3))) expression *assignArray(const char *str, bytecode *arrayIndex, expression *e);
-COMPSL_INTERN COMPSL_NONNULL expression *readVar(const char* name);
-COMPSL_INTERN __attribute__((__nonnull__(1))) expression *readArray(const char* name, bytecode *arrayIndex);
-COMPSL_INTERN COMPSL_NONNULL expression *incVar(const char *name, bool plus, bool post);
-COMPSL_INTERN __attribute__((__nonnull__(1))) expression *incArray(const char *name, bytecode *arIndex, bool plus, bool post);
+COMPSL_INTERN expression *assignVar(const char *str, expression *e);
+COMPSL_INTERN expression *assignArray(const char *str, bytecode *arrayIndex, expression *e);
+COMPSL_INTERN expression *readVar(const char* name);
+COMPSL_INTERN expression *readArray(const char* name, bytecode *arrayIndex);
+COMPSL_INTERN expression *incVar(const char *name, bool plus, bool post);
+COMPSL_INTERN expression *incArray(const char *name, bytecode *arIndex, bool plus, bool post);
 
 // control.c
-COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *cond, bytecode *block);
-COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *cond, bytecode *block, bytecode *elseBlock);
+COMPSL_INTERN bytecode *ctrlWhile(expression *cond, bytecode *block);
+COMPSL_INTERN bytecode *ctrlIf(expression *cond, bytecode *block, bytecode *elseBlock);
 
 // err.c
 COMPSL_INTERN COMPSL_NONNULL void internalCompileError(const char* str);

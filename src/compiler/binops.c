@@ -1,7 +1,7 @@
 // $Id$
 
 /*
-    CompSL scripting language 
+    CompSL scripting language
     Copyright (C) 2007  Thomas Jones & John Peberdy
 
     This program is free software; you can redistribute it and/or modify
@@ -36,9 +36,9 @@
  *
  * Constraint: The +=, *=, ..= operators on arrays use the scratch register to store array indexes
  * This happens near the end of b -> Caller assumes we won't write the scretch register between b
- * and the end of the returned bytecode string. 
+ * and the end of the returned bytecode string.
  */
-COMPSL_INTERN COMPSL_NONNULL expression* bin_bc_op(int op,expression* a, expression* b) {
+COMPSL_INTERN expression* bin_bc_op(int op,expression* a, expression* b) {
   assert((a!=(expression*)0) && (b!=(expression*)0));
   bool isFloat;
   int alen,blen, endi;
@@ -54,7 +54,7 @@ COMPSL_INTERN COMPSL_NONNULL expression* bin_bc_op(int op,expression* a, express
     expr_autocast(true, a);
     expr_autocast(true, b);
     isFloat = true;
-  } 
+  }
 
   alen = bc_len(a->val.bcode);
   blen = bc_len(b->val.bcode);
@@ -64,7 +64,7 @@ COMPSL_INTERN COMPSL_NONNULL expression* bin_bc_op(int op,expression* a, express
   if(mcode == NULL) internalCompileError("Out of Memory");
 
   memcpy(mcode, a->val.bcode,sizeof(bytecode)*alen);
-  memcpy(&mcode[alen], b->val.bcode,sizeof(bytecode)*blen);  
+  memcpy(&mcode[alen], b->val.bcode,sizeof(bytecode)*blen);
 
   switch(op) {
   case PLUS:
@@ -140,17 +140,17 @@ COMPSL_INTERN COMPSL_NONNULL expression* bin_bc_op(int op,expression* a, express
   mcode[endi].a1 = 0;
   mcode[endi+1].code = BC_NONO;
   mcode[endi+1].a1=0;
-  
+
   free(a->val.bcode);
   a->val.bcode = NULL;
-  
+
   expr_free(b);
   a->val.bcode = mcode;
   return a;
 }
 
-// OPTIMIZE TODO: add more operators in bin_lit_op - would precalculate more stuff at compile time 
-COMPSL_INTERN COMPSL_NONNULL expression* bin_lit_op(int op, expression* a, expression* b) {
+// OPTIMIZE TODO: add more operators in bin_lit_op - would precalculate more stuff at compile time
+COMPSL_INTERN expression* bin_lit_op(int op, expression* a, expression* b) {
   if(!a->isFloat && !b->isFloat) {
     int n1 = a->val.in;
     int n2 = b->val.in;
@@ -196,7 +196,7 @@ COMPSL_INTERN COMPSL_NONNULL expression* bin_lit_op(int op, expression* a, expre
 
 // Post: dont use a or b, they're freed if need be
 
-COMPSL_INTERN COMPSL_NONNULL expression* bin_op(int op,expression* a, expression* b) {
+COMPSL_INTERN expression* bin_op(int op,expression* a, expression* b) {
   assert((a!=NULL) && (b!=NULL));
   expression *ret;
   if(a->isLiteral && b->isLiteral) {

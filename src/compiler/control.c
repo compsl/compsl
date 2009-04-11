@@ -24,7 +24,7 @@
 #include "compiler/interncomp.h"
 
 
-COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
+COMPSL_INTERN bytecode *ctrlIf(expression *condExpr, bytecode *block, bytecode *elseBlock) {
   // Plan: condition, cjmp on 0, block, jmp to end, else
   int len, cpos;
 
@@ -98,7 +98,7 @@ COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlIf(expression *condExpr, bytecode *bl
 
 static void fixBreaksContinues(bytecode* bc, int len, int testLen, int jmpLen);
 
-COMPSL_INTERN COMPSL_NONNULL bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
+COMPSL_INTERN bytecode *ctrlWhile(expression *condExpr, bytecode *block) {
   // Plan:
   //
   //   condition

@@ -92,29 +92,28 @@ endif
 ifeq ($(OPTIMIZE),FULL)
 	# don't use O3 since we really probably don't need it and we don't
 	# know if it really procuces better code for us
-	OPTFLAGS += -O2 -fmerge-all-constants
-	# -fmodulo-sched -fgcse-after-reload
+	OPTFLAGS += -O2 -fmerge-all-constants -fmodulo-sched -fgcse-after-reload
 	#these are what -O3 turns on
 	#-finline-functions -funswitch-loops -fgcse-after-reload
 	
 	#OPTFLAGS += -funroll-loops -fsee -fipa-pta
 	#OPTFLAGS += -fsched-spec-load -maccumulate-outgoing-args
-	#OPTFLAGS += -minline-all-stringops 
-	#OPTFLAGS += -fno-stack-limit
+	OPTFLAGS += -minline-all-stringops 
+	OPTFLAGS += -fno-stack-limit
 	
 	#OPTFLAGS +=-fdata-sections -ffunction-sections
 	# TODO: make sure none of these breaks the library for linking....
-	#OPTFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
+	OPTFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 
 	
 	#OPTFLAGS += -fgcse-sm -fgcse-las
 	#OPTFLAGS += -ftree-vectorize -ftree-loop-linear -ftree-loop-im -fivopts -ftree-loop-ivcanon
 	#according to gentoo wiki tracer may not work... 
 	#OPTFLAGS += -ftracer -fsched2-use-traces
 	#OPTFLAGS += -fsplit-ivs-in-unroller -fvariable-expansion-in-unroller
-	#OPTFLAGS += -freorder-blocks-and-partition
+	OPTFLAGS += -freorder-blocks-and-partition
 	#OPTFLAGS += -fprefetch-loop-arrays
 	
-	#OPTFLAGS += -fbranch-target-load-optimize 
+	OPTFLAGS += -fbranch-target-load-optimize 
 	#OPTFLAGS += -fbranch-target-load-optimize2
 	#OPTFLAGS += -floop-optimize2 -fmove-all-movables
 	

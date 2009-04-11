@@ -267,8 +267,14 @@
 <path value=""/>
 </doc-comment-owner>
 </storageModule>
+<storageModule moduleId="org.eclipse.cdt.core.pathentry">
+<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+<pathentry kind="src" path=""/>
+<pathentry kind="out" path=""/>
+<pathentry base-path="compsl" include="src/include" kind="inc" path="" system="true"/>
+</storageModule>
 <storageModule moduleId="scannerConfiguration">
-<autodiscovery enabled="true" problemReportingEnabled="false" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"/>
+<autodiscovery enabled="false" problemReportingEnabled="false" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"/>
 <profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
 <buildOutputProvider>
 <openAction enabled="true" filePath=""/>
@@ -349,12 +355,6 @@
 <parser enabled="false"/>
 </scannerInfoProvider>
 </profile>
-</storageModule>
-<storageModule moduleId="org.eclipse.cdt.core.pathentry">
-<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
-<pathentry kind="src" path=""/>
-<pathentry kind="out" path=""/>
-<pathentry base-path="compsl" include="src/include" kind="inc" path="" system="true"/>
 </storageModule>
 </cconfiguration>
     

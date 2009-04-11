@@ -1,7 +1,7 @@
 // $Id$
 
 /*
-    CompSL scripting language 
+    CompSL scripting language
     Copyright (C) 2007  Thomas Jones & John Peberdy
 
     This program is free software; you can redistribute it and/or modify
@@ -26,21 +26,21 @@
 
 #include "compiler/interncomp.h"
 
-COMPSL_INTERN COMPSL_NONNULL expression *function_call(const char* name, list *params) {
+COMPSL_INTERN expression *function_call(const char* name, list *params) {
   expression *ex = malloc(sizeof(expression));
   if(ex == NULL) internalCompileError("Out of Memory");
   bytecode *mcode=NULL;
   ex->isFloat = false;
   int lenBc, curBc;
-  
+
   bytecode callcode;
   int numParams=0;
   uint8_t *paramFlags = NULL;
   bool freeParamFlags = false;
   bool found=false;
-  
-  llist *curParam;	  
-  
+
+  llist *curParam;
+
   // Built in funcs
   for(int i=0;i<builtins_len;i++) {
     if(strcmp(name,builtins[i].name)==0) {
@@ -48,7 +48,7 @@ COMPSL_INTERN COMPSL_NONNULL expression *function_call(const char* name, list *p
       bool isFloat = builtins[i].isFloat;
       callcode.code = builtins[i].code;
       callcode.a1 =0;
-      numParams = builtins[i].ac; 
+      numParams = builtins[i].ac;
       ex->isFloat = builtins[i].isFloat;
       paramFlags = malloc(sizeof(uint8_t)*numParams);
       if(paramFlags == NULL) internalCompileError("Out of Memory");
@@ -59,7 +59,7 @@ COMPSL_INTERN COMPSL_NONNULL expression *function_call(const char* name, list *p
       break;
     }
   }
-  
+
   // Native function
   if(!found) {
     symbolinfo symbol = searchSym(name,ccompart);
@@ -82,39 +82,39 @@ COMPSL_INTERN COMPSL_NONNULL expression *function_call(const char* name, list *p
     callcode.code = BC_CALL;
     callcode.a1 = symbol.id;
     found = true;
-    
+
     DPRINTF("Function \"%s\" found with id %i, function=%p\n",name,symbol.id, funk->func);
-    assert(strcmp(name,funk->name)==0); 
+    assert(strcmp(name,funk->name)==0);
     assert(funk->func!=0);
-  }	    
-  
+  }
+
   assert(found);
   assert(paramFlags!=0 || numParams==0);
-  
-  
+
+
   // Check no. arguments
   if(params->length != numParams) {
     sprintf(sprt, "Function %s has %i parameters but %i found",name, numParams, params->length);
     compileError(sprt);
     return 0;
   }
-  
+
   // 1 for callcode, 1 for BC_NONO
   lenBc = 2;
-  
+
   // Ready the parameters and count the size of the bytecodes
   curParam = params->head;
   for(int i=0; i< numParams;i++) {
     expression* ce = (expression*)curParam->obj;
     expr_autocast(paramFlags[i] & FLOAT_VAR, ce);
-    
+
     if(paramFlags[i] & IS_ARRAY) {
       sprintf(sprt, "Function %s has parameters %i as an array, however array wasn't found",name, i);
       compileError(sprt);
       free(ex);
       return NULL;
     }
-    
+
     if(ce->isLiteral) {
       ce->val.bcode = expr_toBc(ce);
       ce->isLiteral = false;
@@ -123,11 +123,11 @@ COMPSL_INTERN COMPSL_NONNULL expression *function_call(const char* name, list *p
     curParam = curParam->next;
     DPRINTF("  Parameter %i has bytecode length %i, new total is %i\n",i, bc_len(ce->val.bcode), lenBc);
   }
-  
+
   mcode = calloc(lenBc, sizeof(bytecode));
   if(mcode == NULL) internalCompileError("Out of Memory");
   curBc = 0;
-  
+
   // Copy the parameters into mcode, last parameter first
   for(int i=numParams-1;i>=0;i--) {
     expression* ce = (expression*)list_get(params,i); // inneficient
@@ -136,21 +136,21 @@ COMPSL_INTERN COMPSL_NONNULL expression *function_call(const char* name, list *p
     expr_free(ce);
     curBc+=clen;
   }
-  
+
   mcode[curBc] = callcode;
   curBc++;
   mcode[curBc].code = BC_NONO;
   curBc++;
   assert(curBc==lenBc);
-  
+
   ex->isLiteral = false;
   ex->val.bcode = mcode;
-  
+
   if(freeParamFlags) free(paramFlags);
   list_free(params);
   // params contents already free'd in copy loop
-  
+
   DPRINTF("Function call completed with length %i with isFloat=%i\n", bc_len(ex->val.bcode), ex->isFloat);
-  
+
   return ex;
 }

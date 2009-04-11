@@ -25,7 +25,7 @@
 #include "compiler/interncomp.h"
 
 
-COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode* bc) {
+COMPSL_INTERN int bc_len(bytecode* bc) {
   assert(bc);
   int len=0;
   while(bc->code!=BC_NONO&&bc->code!=BC_END) {
@@ -40,14 +40,14 @@ COMPSL_INTERN COMPSL_NONNULL int bc_len(bytecode* bc) {
 }
 
 
-COMPSL_INTERN COMPSL_NONNULL void expr_ensureLit(expression* exp) {
+COMPSL_INTERN void expr_ensureLit(expression* exp) {
   if(exp->isLiteral) {
     exp->val.bcode = expr_toBc(exp);
     exp->isLiteral = false;
   }
 }
 
-COMPSL_INTERN COMPSL_NONNULL void expr_autocast(bool toFloat,expression *e) {
+COMPSL_INTERN void expr_autocast(bool toFloat,expression *e) {
 
   if(toFloat == e->isFloat) {
     // no cast needed
@@ -74,7 +74,7 @@ COMPSL_INTERN COMPSL_NONNULL void expr_autocast(bool toFloat,expression *e) {
 /*
  * Note: doesnt free anything
  */
-COMPSL_INTERN COMPSL_NONNULL bytecode* expr_toBc(expression *exp) {
+COMPSL_INTERN bytecode* expr_toBc(expression *exp) {
   if(exp->isLiteral) {
     bytecode* bc = malloc(sizeof(bytecode)*2);
     if(bc==NULL) internalCompileError("Out of memory");

@@ -115,4 +115,4 @@ Notes
 	maxf
 	hypot
 for everything but rand, they are equivalent to the C standard library function
-of the same name.
+of the same name. 

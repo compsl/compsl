@@ -7,7 +7,7 @@ Welcome to CompSL. A simple, pretty fast bytecode interpreted scripting language
 Copyright Thomas Jones and John Peberdy. Licensed under GPL. See LICENSE.
 Current homepage: http://peberdy.ca/jp/projects/compsl.html
 
-Thomas   -- spudd86 ---------
+Thomas   -- spudd86.2 -------
          ----  at -----------
          ------- gmail ------
          ---------- dot com -
@@ -23,7 +23,7 @@ Please let us know if you find this code useful!
 For help with the makefile type:
 $ make help  
 
-Before compiling run ./configure to detect compiliation settings (note configure
+Before compiling run ./configure to detect compilation settings (note configure
 script is NOT autoconf based)
 
 The API is specified in src/extern/compsl.h

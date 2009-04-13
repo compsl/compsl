@@ -5,6 +5,7 @@ bin/*
 .project
 config.opts
 config.mk
+config.mak
 configure.log
 src/compiler/compsl.output
 src/compiler/compsl.tab.c

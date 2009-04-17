@@ -42,7 +42,7 @@ REG_SRCS:=src/api/compartment.c src/api/error.c  src/api/gen.c  src/interp/run.c
 	src/api/vars.c src/api/vm.c src/api/mt.c src/api/userspace.c \
 	$(CMPATH)/binops.c $(CMPATH)/function.c $(CMPATH)/interncomp.c $(CMPATH)/err.c \
 	$(CMPATH)/var.c $(CMPATH)/comp.c $(CMPATH)/control.c $(CMPATH)/compglobals.c \
-	$(CMPATH)/stackcheck.c $(CMPATH)/optimize.c
+	$(CMPATH)/stackcheck.c $(CMPATH)/optimize.c $(CMPATH)/ast.c
 
 DERIVED_SRCS=$(CMPATH)/lex.yy.c $(CMPATH)/compsl.tab.c
 DERIVED_FILES=$(DERIVED_SRCS) $(CMPATH)/compsl.tab.h 
@@ -51,7 +51,7 @@ OBJECTS := $(SOURCES:.c=.o) $(DERIVED_SRCS:.c=.o)
 
 TESTSRCS := $(addprefix src/test/test-,interp-base.c interp-jumps.c \
     interp-arith.c interp-comp.c interp-builtins.c interp.c intern.c api.c \
-    comp.c torture.c so.c)
+    comp.c torture.c ast.c so.c)
 
 TESTOBJS := $(TESTSRCS:.c=.o)
 

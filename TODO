@@ -1,3 +1,15 @@
+
+New TODO:
+ 1. replace our current interface to native calls with one based on libffi
+ 2. re-work variables so we can split out arrays from scalars
+ 3. keep type info for constants
+ 4. clean up API
+	- make the add variable stuff not return a pointer so we can allocate only
+	  as much space as we need for variables (also make the get functions
+	  return NULL until we have compiled the compartment) 
+
+
+
 TODO: this TODO list is out of date
 TODO: In no particular order.
 general
